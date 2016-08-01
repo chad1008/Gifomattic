@@ -12,7 +12,7 @@ After typing gifadd, you provide a url and name (both required) for the GIF, as 
 
 You can also assign a hotkey to gifadd, which will start the process using the last item copied to your clipboard. Copy URL, hit hotkey, fill in title and tags and you're done!
 
-##Searching and Sharing GIFs (keyword: gif)
+##Searching, Sharing, and Editing GIFs (keyword: gif)
 
 Now that you've saved a GIF or two, you can select them to share the URLs.
 
