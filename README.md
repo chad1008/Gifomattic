@@ -1,8 +1,8 @@
-# Gifomattic
+#Gifomattic
 
 Gifomattic is an Alfred 3 workflow to help you organize and share your favorite GIFs.
 
-There are four commands (so far). Gifomattic uses URLs for GIF sharing. You can use the URL where you originally found the GIF or upload it to someplace of your own like a Cloudup stream or WordPress media library.
+Gifomattic uses URLs for GIF sharing. You can use the URL where you originally found the GIF or upload it to someplace of your own like a Cloudup stream or WordPress media library.
 
 ##Adding GIFs (keyword: gifadd)
 
@@ -24,21 +24,15 @@ This keyword also searches for tags. If your search query matches any of the tag
 
 Selecting a tag from the search results will paste the URL of a random tag from that group - making it a nice surprise for you, as well as the person you're sending it to :)
 
-
 ##Editing  GIFs (keyword: gifedit)
 
+If you need to change anything about your GIF, you can use SHIFT + RETURN to select if from search results.
 
-If you need to change anything about your GIF, you can use 'gifedit.'
+Selecting a GIF this way will allow you to edit the selected GIF. At each step along the way you can elect to keep the current value, or enter a new one. For tags you'll also have the option (when applicable) to erase the current tags.
 
-This will run a similar search to what you've used before, only this time you'll see the ID number of the GIF displayed in the results.
-
-Selecting a GIF from this search will allow you to edit the selected GIF. At each step along the way you can elect to keep the current value, or enter a new one. For tags you'll also have the option (when applicable) to erase the current tags.
-
-You can also assign a hotkey to gifedit, which will grab the current selection in OSX - ideal for quickly fixing a GIF that didn't paste properly.
-
+You can also assign a hotkey to edit GIFs, which will grab the current selection in OSX - ideal for quickly fixing a GIF that didn't paste properly.
 
 ##Deleting GIFs (keyword: gifdelete)
-
 
 This one's fairly self explanatory. Enter 'gifdelete' then search and select.
 
