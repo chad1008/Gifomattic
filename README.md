@@ -24,7 +24,7 @@ This keyword also searches for tags. If your search query matches any of the tag
 
 Selecting a tag from the search results will paste the URL of a random tag from that group - making it a nice surprise for you, as well as the person you're sending it to :)
 
-##Editing  GIFs (keyword: gifedit)
+##Editing  GIFs
 
 If you need to change anything about your GIF, you can use SHIFT + RETURN to select if from search results.
 
