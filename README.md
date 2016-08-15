@@ -4,6 +4,7 @@ Gifomattic uses URLs for gif sharing. You can use the URL where you originally f
 
 ##Adding Gifs
 **Keyword:** `gifadd`
+
 **Shortcut:** user-defined hotkey to use last url added to clipboard
 
 Entering the keyword 'gifadd' into Alfred will allow you to save a new gif. The first time your run gifadd, Gifomattic will create a new folder for your data. In that folder a new database with the necessary table is built and a folder for icon files is created, along with the icon for the gif you've just saved.
@@ -36,7 +37,9 @@ When you see the gif you want you can share and edit it using the usual commands
 
 ##Editing  Gifs
 **Keyword:** `gifedit`
+
 **Shortcut:** User defined hotkey selecting the currently highlighted item on the screen
+
 **Modifier:** `SHIFT + RETURN` on any gif search result
 
 If you need to change anything about your gif, you can type `gifedit` to search, or use `SHIFT + RETURN` to select if from search results.
@@ -47,6 +50,7 @@ You can also assign a hotkey to edit gifs, which will grab the current selection
 
 ##Viewing Gif Reports
 **Keyword:** `gifstats`
+
 **Modifier:** `CMD + RETURN` on any gif search result
 
 To view a report on a specific gif, search for it like you would normally, and select it using `CMD + RETURN`. A temporary file will be created and opened in your web browser showing the gif and all of it's info, including share counts.
