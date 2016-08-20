@@ -13,6 +13,9 @@ After typing `gifadd`, you provide a url and name (both required) for the gif, a
 
 You can also assign a hotkey to `gifadd`, which will start the process using the last item copied to your clipboard. Copy URL, hit hotkey, fill in title and tags and you're done!
 
+###Duplicate Gifs
+When adding a gif, `gifadd` will alert you to existing gifs in your database that match the URL or name you've entered. If you notice you're saving a gif you already have, you can select the match to edit it, rather than continuing with the new gif creation.
+
 ##Searching and Sharing Gifs
 **Keyword:** `gif`
 
