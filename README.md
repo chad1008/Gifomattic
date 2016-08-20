@@ -62,6 +62,6 @@ To view a report on a specific gif, search for it like you would normally, and s
 ##Deleting Gifs
 **Keyword:** `gifdelete`
 
-This one's fairly self explanatory. Enter 'gifdelete' then search and select.
+This one's fairly self explanatory. Enter `gifdelete` then search and select.
 
 You then confirm the cancellation (or not, if you've changed your mind) and the gif is removed from your database. There no undo button. Scary stuff.
