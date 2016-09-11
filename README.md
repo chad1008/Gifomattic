@@ -65,3 +65,10 @@ To view a report on a specific gif, search for it like you would normally, and s
 This one's fairly self explanatory. Enter `gifdelete` then search and select.
 
 You then confirm the cancellation (or not, if you've changed your mind) and the gif is removed from your database. There no undo button. Scary stuff.
+
+##Restoring Gifs
+**Keyword:** `gifrestore`
+
+Okay, fine. If you delete a gif and you REALLY want it back, you can use the `gifrestore` command. Accidents happen, I get it.
+
+The last gif you deleted will be reinserted into the database - but it only works for the last gif, and you can only do it once. After that you're on your own. For real this time. ;)
