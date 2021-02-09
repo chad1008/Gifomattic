@@ -67,22 +67,3 @@ function bind_values ( $stmt, $args ) {
 		$stmt->bindValue( $k, $v );
 	}
 }
-
-/////////////////////
-//FOR DEV USE ONLY///
-/////////////////////
-function clean_slate() {
-	$file = $_SERVER['alfred_workflow_data'] . '/gifomattic.db';
-
-	$db = new sqlite3( $file );
-	$delete_gifs = 'DELETE FROM gifs';
-	$delete_tags = 'DELETE FROM tags';
-	$delete_tag_relationships = 'DELETE FROM tag_relationships';
-	
-	$db->exec( $delete_gifs );
-	$db->exec( $delete_tags );
-	$db->exec( $delete_tag_relationships );
-
-	$db->close();
-	unset($db);
-}
