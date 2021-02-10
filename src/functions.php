@@ -39,7 +39,7 @@ function prep_db() {
 		)';
 	$create_tags_table = 'CREATE TABLE IF NOT EXISTS tags (
 		tag_id	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-		tag	TEXT NOT NULL UNIQUE
+		tag	TEXT COLLATE NOCASE NOT NULL UNIQUE
 		)';
 	$create_tags_rel_table = 'CREATE TABLE IF NOT EXISTS tag_relationships (
 		tag_id	INTEGER NOT NULL,
