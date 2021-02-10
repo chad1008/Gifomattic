@@ -11,13 +11,9 @@ class GIF_Query {
 	 *
 	 * @since 2.0
 	 * @var $query string The Alfred input query
-	 * @var $props string Properties to manipulate (SELECT, INSERT, etc)
-	 * @var $cols string  Database column(s) to check against/insert into
 	 */
 	public $query;
-	public $props;
-	public $col;
-	
+
 	/**
 	 * The sqlite3 object for the Gifomattic database
 	 *
@@ -27,20 +23,22 @@ class GIF_Query {
 	public $db;
 
 	/**
-	 * The current GIF being iterated through
+	 * The current GIF or tag being iterated through
 	 *
 	 * @since 2.0
 	 * @var array
 	 */
 	public $current_gif;
+	public $current_tag;
 
 	/**
-	 * The snumber of gifs returned by the current query
+	 * The number of GIFs and tags returned by the current query
 	 *
 	 * @since 2.0
 	 * @var int
 	 */
 	public $gif_count;
+	public $tag_count;
 
 	/**
 	 * The GIFs array. Contains all of the GIFs returned by the current query.
@@ -50,7 +48,8 @@ class GIF_Query {
 	 * @var array
 	 */
 	public $gifs;
-
+	public $tags;
+	
 	/**
 	 * Constructor.
 	 *
@@ -60,103 +59,187 @@ class GIF_Query {
 	 *
 	 * @since 2.0
 	 *
-	 * @param string $query Alfred user input
-	 * @param string $props Values to SELECT from the database
-	 * @param string $col Which column should be searched in the database
+	 * @param string $query Alfred user input //TODO remove query param
+	 * @param string $type Type of query to perform (gif, tag, or gifs_with_tag
 	 */
-	public function __construct( $query='', $props='gif_id,url,name', $col='name' ) {
-		// Set object properties
-		$this->query = $query;
-		$this->props = $props;
-		$this->col   = $col;
+	public function __construct( $query='', $type='' ) {
+		// Set object properties TODO Remove testing conditional
+		global $argv;
+		if (isset ( $argv[1] ) ) {
+			$this->query=$argv[1];
+		} else {
+			$this->query = $query;
+		}
 
-		// Initiate values
+		// Initialize counts
 		$this->current_gif = -1;
+		$this->current_tag = -1;
 
-		// Set database connection
-		$file = 'gifomattic.db';
+		// Set database connection TODO Remove testing conditional
+		if ( isset( $_SERVER['alfred_workflow_data'] ) ) {
+			$file = $_SERVER['alfred_workflow_data'] . '/gifomattic.db';
+		} else {
+			$file = 'gifomattic.db';
+		}
 		$this->db = new sqlite3($file);
+
+		// Set icon folder path
+		global $icons;
+		$icons = $_SERVER['alfred_workflow_data'] . '/icons/';
 		
-		// Count the GIFs in the query
+		// Count the GIFs and tags in the query
 		$this->gif_count = $this->count_gifs();
+		$this->tag_count = $this->count_tags();
 
-		// Populate the GIFs array
+		// Populate the GIFs and tags arrays
 		$this->gifs = $this->get_gifs();
-
+		$this->tags = $this->get_tags();
 	}
 	
 	/**
-	 * Build the prepared statement for the query, based on provided values or defaults
+	 * Query GIFs based on the name provided
+	 *
+	 * Generates the GIFs array
 	 *
 	 * @since 2.0
 	 *
-	 * @return object
+	 * @return array
 	 */
-	public function get_gifs(){
-		// Execute the query
-		$stmt = $this->db->prepare( "SELECT {$this->props} FROM gifs WHERE {$this->col} LIKE '%' || :query ||'%'" );
+	public function get_gifs() {
+		$stmt = $this->db->prepare( "SELECT * FROM gifs WHERE name LIKE '%' || :query ||'%'" );
 		$stmt->bindValue( ':query', $this->query );
 		$result = $stmt->execute();
 
-		//Build the gifs array
+		//Build the GIFs array
 		$gifs = array();
 		while ( $gif = $result->fetchArray( SQLITE3_ASSOC ) ) {
 			$gifs[] = $gif;
 		}
 
 		return $gifs;
-		
 	}
 
 	/**
 	 * Count the number of GIFs returned by the current query.
 	 *
-	 * Used to defind $this->gif_count
+	 * Used to define $this->gif_count
 	 *
 	 * @since 2.0
 	 *
 	 * @return int
 	 */
 	public function count_gifs() {
-		$stmt = $this->db->prepare( "SELECT COUNT(*) as count FROM gifs WHERE {$this->col} LIKE '%' || :query ||'%'" );
+		$stmt = $this->db->prepare( "SELECT COUNT(*) as count FROM gifs WHERE name LIKE '%' || :query ||'%'" );
 		$stmt->bindValue( ':query', $this->query );
 		$result = $stmt->execute();
 		$gif_count = $result->fetchArray( SQLITE3_ASSOC )['count'];
 		
 		return $gif_count;
-		
 	}
 
 	/**
 	 * Check if there are additional GIFs in the query results
-	 *
-	 *
 	 *
 	 * @since 2.0
 	 *
 	 * @return bool True if there are more GIFs, False if there are not
 	 */
 	public function have_gifs() {
-		if ( $this->current_gif + 1 < $this-> gif_count ) {
-			return true;
+		if ( $this->current_gif + 1 < $this->gif_count ) {
+			return TRUE;
 		} else {
-			return false;
+			return FALSE;
 		}
 	}
 
 	/**
 	 * The current GIF being accessed by the loop
 	 *
+	 * Outputs XML list elements formatted for Alfred
+	 *
 	 * @since 2.0
 	 *
-	 * @return array //TODO set to return the array rather than printing
+	 * @return mixed
 	 */
 	public function the_gif() {
+		global $icons;
 		++$this->current_gif;
 		$the_gif = $this->gifs[$this->current_gif];
 
-		echo "<pre>";
-		print_r( $the_gif );
-		echo "</pre>";
+		echo '<item arg="' . $the_gif['gif_id'] . '">';
+		echo '<title>' . htmlspecialchars( $the_gif['name'] ) . '</title>';
+		echo '<subtitle>' . $the_gif['url'] . '</subtitle>';
+
+		$icon = $icons . $the_gif['gif_id'] . '.jpg';
+		if ( file_exists( $icon ) ) {
+			echo '<icon>' . $icon . '</icon>';
+		}
+		echo '</item>';
 	}
+
+	/**
+	 * Query tags based on the name provided
+	 *
+	 * Generates the tags array
+	 *
+	 * @since 2.0
+	 *
+	 * @return array
+	 */
+	public function get_tags() {
+		$stmt = $this->db->prepare( "SELECT tag_id,tag FROM tags WHERE tag LIKE '%' || :query ||'%'" );
+		$stmt->bindValue( ':query', $this->query );
+		$result = $stmt->execute();
+
+		//Build the tags array
+		$tags = array();
+		while ( $tag = $result->fetchArray( SQLITE3_ASSOC ) ) {
+			$tags[] = $tag;
+		}
+
+		return $tags;
+	}
+	public function count_tags() {
+		$stmt = $this->db->prepare( "SELECT COUNT(*) as count FROM tags WHERE tag LIKE '%' || :query ||'%'" );
+		$stmt->bindValue( ':query', $this->query );
+		$result = $stmt->execute();
+		$tag_count = $result->fetchArray( SQLITE3_ASSOC )['count'];
+
+		return $tag_count;
+	}
+
+	/**
+	 * Check if there are additional tags in the query results
+	 *
+	 * @since 2.0
+	 *
+	 * @return bool True if there are more tags, false if there are not
+	 */
+	public function have_tags() {
+		if ( $this->current_tag + 1 < $this->tag_count ) {
+			return TRUE;
+		} else {
+			return FALSE;
+		}
+	}
+
+	/**
+	 * The current tag being accessed by the loop
+	 *
+	 *  Outputs XML list elements formatted for Alfred
+	 *
+	 * @since 2.0
+	 *
+	 * @return mixed
+	 */
+	public function the_tag() {
+		++$this->current_tag;
+		$the_tag = $this->tags[$this->current_tag];
+
+		echo '<item arg="' . $the_tag['tag_id'] . '">';
+		echo '<title>' . htmlspecialchars( $the_tag['tag'] ) . '</title>';
+		echo '<subtitle>Insert a randomly selected ' . $the_tag['tag'] . ' GIF</subtitle>';
+		echo '</item>';
+	}
+
 }
