@@ -187,7 +187,15 @@ class GIF_Query {
 	 * @return array
 	 */
 	public function get_tags() {
-		$stmt = $this->db->prepare( "SELECT tag_id,tag FROM tags WHERE tag LIKE '%' || :query ||'%'" );
+		$stmt = $this->db->prepare( "SELECT tags.tag_id,
+										tags.tag,
+										COUNT(*) as 'gifs-avail'
+									 FROM tags LEFT JOIN tag_relationships
+									 ON tags.tag_id = tag_relationships.tag_id
+									 WHERE tags.tag LIKE '%' || :query ||'%'
+									 GROUP BY tags.tag_id
+								   ");
+
 		$stmt->bindValue( ':query', $this->query );
 		$result = $stmt->execute();
 
@@ -238,7 +246,7 @@ class GIF_Query {
 
 		echo '<item arg="' . $the_tag['tag_id'] . '">';
 		echo '<title>' . htmlspecialchars( $the_tag['tag'] ) . '</title>';
-		echo '<subtitle>Insert a randomly selected ' . $the_tag['tag'] . ' GIF</subtitle>';
+		echo '<subtitle>Insert a randomly selected ' . $the_tag['tag'] . ' GIF (' . $the_tag['gifs-avail'] . ' available)</subtitle>';
 		echo '</item>';
 	}
 
