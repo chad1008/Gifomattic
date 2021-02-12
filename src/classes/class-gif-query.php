@@ -11,8 +11,11 @@ class GIF_Query {
 	 *
 	 * @since 2.0
 	 * @var $query string The Alfred input query
+	 * @var $query_type Allows for filtering different query types in $this_>get_gifs() and $this->get_tags()
 	 */
+	protected $argv;
 	public $query;
+	public $query_type;
 
 	/**
 	 * The sqlite3 object for the Gifomattic database
@@ -41,35 +44,31 @@ class GIF_Query {
 	public $tag_count;
 
 	/**
-	 * The GIFs array. Contains all of the GIFs returned by the current query.
-	 * Each GIF in the array is an associative array of the values requested from the database.
+	 * The GIFs and tags arrays. Contains all of the GIFs and tags returned by the current query.
+	 * Each GIF or tag in the array is an associative array of the values requested from the database.
 	 *
 	 * @since 2.0
 	 * @var array
 	 */
 	public $gifs;
 	public $tags;
-	
+
 	/**
 	 * Constructor.
 	 *
 	 * Sets up the GIF query
 	 * 
-	 * By default, sets $props to 'gif_id,url,name' and $col to 'name'
+	 * Relies on Alfred-provided $argv[1] for user input
 	 *
 	 * @since 2.0
 	 *
-	 * @param string $query Alfred user input //TODO remove query param
-	 * @param string $type Type of query to perform (gif, tag, or gifs_with_tag
+	 * @param mixed $query Alfred user input
+	 * @param string $type Type of query required
 	 */
-	public function __construct( $query='', $type='' ) {
-		// Set object properties TODO Remove testing conditional
-		global $argv;
-		if (isset ( $argv[1] ) ) {
-			$this->query=$argv[1];
-		} else {
-			$this->query = $query;
-		}
+	public function __construct( $query, $type='' ) {
+		// Set query and query type properties
+		$this->query = $query;
+		$this->query_type = $type;
 
 		// Initialize counts
 		$this->current_gif = -1;
@@ -86,32 +85,42 @@ class GIF_Query {
 		// Set icon folder path
 		global $icons;
 		$icons = $_SERVER['alfred_workflow_data'] . '/icons/';
-		
-		// Count the GIFs and tags in the query
-		$this->gif_count = $this->count_gifs();
-		$this->tag_count = $this->count_tags();
 
 		// Populate the GIFs and tags arrays
 		$this->gifs = $this->get_gifs();
 		$this->tags = $this->get_tags();
+
+		// Count the GIFs and tags in the query
+		$this->gif_count = $this->count_gifs();
+		$this->tag_count = $this->count_tags();
+
 	}
 	
 	/**
-	 * Query GIFs based on the name provided
+	 * Query GIFs based on the user-provided name or workflow-provided ID
 	 *
-	 * Generates the GIFs array
+	 * Generates the GIFs array. Relies on Alfred function getenv() for variables passed between workflow nodes
 	 *
 	 * @since 2.0
 	 *
 	 * @return array
 	 */
 	public function get_gifs() {
-		$stmt = $this->db->prepare( "SELECT * FROM gifs WHERE name LIKE '%' || :query ||'%'" );
+		if ( $this->query_type == 'gif_by_id' ) {
+			$stmt = $this->db->prepare( "SELECT * FROM gifs WHERE gif_id IS :query" );
+		} elseif ( $this->query_type == 'tag_by_id' ) {
+			$stmt = $this->db->prepare( "SELECT *
+										 FROM gifs LEFT JOIN tag_relationships
+									  		ON gifs.gif_id = tag_relationships.gif_id
+									 			WHERE tag_relationships.tag_id IS :query
+										" );
+		} else {
+			$stmt = $this->db->prepare( "SELECT * FROM gifs WHERE name LIKE '%' || :query ||'%'" );
+		}
 		$stmt->bindValue( ':query', $this->query );
 		$result = $stmt->execute();
 
 		//Build the GIFs array
-		$gifs = array();
 		while ( $gif = $result->fetchArray( SQLITE3_ASSOC ) ) {
 			$gifs[] = $gif;
 		}
@@ -128,12 +137,13 @@ class GIF_Query {
 	 *
 	 * @return int
 	 */
-	public function count_gifs() {
-		$stmt = $this->db->prepare( "SELECT COUNT(*) as count FROM gifs WHERE name LIKE '%' || :query ||'%'" );
+	public function count_gifs() { //TODO Update to adapt to query_types
+		/*$stmt = $this->db->prepare( "SELECT COUNT(*) as count FROM gifs WHERE name LIKE '%' || :query ||'%'" );
 		$stmt->bindValue( ':query', $this->query );
 		$result = $stmt->execute();
-		$gif_count = $result->fetchArray( SQLITE3_ASSOC )['count'];
-		
+		$gif_count = $result->fetchArray( SQLITE3_ASSOC )['count'];*/
+
+		$gif_count = count( $this->gifs );
 		return $gif_count;
 	}
 
@@ -178,24 +188,53 @@ class GIF_Query {
 	}
 
 	/**
-	 * Query tags based on the name provided
+	 * Increment the share count of the queried GIF
 	 *
-	 * Generates the tags array
+	 * @param mixed $id ID of GIF to increment. If empty, use current query.
+	 * @param string $count Determines which count (selected_count or random_count) to increment
+	 *
+	 * @since 2.0
+	 */
+	public function increment_count( $count, $id='' ) {
+		$stmt = $this->db->prepare( "UPDATE gifs SET {$count} = {$count} + 1 WHERE gif_id IS :query" );
+		if ( $id == '' ) {
+			$stmt->bindValue( ':query', $this->query );
+		} else {
+			$stmt->bindValue( ':query', $id );
+		}
+		$stmt->execute();
+		
+	}
+
+	/**
+	 * Query tags based on the user-provided name or workflow-provided ID
+	 *
+	 * Generates the tags array. Relies on Alfred function getenv() for variables passed between workflow nodes
 	 *
 	 * @since 2.0
 	 *
 	 * @return array
 	 */
 	public function get_tags() {
-		$stmt = $this->db->prepare( "SELECT tags.tag_id,
+		if ( $this->query_type == 'tag_by_id' ) {
+			$stmt = $this->db->prepare( "SELECT tags.tag_id,
 										tags.tag,
 										COUNT(*) as 'gifs-avail'
 									 FROM tags LEFT JOIN tag_relationships
-									 ON tags.tag_id = tag_relationships.tag_id
-									 WHERE tags.tag LIKE '%' || :query ||'%'
+									 	ON tags.tag_id = tag_relationships.tag_id
+									 		WHERE tags.tag IS :query 
 									 GROUP BY tags.tag_id
-								   ");
-
+								   " );
+		} else {
+			$stmt = $this->db->prepare( "SELECT tags.tag_id,
+										tags.tag,
+										COUNT(*) AS 'gifs-avail'
+									 FROM tags LEFT JOIN tag_relationships
+									 	ON tags.tag_id = tag_relationships.tag_id
+									 		WHERE tags.tag LIKE '%' || :query ||'%'
+									 GROUP BY tags.tag_id
+								   " );
+		}
 		$stmt->bindValue( ':query', $this->query );
 		$result = $stmt->execute();
 
@@ -207,6 +246,16 @@ class GIF_Query {
 
 		return $tags;
 	}
+
+	/**
+	 * Count the number of tags returned by the current query.
+	 *
+	 * Used to define $this->tag_count
+	 *
+	 * @since 2.0
+	 *
+	 * @return int
+	 */
 	public function count_tags() {
 		$stmt = $this->db->prepare( "SELECT COUNT(*) as count FROM tags WHERE tag LIKE '%' || :query ||'%'" );
 		$stmt->bindValue( ':query', $this->query );
@@ -234,7 +283,7 @@ class GIF_Query {
 	/**
 	 * The current tag being accessed by the loop
 	 *
-	 *  Outputs XML list elements formatted for Alfred
+	 * Outputs XML list elements formatted for Alfred
 	 *
 	 * @since 2.0
 	 *

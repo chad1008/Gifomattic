@@ -33,8 +33,8 @@ function prep_db() {
 		gif_id	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 		url	TEXT NOT NULL,
 		name	TEXT NOT NULL,
-		selectedcount	INTEGER NOT NULL DEFAULT 0,
-		randomcount	INTEGER NOT NULL DEFAULT 0,
+		selected_count	INTEGER NOT NULL DEFAULT 0,
+		random_count	INTEGER NOT NULL DEFAULT 0,
 		date	TEXT NOT NULL
 		)';
 	$create_tags_table = 'CREATE TABLE IF NOT EXISTS tags (

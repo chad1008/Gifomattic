@@ -10,11 +10,12 @@
 require_once ( 'functions.php' );
 
 // Initiate a new query
-$query = new GIF_Query();
+$input = $argv[1];
+$query = new GIF_Query( $input );
 
 //The GIF loop!
 // Imitation is the sincerest form of flattery
-if ( $query->have_gifs() || $query->have_tags() ) {
+if ( $query->have_gifs() ) {
 
 	echo '<?xml version="1.0"?>';
 	echo '<items>';
