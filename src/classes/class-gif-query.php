@@ -169,22 +169,31 @@ class GIF_Query {
 	 *
 	 * @since 2.0
 	 *
-	 * @return mixed
+	 * @return array
 	 */
 	public function the_gif() {
-		global $icons;
+		// Increment the current_gif pointer, and then use it to identify the current gif from the GIF array
 		++$this->current_gif;
 		$the_gif = $this->gifs[$this->current_gif];
 
-		echo '<item arg="' . $the_gif['gif_id'] . '">';
-		echo '<title>' . htmlspecialchars( $the_gif['name'] ) . '</title>';
-		echo '<subtitle>' . $the_gif['url'] . '</subtitle>';
-
+		// Define the current GIFs icon file
+		global $icons;
 		$icon = $icons . $the_gif['gif_id'] . '.jpg';
-		if ( file_exists( $icon ) ) {
-			echo '<icon>' . $icon . '</icon>';
-		}
-		echo '</item>';
+
+		// Populate GIF data into an array for eventual output as JSON for Alfred
+		$gif = array(
+				'title'		=> htmlspecialchars( $the_gif['name'] ),
+				'subtitle'  => $the_gif['url'],
+				'arg'	    => $the_gif['gif_id'],
+				'icon'		=> array(
+					'path'  => $icon,
+				),
+				'variables' => array(
+					'query_type' => 'gif_by_id',
+				),
+		);
+
+		return $gif;
 	}
 
 	/**
@@ -287,16 +296,31 @@ class GIF_Query {
 	 *
 	 * @since 2.0
 	 *
-	 * @return mixed
+	 * @return array
 	 */
 	public function the_tag() {
 		++$this->current_tag;
-		$the_tag = $this->tags[$this->current_tag];
+		$current_tag = $this->tags[$this->current_tag];
 
-		echo '<item arg="' . $the_tag['tag_id'] . '">';
+/*		echo '<item arg="' . $curr['tag_id'] . '">';
 		echo '<title>' . htmlspecialchars( $the_tag['tag'] ) . '</title>';
 		echo '<subtitle>Insert a randomly selected ' . $the_tag['tag'] . ' GIF (' . $the_tag['gifs-avail'] . ' available)</subtitle>';
-		echo '</item>';
+		echo '</item>';*/
+
+		$the_tag = array(
+			'title'		=> htmlspecialchars( $current_tag['tag'] ),
+			'subtitle'  => 'Insert a randomly selected ' . $current_tag['tag'] . ' GIF (' . $current_tag['gifs-avail'] . ' available)',
+			'arg'	    => $current_tag['tag_id'],
+			'icon'		=> array(
+				'path'  => '',
+			),
+			'variables' => array(
+				'query_type' => 'tag_by_id',
+			),
+		);
+
+		return $the_tag;
+
 	}
 
 }

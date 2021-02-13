@@ -17,12 +17,15 @@ $query = new GIF_Query( $input );
 // Imitation is the sincerest form of flattery
 if ( $query->have_gifs() ) {
 
-	echo '<?xml version="1.0"?>';
-	echo '<items>';
-	
-		while ( $query->have_gifs() ) {
-			$query->the_gif();
-		}
+/*	echo '<?xml version="1.0"?>';
+	echo '<items>';*/
+	$items = array(
+		'items' => array(),
+	);
 
-	echo '</items>';
+		while ( $query->have_gifs() ) {
+			$items['items'][] = $query->the_gif();
+		}
+	echo json_encode( $items );
+/*	echo '</items>';*/
 }

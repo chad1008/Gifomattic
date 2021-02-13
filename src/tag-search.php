@@ -15,12 +15,17 @@ $query = new GIF_Query( $input );
 //The tag loop!
 if ( $query->have_tags() ) {
 
-	echo '<?xml version="1.0"?>';
-	echo '<items>';
+/*	echo '<?xml version="1.0"?>';
+	echo '<items>';*/
 
-		while ( $query->have_tags() ) {
-			$query->the_tag();
-		}
+	$items = array(
+		'items' => array(),
+	);
 
-	echo '</items>';
+	while ( $query->have_tags() ) {
+		$items['items'][] = $query->the_tag();
+	}
+	echo json_encode( $items );
+
+/*	echo '</items>';*/
 }
