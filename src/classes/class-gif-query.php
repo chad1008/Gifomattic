@@ -174,17 +174,17 @@ class GIF_Query {
 	public function the_gif() {
 		// Increment the current_gif pointer, and then use it to identify the current gif from the GIF array
 		++$this->current_gif;
-		$the_gif = $this->gifs[$this->current_gif];
+		$current_gif = $this->gifs[$this->current_gif];
 
 		// Define the current GIFs icon file
 		global $icons;
-		$icon = $icons . $the_gif['gif_id'] . '.jpg';
+		$icon = $icons . $current_gif['gif_id'] . '.jpg';
 
 		// Populate GIF data into an array for eventual output as JSON for Alfred
-		$gif = array(
-				'title'		=> htmlspecialchars( $the_gif['name'] ),
-				'subtitle'  => $the_gif['url'],
-				'arg'	    => $the_gif['gif_id'],
+		$the_gif = array(
+				'title'		=> htmlspecialchars( $current_gif['name'] ),
+				'subtitle'  => $current_gif['url'],
+				'arg'	    => $current_gif['gif_id'],
 				'icon'		=> array(
 					'path'  => $icon,
 				),
@@ -193,7 +193,7 @@ class GIF_Query {
 				),
 		);
 
-		return $gif;
+		return $the_gif;
 	}
 
 	/**
@@ -299,14 +299,11 @@ class GIF_Query {
 	 * @return array
 	 */
 	public function the_tag() {
+		// Increment the current_tag pointer, and then use it to identify the current tag from the tag array
 		++$this->current_tag;
 		$current_tag = $this->tags[$this->current_tag];
 
-/*		echo '<item arg="' . $curr['tag_id'] . '">';
-		echo '<title>' . htmlspecialchars( $the_tag['tag'] ) . '</title>';
-		echo '<subtitle>Insert a randomly selected ' . $the_tag['tag'] . ' GIF (' . $the_tag['gifs-avail'] . ' available)</subtitle>';
-		echo '</item>';*/
-
+		// Populate tag data into an array for eventual output as JSON for Alfred
 		$the_tag = array(
 			'title'		=> htmlspecialchars( $current_tag['tag'] ),
 			'subtitle'  => 'Insert a randomly selected ' . $current_tag['tag'] . ' GIF (' . $current_tag['gifs-avail'] . ' available)',
