@@ -14,18 +14,24 @@ $input = $argv[1];
 $query = new GIF_Query( $input );
 
 //The GIF loop!
-// Imitation is the sincerest form of flattery
-if ( $query->have_gifs() ) {
+// Imitation is the sincerest form of flattery...
+if ( $query->have_gifs() || $query->have_tags() ) {
 
-/*	echo '<?xml version="1.0"?>';
-	echo '<items>';*/
+	// Create the basis of the multidimensional Items array Alfred looks for
 	$items = array(
 		'items' => array(),
 	);
 
-		while ( $query->have_gifs() ) {
-			$items['items'][] = $query->the_gif();
-		}
+	// Add any tags returned by the current quer to the array
+	while ( $query->have_tags() ) {
+		$items['items'][] = $query->the_tag();
+	}
+
+	// Add any GIFs returned by the current query to the array
+	while ( $query->have_gifs() ) {
+		$items['items'][] = $query->the_gif();
+	}
+
+	// Encode our array as JSON for Alfred's output
 	echo json_encode( $items );
-/*	echo '</items>';*/
 }
