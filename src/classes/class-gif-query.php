@@ -121,6 +121,7 @@ class GIF_Query {
 		$result = $stmt->execute();
 
 		//Build the GIFs array
+		$gif = array();
 		while ( $gif = $result->fetchArray( SQLITE3_ASSOC ) ) {
 			$gifs[] = $gif;
 		}

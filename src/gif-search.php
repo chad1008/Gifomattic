@@ -13,7 +13,7 @@ require_once ( 'functions.php' );
 $input = $argv[1];
 $query = new GIF_Query( $input );
 
-//The GIF loop!
+//The Gifomattic loop!
 // Imitation is the sincerest form of flattery...
 if ( $query->have_gifs() || $query->have_tags() ) {
 
@@ -22,7 +22,7 @@ if ( $query->have_gifs() || $query->have_tags() ) {
 		'items' => array(),
 	);
 
-	// Add any tags returned by the current quer to the array
+	// Add any tags returned by the current query to the array
 	while ( $query->have_tags() ) {
 		$items['items'][] = $query->the_tag();
 	}
