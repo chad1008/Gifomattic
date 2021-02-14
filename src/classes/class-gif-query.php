@@ -114,6 +114,14 @@ class GIF_Query {
 									  		ON gifs.gif_id = tag_relationships.gif_id
 									 			WHERE tag_relationships.tag_id IS :query
 										" );
+		} elseif ( $this->query_type == 'gifs_with_tag' ) {
+			$stmt = $this->db->prepare( "SELECT *
+										 FROM gifs LEFT JOIN tag_relationships
+											ON gifs.gif_id = tag_relationships.gif_id
+												WHERE tag_relationships.tag_id IS :tag
+												AND gifs.name LIKE  '%' || :query ||'%'
+										" );
+			$stmt->bindValue( ':tag', getenv( 'tag_to_list' ) );
 		} else {
 			$stmt = $this->db->prepare( "SELECT * FROM gifs WHERE name LIKE '%' || :query ||'%'" );
 		}
