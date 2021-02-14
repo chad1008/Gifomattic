@@ -138,13 +138,9 @@ class GIF_Query {
 	 *
 	 * @return int
 	 */
-	public function count_gifs() { //TODO Update to adapt to query_types
-		/*$stmt = $this->db->prepare( "SELECT COUNT(*) as count FROM gifs WHERE name LIKE '%' || :query ||'%'" );
-		$stmt->bindValue( ':query', $this->query );
-		$result = $stmt->execute();
-		$gif_count = $result->fetchArray( SQLITE3_ASSOC )['count'];*/
-
+	public function count_gifs() {
 		$gif_count = count( $this->gifs );
+
 		return $gif_count;
 	}
 
@@ -267,10 +263,7 @@ class GIF_Query {
 	 * @return int
 	 */
 	public function count_tags() {
-		$stmt = $this->db->prepare( "SELECT COUNT(*) as count FROM tags WHERE tag LIKE '%' || :query ||'%'" );
-		$stmt->bindValue( ':query', $this->query );
-		$result = $stmt->execute();
-		$tag_count = $result->fetchArray( SQLITE3_ASSOC )['count'];
+		$tag_count = count( $this->gifs );
 
 		return $tag_count;
 	}
