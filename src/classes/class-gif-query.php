@@ -271,7 +271,7 @@ class GIF_Query {
 	 * @return int
 	 */
 	public function count_tags() {
-		$tag_count = count( $this->gifs );
+		$tag_count = count( $this->tags );
 
 		return $tag_count;
 	}
