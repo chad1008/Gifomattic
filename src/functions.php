@@ -19,14 +19,18 @@ spl_autoload_register('class_autoloader');
  *
  * @since 2.0
  */
-function prep_db() {
-	$file = $_SERVER['alfred_workflow_data'] . '/gifomattic.db';
+function prep_db() { //TODO Remove testing conditional
+	if ( isset( $_SERVER['alfred_workflow_data'] ) ) {
+		$file = $_SERVER['alfred_workflow_data'] . '/gifomattic.db';
+	} else {
+		$file = 'gifomattic.db';
+	}
 
 	// Check if a database exists. If not, set up a workflow folder to put the database in.
 	if (!file_exists($file)) {
 		mkdir($_SERVER['alfred_workflow_data']);
 	}
-		// Create the database and tables
+		// Create the database and tables as needed
 		$db = new sqlite3( $file );
 		$create_gifs_table = 'CREATE TABLE IF NOT EXISTS gifs (
 		gif_id	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,

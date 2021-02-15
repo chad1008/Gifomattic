@@ -74,13 +74,8 @@ class GIF_Query {
 		$this->current_gif = -1;
 		$this->current_tag = -1;
 
-		// Set database connection TODO Remove testing conditional
-		if ( isset( $_SERVER['alfred_workflow_data'] ) ) {
-			$file = $_SERVER['alfred_workflow_data'] . '/gifomattic.db';
-		} else {
-			$file = 'gifomattic.db';
-		}
-		$this->db = new sqlite3($file);
+		// Set database connection
+		$this->db = prep_db();
 
 		// Set icon folder path
 		global $icons;
