@@ -21,15 +21,14 @@ spl_autoload_register('class_autoloader');
  */
 function prep_db() {
 	$file = $_SERVER['alfred_workflow_data'] . '/gifomattic.db';
-	
+
 	// Check if a database exists. If not, set up a workflow folder to put the database in.
-	if ( !file_exists( $file ) ) {
+	if (!file_exists($file)) {
 		mkdir($_SERVER['alfred_workflow_data']);
 	}
-	
-	// Create the database and tables
-	$db = new sqlite3( $file );
-	$create_gifs_table = 'CREATE TABLE IF NOT EXISTS gifs (
+		// Create the database and tables
+		$db = new sqlite3( $file );
+		$create_gifs_table = 'CREATE TABLE IF NOT EXISTS gifs (
 		gif_id	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 		url	TEXT NOT NULL,
 		name	TEXT NOT NULL,
@@ -37,20 +36,20 @@ function prep_db() {
 		random_count	INTEGER NOT NULL DEFAULT 0,
 		date	TEXT NOT NULL
 		)';
-	$create_tags_table = 'CREATE TABLE IF NOT EXISTS tags (
+		$create_tags_table = 'CREATE TABLE IF NOT EXISTS tags (
 		tag_id	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 		tag	TEXT COLLATE NOCASE NOT NULL UNIQUE
 		)';
-	$create_tags_rel_table = 'CREATE TABLE IF NOT EXISTS tag_relationships (
+		$create_tags_rel_table = 'CREATE TABLE IF NOT EXISTS tag_relationships (
 		tag_id	INTEGER NOT NULL,
 		gif_id	INTEGER NOT NULL,
 		PRIMARY KEY ( tag_id, gif_id)
 		)';
 
-		$db->exec( $create_gifs_table );
-		$db->exec( $create_tags_table );
-		$db->exec( $create_tags_rel_table );
-		
+		$db->exec($create_gifs_table);
+		$db->exec($create_tags_table);
+		$db->exec($create_tags_rel_table);
+
 		return $db;
 }
 
@@ -62,7 +61,7 @@ function prep_db() {
  *
  * @since 2.0
  */
-function bind_values ( $stmt, $args ) {
+function bind_values( $stmt, $args ) {
 	foreach( $args as $k => $v ) {
 		$stmt->bindValue( $k, $v );
 	}
