@@ -12,7 +12,7 @@ function class_autoloader( $class ) {
 		$class_slug = preg_replace( '/_/', '-', strtolower( $class ) );
 		include_once 'classes/class-' . $class_slug . '.php';
 }
-spl_autoload_register('class_autoloader');
+spl_autoload_register( 'class_autoloader' );
 
 /**
  * Checks for and if needed creates the Gifomattic database
@@ -27,8 +27,8 @@ function prep_db() { //TODO Remove testing conditional
 	}
 
 	// Check if a database exists. If not, set up a workflow folder to put the database in.
-	if (!file_exists($file)) {
-		mkdir($_SERVER['alfred_workflow_data']);
+	if ( !file_exists( $file ) ) {
+		mkdir( $_SERVER['alfred_workflow_data'] );
 	}
 		// Create the database and tables as needed
 		$db = new sqlite3( $file );
@@ -50,9 +50,9 @@ function prep_db() { //TODO Remove testing conditional
 		PRIMARY KEY ( tag_id, gif_id)
 		)';
 
-		$db->exec($create_gifs_table);
-		$db->exec($create_tags_table);
-		$db->exec($create_tags_rel_table);
+		$db->exec( $create_gifs_table );
+		$db->exec( $create_tags_table );
+		$db->exec( $create_tags_rel_table );
 
 		return $db;
 }
