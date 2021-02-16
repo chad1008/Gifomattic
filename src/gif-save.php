@@ -2,7 +2,7 @@
 /**
  * The Save GIF script
  *
- * Powers submission of the Save GIF and Edit GIF flows
+ * Powers submission of the Add GIF and Edit GIF flows
  */
 
 require_once( 'functions.php' );
@@ -27,4 +27,9 @@ $args = array(
 );
 bind_values( $stmt, $args );
 
-$stmt->execute();
+$result = $stmt->execute();
+
+$success = "GIF saved: " . $gif['name'];
+popup_notice( $success );
+
+

@@ -70,3 +70,32 @@ function bind_values( $stmt, $args ) {
 		$stmt->bindValue( $k, $v );
 	}
 }
+
+/**
+ * Prepare a success/failure message
+ *
+ * @param string $message A customized message to be output
+ *
+ * @since 2.0
+ */
+
+function popup_notice( $message='' ) {
+	//define success outputs for random selection
+	$wins = array(
+		"Boom!",
+		"Huzzah!",
+		"Nailed It!",
+		"You're my hero",
+		"Beep Beep Boop...",
+		"Mission accomplished!",
+		"Oh, that's a good one!",
+		"Your GIF is my command",
+		"Is it hard to be so awesome?",
+		"The GIF is strong with this one...",
+		"I love it when a plan comes together",
+		"With great GIF comes great responsibility",
+	);
+	
+	$rand = $wins[array_rand( $wins )];
+	echo $rand . "\r\n" . $message;
+}
