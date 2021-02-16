@@ -18,7 +18,7 @@ if ( !getenv( 'next_step' ) ) {
 				'subtitle' => $input,
 				'arg' => $input,
 				'variables' => array(
-					'new_gif_url' => $input,
+					'gif_url' => $input,
 					'next_step' => 'gif_name',
 					'gif_add_subtitle' => "Step 2: Enter the new GIF's name"
 				),
@@ -36,7 +36,7 @@ if ( !getenv( 'next_step' ) ) {
 				'subtitle' => $input,
 				'arg' => $input,
 				'variables' => array(
-					'new_gif_name' => $input,
+					'gif_name' => $input,
 					'next_step' => 'save_gif',
 				),
 			),
