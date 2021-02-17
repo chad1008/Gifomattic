@@ -29,6 +29,13 @@ bind_values( $stmt, $args );
 
 $result = $stmt->execute();
 
+// Grab the ID of the new GIF and add it to our array of the GIFs data
+$gif['id'] = $db->lastInsertRowID();
+
+
+// Create/update the icon for the GIF that was just added/updated
+iconify( $gif );
+
 $success = "GIF saved: " . $gif['name'];
 popup_notice( $success );
 
