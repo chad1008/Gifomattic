@@ -133,12 +133,14 @@ function iconify( $gif ) {
 /**
  * Prepare a success/failure message
  *
- * @param string $message A customized message to be output
+ * @param string $message String to be appended to the random success message
  *
  * @since 2.0
+ * 
+ * @return string
  */
 function popup_notice( $message='' ) {
-	//define success outputs for random selection
+	// Define success outputs for random selection
 	$wins = array(
 		"Boom!",
 		"Huzzah!",
@@ -155,6 +157,6 @@ function popup_notice( $message='' ) {
 	);
 	
 	$rand = $wins[array_rand( $wins )];
-	echo $rand . "\r\n" . $message;
+	return $rand . "\r\n" . $message;
 }
 
