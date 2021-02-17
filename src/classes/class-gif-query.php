@@ -79,7 +79,6 @@ class GIF_Query {
 
 		// Set icon folder path
 		global $icons;
-		$icons = $_SERVER['alfred_workflow_data'] . '/icons/';
 
 		// Populate the GIFs and tags arrays
 		$this->gifs = $this->get_gifs();
@@ -182,7 +181,7 @@ class GIF_Query {
 
 		// Populate GIF data into an array for eventual output as JSON for Alfred
 		$the_gif = array(
-				'title'		=> htmlspecialchars( $current_gif['name'] ),
+				'title'		=> $current_gif['name'],
 				'subtitle'  => $current_gif['url'],
 				'arg'	    => $current_gif['gif_id'],
 				'icon'		=> array(
@@ -302,7 +301,7 @@ class GIF_Query {
 
 		// Populate tag data into an array for eventual output as JSON for Alfred
 		$the_tag = array(
-			'title'		=> htmlspecialchars( $current_tag['tag'] ),
+			'title'		=> $current_tag['tag'],
 			'subtitle'  => 'Insert a randomly selected ' . $current_tag['tag'] . ' GIF (' . $current_tag['gifs-avail'] . ' available)',
 			'arg'	    => $current_tag['tag_id'],
 			'icon'		=> array(
@@ -314,7 +313,5 @@ class GIF_Query {
 		);
 
 		return $the_tag;
-
 	}
-
 }
