@@ -8,8 +8,8 @@
 require_once( 'functions.php' );
 
 $input = $argv[1];
-$id =  getenv( 'edit_gif_id' );
-$gif = new GIF( $id );
+$gif_id =  getenv( 'edit_gif_id' );
+$gif = new GIF( $gif_id );
 $tags = new Tag_Query( $input );
 
 // Create the basis of the multidimensional Items array Alfred looks for
@@ -36,13 +36,14 @@ if ( getenv( 'tag_edit_mode' ) == 'add_tags' ) {
 			),
 		);
 	} else {
-		// Set up user input as a new tag to save, unless it matches an existingtag
+		// Set up user input as a new tag to save, unless it matches an existing tag
 		if ( !in_array( $input, array_column( $tags->tags, 'tag') ) )  {
 			$items['items'][] = array(
-				'title' 		 => "Create a new tag: $input",
-				'arg'   		 => $input,
-				'variables'		 => array(
-					'is_new_tag' => true,
+				'title' 	=> "Create a new tag: $input",
+				'arg'   	=> $input,
+				'variables'	=> array(
+					'is_new_tag' 	=> 'true',
+					'tag_edit_mode' => 'add_tags',
 				),
 			);
 		}
@@ -73,6 +74,7 @@ if ( getenv( 'tag_edit_mode' ) == 'add_tags' ) {
 				),
 				'variables'		 => array(
 					'is_new_tag' => false,
+					'tag_edit_mode' => 'add_tags',
 				),
 			);
 		}
