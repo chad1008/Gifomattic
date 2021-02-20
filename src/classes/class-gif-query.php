@@ -11,9 +11,8 @@ class GIF_Query {
 	 *
 	 * @since 2.0
 	 * @var $query string The Alfred input query
-	 * @var $query_type string Allows for filtering different query types in $this_>get_gifs() and $this->get_tags()
+	 * @var $query_type string Allows for filtering different query types in $this_>get_gifs()
 	 */
-	protected $argv;
 	public $query;
 	public $query_type;
 	public $tag_to_search;
@@ -27,39 +26,34 @@ class GIF_Query {
 	public $db;
 
 	/**
-	 * The current GIF or tag being iterated through
+	 * The current GIF being iterated through
 	 *
 	 * @since 2.0
 	 * @var array
 	 */
 	public $current_gif;
-	public $current_tag;
 
 	/**
-	 * The number of GIFs and tags returned by the current query
+	 * The number of GIFs returned by the current query
 	 *
 	 * @since 2.0
 	 * @var int
 	 */
 	public $gif_count;
-	public $tag_count;
 
 	/**
-	 * The GIFs and tags arrays. Contains all of the GIFs and tags returned by the current query.
-	 * Each GIF or tag in the array is an associative array of the values requested from the database.
+	 * The GIFs array. Contains all of the GIFs returned by the current query.
+	 * Each GIF in the array is an associative array of the values requested from the database.
 	 *
 	 * @since 2.0
 	 * @var array
 	 */
 	public $gifs;
-	public $tags;
 
 	/**
 	 * Constructor.
 	 *
 	 * Sets up the GIF query
-	 * 
-	 * Relies on Alfred-provided $argv[1] for user input
 	 *
 	 * @since 2.0
 	 *
@@ -75,19 +69,15 @@ class GIF_Query {
 
 		// Initialize counts
 		$this->current_gif = -1;
-		$this->current_tag = -1;
 
 		// Set database connection
 		$this->db = prep_db();
 
-		// Populate the GIFs and tags arrays
+		// Populate the GIFs array
 		$this->gifs = $this->get_gifs();
-		$this->tags = $this->get_tags();
 
-		// Count the GIFs and tags in the query
+		// Count the GIFs in the query
 		$this->gif_count = $this->count_gifs();
-		$this->tag_count = $this->count_tags();
-
 	}
 	
 	/**
@@ -190,107 +180,5 @@ class GIF_Query {
 		$rand = array_rand( $this->gifs );
 
 		return $this->gifs[$rand]['gif_id'];
-	}
-
-	/**
-	 * Query tags based on the user-provided name or workflow-provided ID
-	 *
-	 * Generates the tags array. Relies on Alfred function getenv() for variables passed between workflow nodes
-	 *
-	 * @since 2.0
-	 *
-	 * @return array
-	 */
-	public function get_tags() {
-		if ( $this->query_type == 'tag_by_id' ) {
-			$stmt = $this->db->prepare( "SELECT tags.tag_id,
-										tags.tag,
-										COUNT(*) as 'gifs-avail'
-									 FROM tags LEFT JOIN tag_relationships
-									 	ON tags.tag_id = tag_relationships.tag_id
-									 		WHERE tags.tag IS :query 
-									 GROUP BY tags.tag_id
-								   " );
-		} else {
-			$stmt = $this->db->prepare( "SELECT tags.tag_id,
-										tags.tag,
-										COUNT(*) AS 'gifs-avail'
-									 FROM tags LEFT JOIN tag_relationships
-									 	ON tags.tag_id = tag_relationships.tag_id
-									 		WHERE tags.tag LIKE '%' || :query ||'%'
-									 GROUP BY tags.tag_id
-								   " );
-		}
-		$stmt->bindValue( ':query', $this->query );
-		$result = $stmt->execute();
-
-		//Build the tags array
-		$tags = array();
-		while ( $tag = $result->fetchArray( SQLITE3_ASSOC ) ) {
-			$tags[] = $tag;
-		}
-
-		return $tags;
-	}
-
-	/**
-	 * Count the number of tags returned by the current query.
-	 *
-	 * Used to define $this->tag_count
-	 *
-	 * @since 2.0
-	 *
-	 * @return int
-	 */
-	public function count_tags() {
-		$tag_count = count( $this->tags );
-
-		return $tag_count;
-	}
-
-	/**
-	 * Check if there are additional tags in the query results
-	 *
-	 * @since 2.0
-	 *
-	 * @return bool True if there are more tags, false if there are not
-	 */
-	public function have_tags() {
-		if ( $this->current_tag + 1 < $this->tag_count ) {
-			return TRUE;
-		} else {
-			return FALSE;
-		}
-	}
-
-	/**
-	 * The current tag being accessed by the loop
-	 *
-	 * Outputs XML list elements formatted for Alfred
-	 *
-	 * @since 2.0
-	 *
-	 * @return array
-	 */
-	public function the_tag() {
-		// Increment the current_tag pointer, and then use it to identify the current tag from the tag array
-		++$this->current_tag;
-		$current_tag = $this->tags[$this->current_tag];
-
-		// Populate tag data into an array for eventual output as JSON for Alfred
-		$the_tag = array(
-			'title'		=> $current_tag['tag'],
-			'subtitle'  => 'Insert a randomly selected ' . $current_tag['tag'] . ' GIF (' . $current_tag['gifs-avail'] . ' available)',
-			'arg'	    => $current_tag['tag_id'],
-			'icon'		=> array(
-				'path'  => '',
-			),
-			'variables' => array(
-				'item_type'    => 'tag',
-				'selected_tag' => $current_tag['tag_id'],
-			),
-		);
-
-		return $the_tag;
 	}
 }
