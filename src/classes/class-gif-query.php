@@ -11,7 +11,7 @@ class GIF_Query {
 	 *
 	 * @since 2.0
 	 * @var $query string The Alfred input query
-	 * @var $query_type Allows for filtering different query types in $this_>get_gifs() and $this->get_tags()
+	 * @var $query_type string Allows for filtering different query types in $this_>get_gifs() and $this->get_tags()
 	 */
 	protected $argv;
 	public $query;
@@ -76,9 +76,6 @@ class GIF_Query {
 
 		// Set database connection
 		$this->db = prep_db();
-
-		// Set icon folder path
-		global $icons;
 
 		// Populate the GIFs and tags arrays
 		$this->gifs = $this->get_gifs();
@@ -173,24 +170,10 @@ class GIF_Query {
 	public function the_gif() {
 		// Increment the current_gif pointer, and then use it to identify the current gif from the GIF array
 		++$this->current_gif;
-		$current_gif = $this->gifs[$this->current_gif];
-
-		// Define the current GIFs icon file
-		global $icons;
-		$icon = $icons . $current_gif['gif_id'] . '.jpg';
+		$current_gif = $this->gifs[$this->current_gif]['gif_id'];
 
 		// Populate GIF data into an array for eventual output as JSON for Alfred
-		$the_gif = array(
-				'title'		=> $current_gif['name'],
-				'subtitle'  => $current_gif['url'],
-				'arg'	    => $current_gif['gif_id'],
-				'icon'		=> array(
-					'path'  => $icon,
-				),
-				'variables' => array(
-					'query_type' => 'gif_by_id',
-				),
-		);
+		$the_gif = new GIF( $current_gif );
 
 		return $the_gif;
 	}
