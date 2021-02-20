@@ -16,6 +16,7 @@ class GIF_Query {
 	protected $argv;
 	public $query;
 	public $query_type;
+	public $tag_to_search;
 
 	/**
 	 * The sqlite3 object for the Gifomattic database
@@ -64,11 +65,13 @@ class GIF_Query {
 	 *
 	 * @param mixed $query Alfred user input
 	 * @param string $type Type of query required
+	 * @param int $tag Optional tag to filter GIFs from
 	 */
-	public function __construct( $query, $type='' ) {
+	public function __construct( $query, $type='', $tag=null) {
 		// Set query and query type properties
 		$this->query = $query;
 		$this->query_type = $type;
+		$this->tag_to_search = $tag;
 
 		// Initialize counts
 		$this->current_gif = -1;
@@ -97,15 +100,7 @@ class GIF_Query {
 	 * @return array
 	 */
 	public function get_gifs() {
-		if ( $this->query_type == 'gif_by_id' ) {
-			$stmt = $this->db->prepare( "SELECT * FROM gifs WHERE gif_id IS :query" );
-		} /*elseif ( $this->query_type == 'tag_by_id' ) {
-			$stmt = $this->db->prepare( "SELECT *
-										 FROM gifs LEFT JOIN tag_relationships
-									  		ON gifs.gif_id = tag_relationships.gif_id
-									 			WHERE tag_relationships.tag_id IS :query
-										" );
-		}*/ elseif ( $this->query_type == 'gifs_with_tag' ) {
+		if ( $this->query_type == 'gifs_with_tag' ) {
 			// Prepare the initial query of all GIFs with the current tag
 			$prepped_stmt = "SELECT *
 						 			FROM gifs
@@ -120,7 +115,7 @@ class GIF_Query {
 
 			// Prepare the final query and bind the tag ID value
 			$stmt = $this->db->prepare( $prepped_stmt );
-			$stmt->bindValue( ':tag', getenv( 'tag_to_list' ) );
+			$stmt->bindValue( ':tag', $this->tag_to_search );
 		} else {
 			$stmt = $this->db->prepare( "SELECT * FROM gifs WHERE name LIKE '%' || :query ||'%'" );
 		}
@@ -187,22 +182,14 @@ class GIF_Query {
 	}
 
 	/**
-	 * Increment the share count of the queried GIF
-	 *
-	 * @param mixed $id ID of GIF to increment. If empty, use current query.
-	 * @param string $count Determines which count (selected_count or random_count) to increment
+	 * Select a random GIF from the query's results
 	 *
 	 * @since 2.0
 	 */
-	public function increment_count( $count, $id='' ) {
-		$stmt = $this->db->prepare( "UPDATE gifs SET {$count} = {$count} + 1 WHERE gif_id IS :query" );
-		if ( $id == '' ) {
-			$stmt->bindValue( ':query', $this->query );
-		} else {
-			$stmt->bindValue( ':query', $id );
-		}
-		$stmt->execute();
-		
+	public function random() {
+		$rand = array_rand( $this->gifs );
+
+		return $this->gifs[$rand]['gif_id'];
 	}
 
 	/**
@@ -299,7 +286,8 @@ class GIF_Query {
 				'path'  => '',
 			),
 			'variables' => array(
-				'query_type' => 'tag_by_id',
+				'item_type'    => 'tag',
+				'selected_tag' => $current_tag['tag_id'],
 			),
 		);
 

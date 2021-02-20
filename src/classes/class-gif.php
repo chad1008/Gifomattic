@@ -20,7 +20,7 @@ class GIF {
 	 * @since 2.0
 	 * @var int
 	 */
-	private $id;
+	public $id;
 
 	/**
 	 * The URL of the GIF
@@ -63,15 +63,15 @@ class GIF {
 	public $date;
 	
 	/**
-	 * An array of all of the GIF's data, from the 'gifs' table (i.e. everything except the tags)
+	 * Path to the GIF's icon file
 	 *
 	 * @since 2.0
-	 * @var array
+	 * @var string
 	 */
-	//private $data;
+	public $icon;
 
 	/**
-	 * A list of the tags associated with the GIF
+	 * A list of the tags assigned to the GIF
 	 *
 	 * @since 2.0
 	 * @var array
@@ -111,6 +111,12 @@ class GIF {
 		
 		// Set the tag list, if possible
 		$this->tags = $this->get_tags();
+
+		// Set icon path
+		global $icons;
+		$this->icon = $icons . $this->id . '.jpg';
+
+
 	}
 
 	/**
@@ -172,6 +178,19 @@ class GIF {
 			':id'	=> $this->id,
 		);
 		bind_values( $stmt, $args );
+		$stmt->execute();
+	}
+
+	/**
+	 * Increment the GIF share count
+	 *
+	 * @param string $count Determines which count (selected_count or random_count) to increment
+	 *
+	 * @since 2.0
+	 */
+	public function increment_count( $count ) {
+		$stmt = $this->db->prepare( "UPDATE gifs SET {$count} = {$count} + 1 WHERE gif_id IS :query" );
+		$stmt->bindValue(':query', $this->id );
 		$stmt->execute();
 	}
 }

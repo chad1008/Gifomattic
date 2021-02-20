@@ -9,12 +9,13 @@
 
 require_once ( 'functions.php' );
 
-// Initialize user input and query type
+// Initialize user input and query type.
 $input = $argv[1];
 $type = 'gifs_with_tag';
+$tag = getenv('selected_tag');
 
 // Query the database (note: 'gifs_with_tag' relies upon the 'tag_to_list' env var within the GIF_Query class
-$list_gifs = new GIF_Query( $input, $type );
+$list_gifs = new GIF_Query( $input, $type, $tag );
 
 if ($list_gifs->have_gifs()) {
 
@@ -35,7 +36,7 @@ if ($list_gifs->have_gifs()) {
 				'path'  => $the_gif->icon,
 			),
 			'variables' => array(
-				'query_type' => 'gif_by_id',
+				'item_type' => 'gif',
 			),
 		);
 	}

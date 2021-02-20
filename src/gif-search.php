@@ -39,7 +39,7 @@ if ( $query->have_gifs() || $query->have_tags() ) {
 				'path'  => $the_gif->icon,
 			),
 			'variables' => array(
-				'query_type' => 'gif_by_id',
+				'item_type'    => 'gif',
 			),
 		);
 
