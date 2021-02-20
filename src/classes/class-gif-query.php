@@ -99,19 +99,27 @@ class GIF_Query {
 	public function get_gifs() {
 		if ( $this->query_type == 'gif_by_id' ) {
 			$stmt = $this->db->prepare( "SELECT * FROM gifs WHERE gif_id IS :query" );
-		} elseif ( $this->query_type == 'tag_by_id' ) {
+		} /*elseif ( $this->query_type == 'tag_by_id' ) {
 			$stmt = $this->db->prepare( "SELECT *
 										 FROM gifs LEFT JOIN tag_relationships
 									  		ON gifs.gif_id = tag_relationships.gif_id
 									 			WHERE tag_relationships.tag_id IS :query
 										" );
-		} elseif ( $this->query_type == 'gifs_with_tag' ) {
-			$stmt = $this->db->prepare( "SELECT *
-										 FROM gifs LEFT JOIN tag_relationships
+		}*/ elseif ( $this->query_type == 'gifs_with_tag' ) {
+			// Prepare the initial query of all GIFs with the current tag
+			$prepped_stmt = "SELECT *
+						 			FROM gifs
+						 				LEFT JOIN tag_relationships
 											ON gifs.gif_id = tag_relationships.gif_id
-												WHERE tag_relationships.tag_id IS :tag
-												AND gifs.name LIKE  '%' || :query ||'%'
-										" );
+											WHERE tag_relationships.tag_id IS :tag";
+			// Prepare additional statement to GIF names by user input
+			$filter_gif_name = " AND gifs.name LIKE  '%' || :query ||'%'";
+
+			// Append the filter statement if user input is provided
+			$prepped_stmt .= $this->query != '' ? $filter_gif_name : '';
+
+			// Prepare the final query and bind the tag ID value
+			$stmt = $this->db->prepare( $prepped_stmt );
 			$stmt->bindValue( ':tag', getenv( 'tag_to_list' ) );
 		} else {
 			$stmt = $this->db->prepare( "SELECT * FROM gifs WHERE name LIKE '%' || :query ||'%'" );

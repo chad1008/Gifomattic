@@ -9,50 +9,37 @@
 
 require_once ( 'functions.php' );
 
+// Initialize user input and query type
 $input = $argv[1];
+$type = 'gifs_with_tag';
 
-if ( $input == '' ) {
+// Query the database (note: 'gifs_with_tag' relies upon the 'tag_to_list' env var within the GIF_Query class
+$list_gifs = new GIF_Query( $input, $type );
 
-	$tag = getenv( 'tag_to_list' );
-	$type = 'tag_by_id';
+if ($list_gifs->have_gifs()) {
 
-	$list_gifs = new GIF_Query( $tag, $type );
+	// Create the basis of the multidimensional Items array Alfred looks for
+	$items = array(
+		'items' => array(),
+	);
 
-	if ($list_gifs->have_gifs()) {
+	// Add any GIFs returned by the current query to the array
+	while ( $list_gifs->have_gifs() ) {
+		$the_gif = $list_gifs->the_gif();
 
-		// Create the basis of the multidimensional Items array Alfred looks for
-		$items = array(
-			'items' => array(),
+		$items['items'][] = array(
+			'title'		=> $the_gif->name,
+			'subtitle'  => $the_gif->url,
+			'arg'	    => $the_gif->id,
+			'icon'		=> array(
+				'path'  => $the_gif->icon,
+			),
+			'variables' => array(
+				'query_type' => 'gif_by_id',
+			),
 		);
-
-		// Add any GIFs returned by the current query to the array
-		while ($list_gifs->have_gifs()) {
-			$items['items'][] = $list_gifs->the_gif();
-		}
-
-		// Encode our array as JSON for Alfred's output
-		echo json_encode( $items );
 	}
 
-} else {
-
-	$type = 'gifs_with_tag';
-	$query = new GIF_Query ( $input, $type );
-
-
-	if ($query->have_gifs() ) {
-
-		// Create the basis of the multidimensional Items array Alfred looks for
-		$items = array(
-			'items' => array(),
-		);
-
-		// Add any GIFs returned by the current query to the array
-		while ($query->have_gifs()) {
-			$items['items'][] = $query->the_gif();
-		}
-
-		// Encode our array as JSON for Alfred's output
-		echo json_encode($items);
-	}
+	// Encode our array as JSON for Alfred's output
+	echo json_encode( $items );
 }
