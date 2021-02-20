@@ -1,0 +1,82 @@
+<?php
+/**
+ * The Edit GIF Tags script
+ *
+ * Powers the tag step of adding and editing GIFs
+ */
+
+require_once( 'functions.php' );
+
+$input = $argv[1];
+$id =  getenv( 'edit_gif_id' );
+$gif = new GIF( $id );
+$tags = new Tag_Query( $input );
+
+// Create the basis of the multidimensional Items array Alfred looks for
+$items = array(
+	'items' => array(),
+);
+
+// Determine if tags should be added or removed
+if ( getenv( 'tag_edit_mode' ) == 'add_tags' ) {
+	// Display prompts to add a tag or exit
+	if ( $input == '' ) {
+		$items['items'][] = array(
+			'title'    => 'Add a tag',
+			'subtitle' => 'Begin typing to select an existing tag, or create a new one',
+			'arg'      => '',
+			'valid'    => false,
+		);
+		$items['items'][] = array(
+			'title'     => 'Exit',
+			'subtitle'  => 'Close the GIF editor',
+			'arg'	    => '',
+			'variables' => array(
+				'exit'  => 'true',
+			),
+		);
+	} else {
+		// Set up user input as a new tag to save, unless it matches an existingtag
+		if ( !in_array( $input, array_column( $tags->tags, 'tag') ) )  {
+			$items['items'][] = array(
+				'title' 		 => "Create a new tag: $input",
+				'arg'   		 => $input,
+				'variables'		 => array(
+					'is_new_tag' => true,
+				),
+			);
+		}
+		// Loop through and display existing tags that match the user input
+		while ( $tags->have_tags() ) {
+			$the_tag = $tags->the_tag();
+
+			// Set up subtitle statement based on the existing GIF count on the current tag
+			if ( $the_tag->gifs_with_tag == 0 ) {
+				$q = "No GIFs";
+				$u = "use";
+			} elseif ( $the_tag->gifs_with_tag == 1 ) {
+				$q = "One other GIF";
+				$u = "uses";
+			} else {
+				$q = "$the_tag->gifs_with_tag other GIFs";
+				$u = "use";
+			}
+			$subtitle = 'Tag this GIF as "' . $the_tag->name . '" (%s currently %s this tag)';
+
+			// Prep an array item for Alfred output
+			$items['items'][] = array(
+				'title'		=> $the_tag->name,
+				'subtitle'  => sprintf( $subtitle, $q, $u ),
+				'arg'	    => $the_tag->id,
+				'icon'		=> array(
+					'path'  => '',
+				),
+				'variables'		 => array(
+					'is_new_tag' => false,
+				),
+			);
+		}
+	}
+}
+
+echo json_encode( $items );
