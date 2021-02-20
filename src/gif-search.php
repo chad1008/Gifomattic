@@ -29,7 +29,20 @@ if ( $query->have_gifs() || $query->have_tags() ) {
 
 	// Add any GIFs returned by the current query to the array
 	while ( $query->have_gifs() ) {
-		$items['items'][] = $query->the_gif();
+		$the_gif = $query->the_gif();
+
+		$items['items'][] = array(
+			'title'		=> $the_gif->name,
+			'subtitle'  => $the_gif->url,
+			'arg'	    => $the_gif->id,
+			'icon'		=> array(
+				'path'  => $the_gif->icon,
+			),
+			'variables' => array(
+				'query_type' => 'gif_by_id',
+			),
+		);
+
 	}
 
 	// Encode our array as JSON for Alfred's output
