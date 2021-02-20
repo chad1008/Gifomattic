@@ -10,10 +10,10 @@ class GIF_Query {
 	 * Query vars
 	 *
 	 * @since 2.0
-	 * @var $query string The Alfred input query
+	 * @var $input string The Alfred input query
 	 * @var $query_type string Allows for filtering different query types in $this_>get_gifs()
 	 */
-	public $query;
+	public $input;
 	public $query_type;
 	public $tag_to_search;
 
@@ -57,13 +57,13 @@ class GIF_Query {
 	 *
 	 * @since 2.0
 	 *
-	 * @param mixed $query Alfred user input
+	 * @param mixed $input Alfred user input
 	 * @param string $type Type of query required
 	 * @param int $tag Optional tag to filter GIFs from
 	 */
-	public function __construct( $query, $type='', $tag=null) {
+	public function __construct( $input, $type='', $tag=null) {
 		// Set query and query type properties
-		$this->query = $query;
+		$this->input = $input;
 		$this->query_type = $type;
 		$this->tag_to_search = $tag;
 
@@ -101,15 +101,15 @@ class GIF_Query {
 			$filter_gif_name = " AND gifs.name LIKE  '%' || :query ||'%'";
 
 			// Append the filter statement if user input is provided
-			$prepped_stmt .= $this->query != '' ? $filter_gif_name : '';
+			$prepped_stmt .= $this->input != '' ? $filter_gif_name : '';
 
 			// Prepare the final query and bind the tag ID value
 			$stmt = $this->db->prepare( $prepped_stmt );
 			$stmt->bindValue( ':tag', $this->tag_to_search );
 		} else {
-			$stmt = $this->db->prepare( "SELECT * FROM gifs WHERE name LIKE '%' || :query ||'%'" );
+			$stmt = $this->db->prepare( "SELECT * FROM gifs WHERE name LIKE '%' || :input ||'%'" );
 		}
-		$stmt->bindValue( ':query', $this->query );
+		$stmt->bindValue( ':input', $this->input );
 		$result = $stmt->execute();
 
 		//Build the GIFs array
