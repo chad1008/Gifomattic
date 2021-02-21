@@ -36,7 +36,7 @@ if ( $gifs->have_gifs() || $tags->have_tags() ) {
 			),
 			'variables' => array(
 				'item_type' => 'tag',
-				'selected_tag' => $the_tag->id,
+				'item_id'   => $the_tag->id,
 			),
 		);
 	}
@@ -54,6 +54,7 @@ if ( $gifs->have_gifs() || $tags->have_tags() ) {
 			),
 			'variables' => array(
 				'item_type'    => 'gif',
+				'item_id'   => $the_gif->id,
 			),
 		);
 
