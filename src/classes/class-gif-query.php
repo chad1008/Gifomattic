@@ -11,10 +11,11 @@ class GIF_Query {
 	 *
 	 * @since 2.0
 	 * @var $input string The Alfred input query
-	 * @var $query_type string Allows for filtering different query types in $this_>get_gifs()
+	 * @var $query string Custom query string based on the parameters provided
+	 * @var $tag_to_search int An optional, specific tag that query results should be filtered against
 	 */
 	public $input;
-	public $query_type;
+	private $query;
 	public $tag_to_search;
 
 	/**
@@ -58,14 +59,13 @@ class GIF_Query {
 	 * @since 2.0
 	 *
 	 * @param mixed $input Alfred user input
-	 * @param string $type Type of query required
 	 * @param int $tag Optional tag to filter GIFs from
 	 */
-	public function __construct( $input, $type='', $tag=null) {
+	public function __construct( $input, $tag=null) {
 		// Set query and query type properties
 		$this->input = $input;
-		$this->query_type = $type;
 		$this->tag_to_search = $tag;
+		$this->query = $this->parse_query();
 
 		// Initialize counts
 		$this->current_gif = -1;
@@ -79,37 +79,61 @@ class GIF_Query {
 		// Count the GIFs in the query
 		$this->gif_count = $this->count_gifs();
 	}
-	
+
 	/**
-	 * Query GIFs based on the user-provided name or workflow-provided ID
+	 * Parse query based on provided parameters
 	 *
-	 * Generates the GIFs array. Relies on Alfred function getenv() for variables passed between workflow nodes
+	 * The query built here is then used by get_gifs() to actually query the database
+	 *
+	 * @since 2.0
+	 *
+	 * @return string
+	 */
+	private function parse_query() {
+		// Start with selecting IDs for all of the results of the query
+		$query = "SELECT gifs.gif_id FROM gifs";
+
+		// If a tag to filter against was provided, set up a LEFT JOIN
+		if ( $this->tag_to_search != null ) {
+			$query .= " LEFT JOIN tag_relationships
+						ON gifs.gif_id = tag_relationships.gif_id
+							WHERE tag_relationships.tag_id IS :tag";
+		// Or, if no tag filter was provided, append a WHERE
+		} else {
+			$query .= " WHERE";
+		}
+
+		// Combine statements with AND only if both user input and a tag to filter
+		if ( $this->tag_to_search != null && $this->input != '' ) {
+			$query .= " AND";
+		}
+
+		// Append LIKE matching for $input if $input is provided
+		if ( $this->input != '' ) {
+			$query .= " gifs.name LIKE  '%' || :input ||'%'";
+		}
+
+		return $query;
+	}
+
+
+	/**
+	 * Query GIFs using the custom built query statment
+	 *
+	 * Generates the GIFs array.
 	 *
 	 * @since 2.0
 	 *
 	 * @return array
 	 */
 	public function get_gifs() {
-		if ( $this->query_type == 'gifs_with_tag' ) {
-			// Prepare the initial query of all GIFs with the current tag
-			$prepped_stmt = "SELECT *
-						 			FROM gifs
-						 				LEFT JOIN tag_relationships
-											ON gifs.gif_id = tag_relationships.gif_id
-											WHERE tag_relationships.tag_id IS :tag";
-			// Prepare additional statement to GIF names by user input
-			$filter_gif_name = " AND gifs.name LIKE  '%' || :query ||'%'";
+		$stmt = $this->db->prepare( $this->query );
+		$args = array(
+			':tag' => $this->tag_to_search,
+			':input' => $this->input,
+		);
+		bind_values( $stmt, $args );
 
-			// Append the filter statement if user input is provided
-			$prepped_stmt .= $this->input != '' ? $filter_gif_name : '';
-
-			// Prepare the final query and bind the tag ID value
-			$stmt = $this->db->prepare( $prepped_stmt );
-			$stmt->bindValue( ':tag', $this->tag_to_search );
-		} else {
-			$stmt = $this->db->prepare( "SELECT * FROM gifs WHERE name LIKE '%' || :input ||'%'" );
-		}
-		$stmt->bindValue( ':input', $this->input );
 		$result = $stmt->execute();
 
 		//Build the GIFs array
