@@ -52,6 +52,17 @@ if ( $type == 'tag' ) {
 	// Query the requested GIF
 	$gif = new GIF( $id );
 
+	// Set up the icon for th GIF's total count
+	$total = $gif->selected_count + $gif->random_count;
+	if ( $total == 0 ) {
+		$total_icon = 'sad icon.png';
+	} elseif ( $total == 1 ) {
+		$total_icon = 'thinking icon.png';
+	} else {
+		$total_icon = 'nailed it icon.png';
+	}
+
+
 	// Add the GIF's details to the output array
 	$items['items'] = array(
 		// Name and URL
@@ -82,24 +93,36 @@ if ( $type == 'tag' ) {
 			'title'    => $gif->selected_count_statement,
 			'subtitle' => '',
 			'valid'    => 'false',
+			'icon'	   => array(
+				'path' => 'checkmark icon.png',
+			),
 		),
 		// Random count
 		array(
 			'title'    => $gif->random_count_statement,
 			'subtitle' => '(when choosing randomly from one of the tags assigned to this GIF)',
 			'valid'    => 'false',
+			'icon'	   => array(
+				'path' => 'random icon.png',
+			),
 		),
 		// Total count
 		array(
 			'title'    => $gif->total_count_statement['title'],
 			'subtitle' => $gif->total_count_statement['subtitle'],
 			'valid'    => 'false',
+			'icon'	   => array(
+				'path' => $total_icon,
+			),
 		),
 		// Date (conditional values for bug reporting if the date is missing)
 		array(
 			'title'    => $gif->date == '' ? "The date for this GIF appears to be missing!" : "This GIF was saved on $gif->date",
 			'subtitle' => $gif->date == '' ? "If you saved this GIF recently, please open an issue on Github! Thanks!" : '',
 			'valid'    => $gif->date == '' ? 'true' : 'false',
+			'icon'	   => array(
+				'path' => 'calendar icon.png',
+			),
 		),
 	);
 
@@ -110,7 +133,7 @@ if ( $type == 'tag' ) {
 			'subtitle' => "It's sad, lonely, and probably difficult for you to find",
 			'valid'    => 'false',
 			'icon'     => array(
-				'path' => '',
+				'path' => 'sad icon.png',
 			),
 		);
 	} else {
@@ -120,7 +143,7 @@ if ( $type == 'tag' ) {
 				'subtitle'  => 'Insert a randomly selected ' . $tag['name'] . ' GIF',
 				'arg'   => $tag['id'],
 				'icon'  => array(
-					'path' => '',
+					'path' => 'tag icon.png',
 				),
 				'variables' => array(
 					'item_type' => 'tag',
