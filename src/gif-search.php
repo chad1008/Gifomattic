@@ -28,15 +28,20 @@ if ( $gifs->have_gifs() || $tags->have_tags() ) {
 		$the_tag = $tags->the_tag();
 
 		$items['items'][] = array(
-			'title' => $the_tag->name,
-			'subtitle' => 'Insert a randomly selected ' . $the_tag->tag . ' GIF (' . $the_tag->gifs_with_tag . ' available)',
-			'arg' => $the_tag->id,
-			'icon' => array(
-				'path' => '',
+			'title'     => $the_tag->name,
+			'subtitle'  => 'Insert a randomly selected ' . $the_tag->tag . ' GIF (' . $the_tag->gifs_with_tag . ' available)',
+			'arg'	    => $the_tag->id,
+			'icon'	    => array(
+				'path'  => '',
 			),
 			'variables' => array(
 				'item_type' => 'tag',
 				'item_id'   => $the_tag->id,
+			),
+			'mods'		=> array(
+				'cmd'	=> array(
+					'subtitle' => 'View GIFs with this tag'
+				)
 			),
 		);
 	}
@@ -53,8 +58,13 @@ if ( $gifs->have_gifs() || $tags->have_tags() ) {
 				'path'  => $the_gif->icon,
 			),
 			'variables' => array(
-				'item_type'    => 'gif',
-				'item_id'   => $the_gif->id,
+				'item_type' => 'gif',
+				'item_id'	=> $the_gif->id,
+			),
+			'mods'		=> array(
+				'cmd'	=> array(
+					'subtitle' => "View this GIF's details and stats"
+				),
 			),
 		);
 
