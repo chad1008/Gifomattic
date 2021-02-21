@@ -16,9 +16,9 @@ require_once ( 'functions.php' );
 $id = $argv[1];
 $item_type = getenv('item_type');
 
-// If the item selected was a tag, run a 'gifs_with_tag' GIF_Query. The Query will pull the 'selected_tag' env var automatically
+// If the item selected was a tag, query the database for GIFs based on the tag ID
 if ( $item_type == 'tag' ) {
-	$gifs = new GIF_Query( '', 'gifs_with_tag', $id );
+	$gifs = new GIF_Query( '', $id );
 
 	// Reassign $id with the GIF id of a random selection from GIFs ths tag is assigned to
 	$id = $gifs->random();
