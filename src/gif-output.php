@@ -22,16 +22,19 @@ if ( $item_type == 'tag' ) {
 
 	// Reassign $id with the GIF id of a random selection from GIFs ths tag is assigned to
 	$id = $gifs->random();
+
+	// Define the count to be increased as 'random_count'
+	$count = 'random_count';
+} elseif ( $item_type == 'gif' ) {
+	// If the item selected was a GIF, define the count to be incremented as 'selected_count'
+	$count = 'selected_count';
 }
 
 // Pull the desired GIF out of the database
 $gif = new GIF( $id );
 
-// Increment the appropriate count
-if ( $item_type == 'gif' ) {
-	$gif->increment_count( 'selected_count');
-} elseif ( $item_type == 'tag' ) {
-	$gif->increment_count( 'random_count' );
-}
+// Increment the appropriate counter
+$gif->increment_count( $count );
 
+// Output the GIF's URL
 echo $gif->url;
