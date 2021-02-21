@@ -12,7 +12,7 @@
 
 require_once ( 'functions.php' );
 
-// Set the query input to the ID passed in by Alfred, and the query type to the variable provided by Alfred
+// Set the query input to the ID passed in by Alfred, and store the item type
 $id = $argv[1];
 $item_type = getenv('item_type');
 

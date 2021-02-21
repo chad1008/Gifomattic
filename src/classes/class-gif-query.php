@@ -62,7 +62,7 @@ class GIF_Query {
 	 * @param int $tag Optional tag to filter GIFs from
 	 */
 	public function __construct( $input, $tag=null) {
-		// Set query and query type properties
+		// Store query and it's properties
 		$this->input = $input;
 		$this->tag_to_search = $tag;
 		$this->query = $this->parse_query();
@@ -115,7 +115,6 @@ class GIF_Query {
 
 		return $query;
 	}
-
 
 	/**
 	 * Query GIFs using the custom built query statment

@@ -58,7 +58,7 @@ class Tag_Query {
 	 * @param string $query Alfred user input
 	 */
 	public function __construct( $query ) {
-		// Set query and query type properties
+		// Store the current query
 		$this->query = $query;
 
 		// Initialize counts
