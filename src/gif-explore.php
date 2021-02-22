@@ -44,6 +44,9 @@ if ( $type == 'tag' ) {
 					'cmd'	=> array(
 						'subtitle' => "View this GIF's details and stats"
 					),
+					'shift'	=> array(
+						'subtitle' => "Edit this GIF"
+					),
 				),
 			);
 		}
@@ -85,6 +88,9 @@ if ( $type == 'tag' ) {
 					'variables' => array(
 						'item_type' => 'gif_preview',
 					),
+				),
+				'shift'	=> array(
+					'subtitle' => "Edit this GIF"
 				),
 			),
 		),
