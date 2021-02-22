@@ -14,14 +14,14 @@ $input = $argv[1];
 $gifs = new GIF_Query( $input );
 $tags = new Tag_Query( $input );
 
+// Initialize items array for Alfred output
+$items = array(
+	'items' => array(),
+);
+
 //The Gifomattic loop!
 // Imitation is the sincerest form of flattery...
 if ( $gifs->have_gifs() || $tags->have_tags() ) {
-
-	// Initialize items array for Alfred output
-	$items = array(
-		'items' => array(),
-	);
 
 	// Add any tags returned by the current query to the array
 	while ( $tags->have_tags() ) {
@@ -70,9 +70,19 @@ if ( $gifs->have_gifs() || $tags->have_tags() ) {
 				),
 			),
 		);
-
 	}
-
-	// Encode our array as JSON for Alfred's output
-	echo json_encode( $items );
 }
+
+// Display an option to add a new GIF
+$items['items'][] = array(
+	'title' => 'Add a new GIF to your library',
+	'subtitle' => 'Enter the new GIF URL',
+	'arg' => $input,
+	'variables' => array(
+		'gif_url' => $input,
+		'next_step' => 'gif_name',
+	),
+);
+
+// Encode our array as JSON for Alfred's output
+echo json_encode( $items );
