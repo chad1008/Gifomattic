@@ -7,9 +7,10 @@
 
 require_once( 'functions.php' );
 
-// Gather details of the GIF to be added/updated. ID is optional, as edited GIFs will provide one, newly added GIFs will not
+// Gather details of the GIF to be added/updated.
+// ID is 'edit_gif_id' if it's been set by the editing flow, otherwise the most recently selected GIF's ID
 $gif = array(
-	'id'   => !getenv( 'edit_gif_id' ) ? '' : getenv( 'edit_gif_id' ),
+	'id'   => !getenv( 'edit_gif_id' ) ? getenv( 'item_id' ) : getenv( 'edit_gif_id' ),
 	'url'  => getenv( 'gif_url' ),
 	'name' => getenv( 'gif_name' ),
 	'date' => date( 'F d, Y' ),
@@ -19,18 +20,31 @@ $gif = array(
 $db = prep_db();
 
 // The INSERT statement
-$stmt = $db->prepare( "INSERT INTO gifs (url,name,date) VALUES (:url,:name,:date)" );
+$insert_stmt = $db->prepare( "INSERT INTO gifs ( url,name,date ) VALUES ( :url,:name,:date )" );
 $args = array(
 	':url'  => $gif['url'],
 	':name' => $gif['name'],
 	':date' => $gif['date'],
 );
-bind_values( $stmt, $args );
+bind_values( $insert_stmt, $args );
 
-$result = $stmt->execute();
+// The UPDATE statement
+$update_stmt = $db->prepare( "UPDATE gifs SET url = :url, name = :name WHERE gif_id IS :id" );
+$args = array(
+	':url'  => $gif['url'],
+	':name' => $gif['name'],
+	':id'   => $gif['id'],
+);
+bind_values( $update_stmt, $args );
 
-// Grab the ID of the new GIF and add it to our array of the GIFs data
-$gif['id'] = $db->lastInsertRowID();
+// If this is an existing GIF ('item_type" env var will be 'gif'), execute UPDATE
+if ( getenv( 'item_type' ) == 'gif') {
+	$result = $update_stmt->execute();
+// Otherwise execute INSERT and grab the new ID
+} else {
+	$result = $insert_stmt->execute();
+	$gif['id'] = $db->lastInsertRowID();
+}
 
 // Create/update the icon for the GIF that was just added/updated
 iconify( $gif );
@@ -50,4 +64,3 @@ $output = array (
 );
 
 echo json_encode( $output );
-

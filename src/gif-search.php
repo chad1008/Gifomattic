@@ -18,7 +18,7 @@ $tags = new Tag_Query( $input );
 // Imitation is the sincerest form of flattery...
 if ( $gifs->have_gifs() || $tags->have_tags() ) {
 
-	// Create the basis of the multidimensional Items array Alfred looks for
+	// Initialize items array for Alfred output
 	$items = array(
 		'items' => array(),
 	);
@@ -64,6 +64,9 @@ if ( $gifs->have_gifs() || $tags->have_tags() ) {
 			'mods'		=> array(
 				'cmd'	=> array(
 					'subtitle' => "View this GIF's details and stats"
+				),
+				'shift' => array(
+					'subtitle' => 'Edit this GIF'
 				),
 			),
 		);
