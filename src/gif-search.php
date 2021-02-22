@@ -29,7 +29,7 @@ if ( $gifs->have_gifs() || $tags->have_tags() ) {
 
 		$items['items'][] = array(
 			'title'     => $the_tag->name,
-			'subtitle'  => 'Insert a randomly selected ' . $the_tag->tag . ' GIF (' . $the_tag->gifs_with_tag . ' available)',
+			'subtitle'  => 'Share a randomly selected ' . $the_tag->tag . ' GIF (' . $the_tag->gifs_with_tag . ' available)',
 			'arg'	    => $the_tag->id,
 			'icon'	    => array(
 				'path'  => '',

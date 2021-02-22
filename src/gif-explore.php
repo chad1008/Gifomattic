@@ -14,7 +14,7 @@ $input = $argv[1];
 $type = getenv( 'item_type' );
 $id = getenv( 'item_id' );
 
-// Create the basis of the multidimensional Items array Alfred looks for
+// Initialize items array for Alfred output
 $items = array(
 	'items' => array(),
 );
@@ -146,7 +146,7 @@ if ( $type == 'tag' ) {
 		foreach ( $gif->tags as $tag ) {
 			$items['items'][] = array(
 				'title' => 'Tagged as: ' . $tag['name'],
-				'subtitle'  => 'Insert a randomly selected ' . $tag['name'] . ' GIF',
+				'subtitle'  => 'Share a randomly selected ' . $tag['name'] . ' GIF',
 				'arg'   => $tag['id'],
 				'icon'  => array(
 					'path' => 'tag icon.png',

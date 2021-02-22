@@ -12,7 +12,7 @@ $gif_id =  getenv( 'edit_gif_id' );
 $gif = new GIF( $gif_id );
 $tags = new Tag_Query( $input );
 
-// Create the basis of the multidimensional Items array Alfred looks for
+// Initialize items array for Alfred output
 $items = array(
 	'items' => array(),
 );
