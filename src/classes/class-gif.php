@@ -179,7 +179,7 @@ class GIF {
 	 * @return array
 	 */
 	public function get_tags() {
-		$stmt = $this->db->prepare( "SELECT tags.tag as name,tags.tag_id as id
+		$stmt = $this->db->prepare( "SELECT tags.tag_id
 									 FROM tags LEFT JOIN tag_relationships
 										ON tags.tag_id = tag_relationships.tag_id
 											WHERE tag_relationships.gif_id IS :id
@@ -190,7 +190,7 @@ class GIF {
 		// Build an array of this GIF's tags
 		$tags = array();
 		while ( $tag = $result->fetchArray( SQLITE3_ASSOC ) ) {
-			$tags[] = $tag;
+			$tags[] = new Tag( $tag['tag_id'] );
 		}
 
 		return $tags;

@@ -145,19 +145,19 @@ if ( $type == 'tag' ) {
 	} else {
 		foreach ( $gif->tags as $tag ) {
 			$items['items'][] = array(
-				'title' => 'Tagged as: ' . $tag['name'],
-				'subtitle'  => 'Share a randomly selected ' . $tag['name'] . ' GIF',
-				'arg'   => $tag['id'],
+				'title' => "Tagged as: $tag->name",
+				'subtitle'  => "Share a randomly selected $tag->name GIF ($tag->gifs_with_tag available)",
+				'arg'   => $tag->id,
 				'icon'  => array(
 					'path' => 'tag icon.png',
 				),
 				'variables' => array(
 					'item_type' => 'tag',
-					'item_id'   => $tag['id']
+					'item_id'   => $tag->id,
 				),
 				'mods'		=> array(
 					'cmd'	=> array(
-						'subtitle' => "View GIFs with this tag"
+						'subtitle' => "View GIFs with this tag",
 					),
 				),
 			);
