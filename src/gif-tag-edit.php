@@ -51,34 +51,36 @@ if ( getenv( 'tag_edit_mode' ) == 'add_tags' ) {
 		while ( $tags->have_tags() ) {
 			$the_tag = $tags->the_tag();
 
-			// Set up subtitle statement based on the existing GIF count on the current tag
-			if ( $the_tag->gifs_with_tag == 0 ) {
-				$q = "No GIFs";
-				$u = "use";
-			} elseif ( $the_tag->gifs_with_tag == 1 ) {
-				$q = "One other GIF";
-				$u = "uses";
-			} else {
-				$q = "$the_tag->gifs_with_tag other GIFs";
-				$u = "use";
-			}
-			$subtitle = 'Tag this GIF as "' . $the_tag->name . '" (%s currently %s this tag)';
+				// Set up subtitle statement based on the existing GIF count on the current tag
+				if ($the_tag->gifs_with_tag == 0) {
+					$q = "No GIFs";
+					$u = "use";
+				} elseif ($the_tag->gifs_with_tag == 1) {
+					$q = "One other GIF";
+					$u = "uses";
+				} else {
+					$q = "$the_tag->gifs_with_tag other GIFs";
+					$u = "use";
+				}
+				$subtitle = 'Tag this GIF as "' . $the_tag->name . '" (%s currently %s this tag)';
 
-			// Prep an array item for Alfred output
-			$items['items'][] = array(
-				'title'		=> $the_tag->name,
-				'subtitle'  => sprintf( $subtitle, $q, $u ),
-				'arg'	    => $the_tag->id,
-				'icon'		=> array(
-					'path'  => '',
-				),
-				'variables'		 => array(
-					'is_new_tag' => false,
-					'tag_edit_mode' => 'add_tags',
-				),
-			);
+				// Prep an array item for Alfred output. Disable any tags that are already assigned to this GIF
+				$items['items'][] = array(
+					'title' => $the_tag->name,
+					'subtitle' => $gif->has_tag( $the_tag->id ) ? 'This GIF is already tagged as "' . $the_tag->name . '"' : sprintf($subtitle, $q, $u),
+					'arg' => $the_tag->id,
+					'icon' => array(
+						'path' => '',
+					),
+					'variables' => array(
+						'is_new_tag' => false,
+						'tag_edit_mode' => 'add_tags',
+					),
+					'valid' => $gif->has_tag( $the_tag->id ) ? 'false' : 'true',
+				);
+			}
 		}
-	}
+	
 }
 
 echo json_encode( $items );

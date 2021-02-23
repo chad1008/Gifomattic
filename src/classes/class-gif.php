@@ -285,4 +285,17 @@ class GIF {
 
 		return $output;
 	}
+
+	/**
+	 * Check to see if the GIF has a specific tag assigned
+	 *
+	 * @param int $id The ID of the tag to compare against the current GIF's tags
+	 * 
+	 * @since 2.0
+	 *
+	 * @return bool
+	 */
+	public function has_tag( $id ) {
+		return in_array( $id, array_column( $this->tags, 'id' ) );
+	}
 }
