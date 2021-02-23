@@ -111,6 +111,12 @@ if ( $type == 'tag' ) {
 			'icon'	   => array(
 				'path' => 'random icon.png',
 			),
+			'mods'		=> array(
+				'cmd'	=> array(
+					'valid'		=> 'false',
+					'subtitle' => '(when choosing randomly from one of the tags assigned to this GIF)',
+				),
+			),
 		),
 		// Total count
 		array(
@@ -120,6 +126,12 @@ if ( $type == 'tag' ) {
 			'icon'	   => array(
 				'path' => $total_icon,
 			),
+			'mods'		=> array(
+				'cmd'	=> array(
+					'valid'		=> 'false',
+					'subtitle' => $gif->total_count_statement['subtitle'],
+				),
+			),
 		),
 		// Date (conditional values for bug reporting if the date is missing)
 		array(
@@ -128,6 +140,12 @@ if ( $type == 'tag' ) {
 			'valid'    => $gif->date == '' ? 'true' : 'false',
 			'icon'	   => array(
 				'path' => 'calendar icon.png',
+			),
+			'mods'		=> array(
+				'cmd'	=> array(
+					'valid'		=> 'false',
+					'subtitle' => $gif->date == '' ? "If you saved this GIF recently, please open an issue on Github! Thanks!" : '',
+				),
 			),
 		),
 	);
@@ -141,12 +159,18 @@ if ( $type == 'tag' ) {
 			'icon'     => array(
 				'path' => 'sad icon.png',
 			),
+			'mods'		=> array(
+				'cmd'	=> array(
+					'valid'		=> 'false',
+					'subtitle' => "It's sad, lonely, and probably difficult for you to find",
+				),
+			),
 		);
 	} else {
 		foreach ( $gif->tags as $tag ) {
 			$items['items'][] = array(
 				'title' => "Tagged as: $tag->name",
-				'subtitle'  => "Share a randomly selected $tag->name GIF ($tag->gifs_with_tag available)",
+				'subtitle' => "View all $tag->gifs_with_tag GIFs with this tag",
 				'arg'   => $tag->id,
 				'icon'  => array(
 					'path' => 'tag icon.png',
@@ -157,7 +181,8 @@ if ( $type == 'tag' ) {
 				),
 				'mods'		=> array(
 					'cmd'	=> array(
-						'subtitle' => "View GIFs with this tag",
+						'valid'		=> 'false',
+						'subtitle'  => "View all $tag->gifs_with_tag GIFs with this tag",
 					),
 				),
 			);
