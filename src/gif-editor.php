@@ -17,51 +17,56 @@ $items = array(
 	'items' => array(),
 );
 
-// If this is the first step, start with the GIF URL prompt. Populate the new_gif_url env variable
+// If this is the first step, start with the GIF URL prompt
 if ( !getenv( 'next_step' ) ) {
 	$items['items'][] = array(
-		'title' => 'New GIF URL:',
-		'subtitle' => $input !=null ? $input : 'Enter the new GIF URL',
-		'arg' => $input,
+		'title' 	=> 'New GIF URL:',
+		'subtitle'  => $input !=null ? $input : 'Enter the new GIF URL',
+		'arg' 		=> 'filler to trigger notifications',
+		'valid'		=> $input == '' ? 'false' : 'true',
 		'variables' => array(
-			'gif_url' => $input,
+			'gif_url'   => $input,
 			'next_step' => 'gif_name',
-			'gif_add_subtitle' => "Step 2: Enter the new GIF's name"
+			'standby_1' => 'Saving your GIF',
+			'standby_2' => 'This should only take a moment, please stand by',
+			'gif_saved' => popup_notice( "GIF saved: $gif->name" )
 		),
 	);
 
-	// While on the first step, if this is an existing GIF ('item_type' env var will be 'gif') provide an option to keep the current url
-	if ( $item_type == 'gif') {
+	// While on the first step, if this is an existing GIF, provide an option to keep the current url
+	if ( is_gif() ) {
 		$items['items'][] = array(
-			'title' => "Keep the GIF's current URL",
-			'subtitle' => $gif->url,
-			'arg' => $gif->url,
+			'title'		=> "Keep the GIF's current URL",
+			'subtitle'  => $gif->url,
+			'arg'		=> '',
 			'variables' => array(
-				'gif_url' => $gif->url,
+				'gif_url'	=> '',
 				'next_step' => 'gif_name',
 			),
 		);
 	}
-// If this is the gif_name step, output the New GIF Name prompt. Populate the new_gif_name env variable
+// If this is the gif_name step, output the New GIF Name prompt
 } elseif ( getenv( 'next_step' ) == 'gif_name' ) {
 		$items['items'][] = array(
-		'title' => 'New GIF name:',
-		'subtitle' => $input !=null ? $input : 'Enter the new GIF name',
-		'arg' => $input,
+		'title'		=> 'New GIF name:',
+		'subtitle'	=> $input !=null ? $input : 'Enter the new GIF name',
+		'arg'		=> '',
+		'valid'		=> $input == '' ? 'false' : 'true',
 		'variables' => array(
-			'gif_name' => $input,
+			'gif_name'	=> $input,
 			'next_step' => 'save_gif',
+			'gif_saved' => popup_notice( "GIF saved: $input" )
 		),
 	);
 
-	// While on the second step, if this is an existing GIF ('item_type" env var will be 'gif') provide an option to keep the current name
-	if ( $item_type == 'gif') {
+	// While on the second step, if this is an existing GIF, provide an option to keep the current name
+	if ( is_gif() ) {
 		$items['items'][] = array(
-			'title' => "Keep the GIF's current name",
-			'subtitle' => $gif->name,
-			'arg' => $gif->name,
+			'title'		=> "Keep the GIF's current name",
+			'subtitle'	=> $gif->name,
+			'arg'		=> '',
 			'variables' => array(
-				'gif_name' => $gif->name,
+				'gif_name'	=> '',
 				'next_step' => 'save_gif',
 			),
 		);

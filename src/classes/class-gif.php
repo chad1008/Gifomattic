@@ -104,6 +104,23 @@ class GIF {
 	 */
 	public $tags;
 
+	/**
+	 * A flag for creating new GIFs
+	 *
+	 * @since 2.0
+	 * @var  bool
+	 */
+	public $is_new;
+
+	/**
+	 * An array of new property values to update the GIF with
+	 *
+	 * @since 2.0
+	 * @var  array
+	 */
+	public $new_props;
+
+
 	public function __construct( int $id=null ) {
 		// Set database connection
 		$this->db = prep_db();
@@ -137,8 +154,8 @@ class GIF {
 
 		// Set the various count statements
 		$this->selected_count_statement = $this->format_count_statement( 'selected_count' );
-		$this->random_count_statement = $this->format_count_statement( 'random_count' );
-		$this-> total_count_statement = $this->total_count_statement();
+		$this->random_count_statement 	= $this->format_count_statement( 'random_count' );
+		$this-> total_count_statement 	= $this->total_count_statement();
 		
 		// Set the tag list, if possible
 		$this->tags = $this->get_tags();
@@ -147,7 +164,12 @@ class GIF {
 		global $icons;
 		$this->icon = $icons . $this->id . '.jpg';
 
-
+		// Set the is_new flag
+		if ( $this->id == null ) {
+			$this->is_new = TRUE;
+		} else {
+			$this->is_new = FALSE;
+		}
 	}
 
 	/**
@@ -201,15 +223,68 @@ class GIF {
 	 *
 	 * @since 2.0
 	 */
-	public function update_gif() {
-		$stmt = $this->db->prepare( "UPDATE gifs SET url=:url, name=:name WHERE gif_id = :id" );
-		$args = array(
-			':url'  => $this->url,
-			':name' => $this->name,
-			':id'	=> $this->id,
-		);
+	public function save() {
+		// Initialize the initial args array
+		$args = array();
+		if ( isset( $this->new_props['url'] ) ) {
+			$args['url'] = $this->new_props['url'];
+		}
+		if ( isset( $this->new_props['name'] ) ) {
+			$args['name'] = $this->new_props['name'];
+		}
+
+		//If this is a new GIF, prepare an INSERT statement
+		if ( $this->is_new ) {
+			$stmt = $this->db->prepare("INSERT INTO gifs ( url,name,date ) VALUES ( :url,:name,:date )");
+
+			// Add the date to the args array
+			$args['date'] = $this->new_props['date'];
+		} else {
+			// Otherwise as long as either a URL or a name have been provided, prepare an UPDATE statement
+			if ( isset( $this->new_props['url']) || isset( $this->new_props['name'] ) ) {
+				// Initialize the UPDATE statement
+				$query = "UPDATE gifs SET";
+				// If a URL has been provided, add it to the query
+				if (isset( $this->new_props['url'] ) ) {
+					$query .= " url = :url";
+				}
+				// A comma, if needed
+				if ( isset( $this->new_props['url']) && isset( $this->new_props['name'] ) ) {
+					$query .= " ,";
+				}
+				// If a name has been provided, add it to the query
+				if ( isset($this->new_props['name'] ) ) {
+					$query .= " name = :name";
+				}
+				// Close the query with WHERE clause using the gif ID
+				$query .= " WHERE gif_id IS :id";
+
+				// Prep the statement
+				$stmt = $this->db->prepare($query);
+
+				// Add the ID to the args array
+				$args['id'] = $this->id;
+			}
+		}
+
+		// As long as there is a new name and/or URL, execute the prepared statement
 		bind_values( $stmt, $args );
-		$stmt->execute();
+
+		if ( isset( $this->new_props['url']) || isset( $this->new_props['name'] ) ) {
+			$stmt->execute();
+		}
+
+		// If this is a new GIF, grab it's ID and stage it (otherwise, just use the current GIF's ID
+		if ( $this->is_new ) {
+			$this->new_props['id'] = $this->db->lastInsertRowID();
+		} else {
+			$this->new_props['id'] = $this->id;
+		}
+		
+		// If a new URL was provided, prepare an icon
+		if ( isset ( $this->new_props['url'] ) ) {
+			iconify( $this->new_props );
+		}
 	}
 
 	/**

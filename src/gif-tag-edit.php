@@ -8,7 +8,7 @@
 require_once( 'functions.php' );
 
 $input = $argv[1];
-$gif_id =  getenv( 'edit_gif_id' );
+$gif_id =  getenv( 'item_id' );
 $gif = new GIF( $gif_id );
 $tags = new Tag_Query( $input );
 

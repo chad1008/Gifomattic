@@ -15,6 +15,34 @@ function class_autoloader( $class ) {
 spl_autoload_register( 'class_autoloader' );
 
 /**
+ * Checks if the currently selected item in Alfred is a GIF
+ *
+ * @since 2.0
+ */
+function is_gif() {
+	$type = getenv( 'item_type' );
+	if ( $type == 'gif' ) {
+		return TRUE;
+	} else {
+		return FALSE;
+	}
+}
+
+/**
+ * Checks if the currently selected item in Alfred is a tag
+ *
+ * @since 2.0
+ */
+function is_tag() {
+	$type = getenv( 'item_type' );
+	if ( $type == 'tag' ) {
+		return TRUE;
+	} else {
+		return FALSE;
+	}
+}
+
+/**
  * Checks for and if needed creates the Gifomattic database
  *
  * @since 2.0

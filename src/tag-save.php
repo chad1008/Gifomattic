@@ -18,7 +18,7 @@ require_once( 'functions.php' );
 
 $mode		= getenv( 'tag_edit_mode' );
 $is_new_tag = getenv( 'is_new_tag' );
-$gif_id		= getenv( 'edit_gif_id' );
+$gif_id		= getenv( 'item_id' );
 $input		= $argv[1];
 $db 		= prep_db();
 
