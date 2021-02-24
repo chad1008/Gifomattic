@@ -63,6 +63,10 @@ if ( $mode == 'add_tags' ) {
 
 } elseif ( $mode == 'remove_tags' ) {
 	// Do Stuff
+} else {
+	// In case of emergency, break glass
+	$error = 'Error: Tag could not be saved...';
+	$notification = popup_notice( $error, TRUE );
 }
 
 // Set up the next step

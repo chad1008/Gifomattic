@@ -162,29 +162,44 @@ function iconify( $gif ) {
  * Prepare a success/failure message
  *
  * @param string $message String to be appended to the random success message
- *
+ * @raram bool   $error   Sets error state for output. Defaults to FALSE
  * @since 2.0
  * 
  * @return string
  */
-function popup_notice( $message='' ) {
-	// Define success outputs for random selection
-	$wins = array(
-		"Boom!",
-		"Huzzah!",
-		"Nailed It!",
-		"You're my hero",
-		"Beep Beep Boop...",
-		"Mission accomplished!",
-		"Oh, that's a good one!",
-		"Your GIF is my command",
-		"Is it hard to be so awesome?",
-		"The GIF is strong with this one...",
-		"I love it when a plan comes together",
-		"With great GIF comes great responsibility",
-	);
-	
-	$rand = $wins[array_rand( $wins )];
+function popup_notice( $message = '', $error = FALSE ) {
+	// Conditionally define outputs for random selection
+	if ( !$error ) {
+		$messages = array(
+			"Boom!",
+			"Huzzah!",
+			"Nailed It!",
+			"You're my hero",
+			"Beep Beep Boop...",
+			"Mission accomplished!",
+			"Oh, that's a good one!",
+			"Your GIF is my command",
+			"Is it hard to be so awesome?",
+			"The GIF is strong with this one...",
+			"I love it when a plan comes together",
+			"With great GIF comes great responsibility",
+		);
+	} else {
+		$messages = array(
+			"Oops. Something went wrong.",
+			"FAIL!",
+			"Womp Womp",
+			"Need more info. Or maybe less info. I don't know, something's borked.",
+			"Are you sure you know what you're doing?",
+			"You must be new here",
+			"I don't know what any of those words mean",
+			"Ummmmm.... no.",
+			"I sense a disturbance in that gif",
+		);
+	}
+
+
+	$rand = $messages[array_rand( $messages )];
 	return $rand . "\r\n" . $message;
 }
 
