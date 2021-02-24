@@ -44,6 +44,7 @@ if ( getenv( 'tag_edit_mode' ) == 'add_tags' ) {
 				'variables'	=> array(
 					'is_new_tag' 	=> 'true',
 					'tag_edit_mode' => 'add_tags',
+					'selected_tag'	=> $input,
 				),
 			);
 		}
@@ -64,7 +65,8 @@ if ( getenv( 'tag_edit_mode' ) == 'add_tags' ) {
 				}
 				$subtitle = 'Tag this GIF as "' . $the_tag->name . '" (%s currently %s this tag)';
 
-				// Prep an array item for Alfred output. Disable any tags that are already assigned to this GIF
+				// Prep an array item for Alfred output
+				//	Disable any tags that are already assigned to this GIF and show a subtitle to that effect
 				$items['items'][] = array(
 					'title' => $the_tag->name,
 					'subtitle' => $gif->has_tag( $the_tag->id ) ? 'This GIF is already tagged as "' . $the_tag->name . '"' : sprintf($subtitle, $q, $u),
@@ -75,6 +77,7 @@ if ( getenv( 'tag_edit_mode' ) == 'add_tags' ) {
 					'variables' => array(
 						'is_new_tag' => false,
 						'tag_edit_mode' => 'add_tags',
+						'selected_tag'	=> $the_tag->name,
 					),
 					'valid' => $gif->has_tag( $the_tag->id ) ? 'false' : 'true',
 				);
