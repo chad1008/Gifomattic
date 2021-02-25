@@ -24,6 +24,9 @@ if ( !getenv( 'next_step' ) ) {
 		'subtitle'  => $input !=null ? $input : 'Enter the new GIF URL',
 		'arg' 		=> 'filler to trigger notifications',
 		'valid'		=> $input == '' ? 'false' : 'true',
+		'icon'  => array(
+			'path' => 'edit.png',
+		),
 		'variables' => array(
 			'gif_url'   => $input,
 			'next_step' => 'gif_name',
@@ -52,6 +55,9 @@ if ( !getenv( 'next_step' ) ) {
 		'subtitle'	=> $input !=null ? $input : 'Enter the new GIF name',
 		'arg'		=> '',
 		'valid'		=> $input == '' ? 'false' : 'true',
+		'icon'  => array(
+			'path' => 'edit.png',
+		),
 		'variables' => array(
 			'gif_name'	=> $input,
 			'next_step' => 'save_gif',

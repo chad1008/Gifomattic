@@ -42,10 +42,16 @@ if ( $type == 'tag' ) {
 				),
 				'mods'		=> array(
 					'cmd'	=> array(
-						'subtitle' => "View this GIF's details and stats"
+						'subtitle' => "View this GIF's details and stats",
+						'icon'	    => array(
+							'path'  => 'view.png',
+						),
 					),
 					'shift'	=> array(
-						'subtitle' => "Edit this GIF"
+						'subtitle' => "Edit this GIF",
+						'icon'	    => array(
+							'path'  => 'edit.png',
+						),
 					),
 				),
 			);
@@ -90,7 +96,10 @@ if ( $type == 'tag' ) {
 					),
 				),
 				'shift'	=> array(
-					'subtitle' => "Edit this GIF"
+					'subtitle' => "Edit this GIF",
+					'icon'	    => array(
+						'path'  => 'edit.png',
+					),
 				),
 			),
 		),
@@ -116,6 +125,10 @@ if ( $type == 'tag' ) {
 					'valid'		=> 'false',
 					'subtitle' => '(when choosing randomly from one of the tags assigned to this GIF)',
 				),
+				'shift'	=> array(
+					'valid'		=> 'false',
+					'subtitle' => '(when choosing randomly from one of the tags assigned to this GIF)',
+				),
 			),
 		),
 		// Total count
@@ -131,6 +144,10 @@ if ( $type == 'tag' ) {
 					'valid'		=> 'false',
 					'subtitle' => $gif->total_count_statement['subtitle'],
 				),
+				'shift'	=> array(
+					'valid'		=> 'false',
+					'subtitle' => $gif->total_count_statement['subtitle'],
+				),
 			),
 		),
 		// Date (conditional values for bug reporting if the date is missing)
@@ -143,6 +160,10 @@ if ( $type == 'tag' ) {
 			),
 			'mods'		=> array(
 				'cmd'	=> array(
+					'valid'		=> 'false',
+					'subtitle' => $gif->date == '' ? "If you saved this GIF recently, please open an issue on Github! Thanks!" : '',
+				),
+				'shift'	=> array(
 					'valid'		=> 'false',
 					'subtitle' => $gif->date == '' ? "If you saved this GIF recently, please open an issue on Github! Thanks!" : '',
 				),
@@ -164,6 +185,10 @@ if ( $type == 'tag' ) {
 					'valid'		=> 'false',
 					'subtitle' => "It's sad, lonely, and probably difficult for you to find",
 				),
+				'shift'	=> array(
+					'valid'		=> 'false',
+					'subtitle' => "It's sad, lonely, and probably difficult for you to find",
+				),
 			),
 		);
 	} else {
@@ -173,7 +198,7 @@ if ( $type == 'tag' ) {
 				'subtitle' => "View all $tag->gifs_with_tag GIFs with this tag",
 				'arg'   => $tag->id,
 				'icon'  => array(
-					'path' => 'tag icon.png',
+					'path' => 'view tag.png',
 				),
 				'variables' => array(
 					'item_type' => 'tag',
@@ -183,6 +208,16 @@ if ( $type == 'tag' ) {
 					'cmd'	=> array(
 						'valid'		=> 'false',
 						'subtitle'  => "View all $tag->gifs_with_tag GIFs with this tag",
+						'icon'	    => array(
+							'path'  => 'view tag.png',
+						),
+					),
+					'shift'	=> array(
+						'valid'		=> 'false',
+						'subtitle'  => "View all $tag->gifs_with_tag GIFs with this tag",
+						'icon'	    => array(
+							'path'  => 'view tag.png',
+						),
 					),
 				),
 			);

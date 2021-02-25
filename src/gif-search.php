@@ -32,7 +32,7 @@ if ( $gifs->have_gifs() || $tags->have_tags() ) {
 			'subtitle'  => 'Share a randomly selected ' . $the_tag->tag . ' GIF (' . $the_tag->gifs_with_tag . ' available)',
 			'arg'	    => $the_tag->id,
 			'icon'	    => array(
-				'path'  => '',
+				'path'  => 'randomize.png',
 			),
 			'variables' => array(
 				'item_type' => 'tag',
@@ -40,11 +40,16 @@ if ( $gifs->have_gifs() || $tags->have_tags() ) {
 			),
 			'mods'		=> array(
 				'cmd'	=> array(
-					'subtitle' => 'View GIFs with this tag'
-				)
+					'subtitle' => 'View GIFs with this tag',
+					'icon'	    => array(
+						'path'  => 'view tag.png',
+					),
+				),
 			),
 		);
 	}
+
+
 
 	// Add any GIFs returned by the current query to the array
 	while ( $gifs->have_gifs() ) {
@@ -63,10 +68,16 @@ if ( $gifs->have_gifs() || $tags->have_tags() ) {
 			),
 			'mods'		=> array(
 				'cmd'	=> array(
-					'subtitle' => "View this GIF's details and stats"
+					'subtitle' => "View this GIF's details and stats",
+					'icon'	    => array(
+						'path'  => $the_gif->icon,
+					),
 				),
 				'shift' => array(
-					'subtitle' => 'Edit this GIF'
+					'subtitle' => 'Edit this GIF',
+					'icon'	    => array(
+						'path'  => 'edit.png',
+					),
 				),
 			),
 		);

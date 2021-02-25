@@ -20,13 +20,16 @@ $items = array(
 
 // Determine if tags should be added or removed
 if ( $mode == 'add_tags' || empty ( $gif->tags ) ) {
-	// Display prompts to add a tag or exit
+	// Display prompts to add a tag or go back to mode selection
 	if ( $input == '' ) {
 		$items['items'][] = array(
 			'title'    => 'Add a tag',
 			'subtitle' => 'Begin typing to select an existing tag, or create a new one',
 			'arg'      => '',
 			'valid'    => false,
+			'icon'  => array(
+				'path' => 'add tag.png',
+			),
 		);
 		$items['items'][] = array(
 			'title' => 'Go back',
