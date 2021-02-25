@@ -12,7 +12,7 @@ require_once( 'functions.php' );
  * @var $mode string Passed from script filter. Used to determine if tags are to be added or removed
  * @var $is_new_tag bool Passed from script filter. Establishes if a new tag should be created, or if an existing tag is being assigned
  * @var $gif_id int Passed from script filter. Contains the ID of the GIF tags should be added to
- * @var $input mixed Passed from script filter. Either the name of the tag being created, or ID of a tag selected for assignment
+ * @var $input mixed Passed from script filter. Either the name of the tag being created, or ID of a tag selected for assignment/removal
  * @var $selected_tag string Passed from script filter. Name of the existing tag that was selected for this GIF
  * @var $db object The Gifomattic database connection
  */
@@ -62,10 +62,22 @@ if ( $mode == 'add_tags' ) {
 	$notification = popup_notice( $success );
 
 } elseif ( $mode == 'remove_tags' ) {
-	// Do Stuff
+	// Prepare DELETE statement to remove record from the tag relationships table
+	$stmt = $db->prepare( "DELETE FROM tag_relationships WHERE tag_id IS :tag_id AND gif_id IS :gif_id" );
+	$args = array(
+		':tag_id' => $input,
+		':gif_id' => $gif_id,
+	);
+	bind_values( $stmt, $args );
+	$stmt->execute();
+
+	// Prepare success message
+	$success = "$selected_tag removed from this GIF";
+	$notification = popup_notice( $success );
+
 } else {
 	// In case of emergency, break glass
-	$error = 'Error: Tag could not be saved...';
+	$error = 'Error: GIF could not be updated...';
 	$notification = popup_notice( $error, TRUE );
 }
 
@@ -82,4 +94,3 @@ $output = array (
 );
 
 echo json_encode( $output );
-

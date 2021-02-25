@@ -36,7 +36,7 @@ $output = array (
 		'arg'		 => '',
 		'variables'	 => array(
 			'item_id'   => $the_gif->new_props['id'],
-			'tag_edit_mode' => 'add_tags',
+			'tag_edit_mode' => $the_gif->is_new ? 'add_tags' : '',
 		),
 	),
 );
