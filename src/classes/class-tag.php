@@ -58,9 +58,9 @@ class Tag {
 	 */
 	public function get_tag_data() { 
 		$stmt = $this->db->prepare( "SELECT tag,
- 											COUNT(*) as gifs_with_tag
+ 											COUNT(tag_relationships.tag_id) as gifs_with_tag
 									FROM tags 
-										JOIN tag_relationships
+										LEFT JOIN tag_relationships
 											USING ( tag_id )
 									WHERE tag_id IS :id"
 								  );

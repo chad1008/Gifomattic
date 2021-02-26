@@ -31,6 +31,7 @@ if ( $gifs->have_gifs() || $tags->have_tags() ) {
 			'title'     => $the_tag->name,
 			'subtitle'  => 'Share a randomly selected ' . $the_tag->tag . ' GIF (' . $the_tag->gifs_with_tag . ' available)',
 			'arg'	    => $the_tag->id,
+			'valid'		=> $the_tag->gifs_with_tag > 0 ? 'true' : 'false',
 			'icon'	    => array(
 				'path'  => 'img/randomize.png',
 			),
@@ -41,6 +42,7 @@ if ( $gifs->have_gifs() || $tags->have_tags() ) {
 			'mods'		=> array(
 				'cmd'	=> array(
 					'subtitle' => 'View GIFs with this tag',
+					'valid'		=> $the_tag->gifs_with_tag > 0 ? 'true' : 'false',
 					'icon'	    => array(
 						'path'  => 'img/view tag.png',
 					),
@@ -48,9 +50,7 @@ if ( $gifs->have_gifs() || $tags->have_tags() ) {
 			),
 		);
 	}
-
-
-
+	
 	// Add any GIFs returned by the current query to the array
 	while ( $gifs->have_gifs() ) {
 		$the_gif = $gifs->the_gif();
