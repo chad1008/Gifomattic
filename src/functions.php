@@ -53,9 +53,18 @@ function prep_db() { //TODO Remove testing conditional
 	} else {
 		$file = 'gifomattic.db';
 	}
-	// While we're here, we should set an global icon folder
+	// While we're here, we should set up the icons folders
 	global $icons;
 	$icons = $_SERVER['alfred_workflow_data'] . '/icons/';
+	$folders = array(
+		$icons,
+		$icons . 'view/',
+		$icons . 'edit/',
+	);
+	foreach( $folders as $folder ) {
+		if (!file_exists( $folder ) )
+			mkdir( $folder, 0777, true );
+	}
 
 	// Check if a database exists. If not, set up a workflow folder to put the database in.
 	if ( !file_exists( $file ) ) {
@@ -141,8 +150,7 @@ function iconify( $gif ) {
 
 	// Save a new cropped thumbnail file
 	global $icons;
-	imagejpeg( $thumbnail, "$icons" . $gif['id'] . ".jpg" );
-
+	imagejpeg( $thumbnail, $icons . $gif['id'] . ".jpg" );
 
 	// Create an image resource to scale from the cropped jpeg
 	$new_jpeg = imagecreatefromjpeg( "$icons" . $gif['id'] . ".jpg") ;
@@ -151,11 +159,22 @@ function iconify( $gif ) {
 	$scaled_jpeg = imagescale( $new_jpeg, 128, -1, IMG_BICUBIC_FIXED );
 
 	// Save the scaled image as a jpeg
-	imagejpeg( $scaled_jpeg, "$icons" . $gif['id'] . ".jpg", 10 );
+	imagejpeg( $scaled_jpeg, $icons . $gif['id'] . ".jpg", 10 );
 
-//destroy temporary and original images
+	// Create the view/edit flagged icon variants
+	$flags = imagecreatefrompng('img/flags.png');
+
+	// Generate "View" icon
+	imagecopymerge($scaled_jpeg, $flags, 64, 64, 0, 0, 64, 64, 100);
+	imagejpeg($scaled_jpeg, $icons . "view/" . $gif['id'] . ".jpg", 10);
+
+	// Generate "Edit" icon
+	imagecopymerge($scaled_jpeg, $flags, 64, 64, 0, 64, 64, 64, 100);
+	imagejpeg($scaled_jpeg, $icons . "edit/" . $gif['id'] . ".jpg", 10);
+
 	imagedestroy($new_jpeg);
 	imagedestroy($scaled_jpeg);
+	imagedestroy($flags);
 }
 
 /**

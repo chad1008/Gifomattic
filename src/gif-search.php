@@ -70,13 +70,13 @@ if ( $gifs->have_gifs() || $tags->have_tags() ) {
 				'cmd'	=> array(
 					'subtitle' => "View this GIF's details and stats",
 					'icon'	    => array(
-						'path'  => $the_gif->icon,
+						'path'  => $the_gif->view_icon,
 					),
 				),
 				'shift' => array(
 					'subtitle' => 'Edit this GIF',
 					'icon'	    => array(
-						'path'  => 'edit.png',
+						'path'  => $the_gif->edit_icon,
 					),
 				),
 			),

@@ -7,6 +7,20 @@ if ( !file_exists( $file ) ) {
 	die( "The database could not be found. Aborting update." );
 }
 
+// Ensure the icon folder structure is in place
+$icons = $_SERVER['alfred_workflow_data'] . '/icons/';
+$folders = array(
+	$icons,
+	$icons . 'view/',
+	$icons . 'edit/',
+);
+foreach( $folders as $folder ) {
+	if (!file_exists( $folder ) )
+		mkdir( $folder, 0777, true );
+}
+
+
+
 // Gather the names of the columns in the 'gifs' table
 $db = new sqlite3( $file );
 $query = 'PRAGMA table_info( gifs )';
@@ -53,6 +67,23 @@ if ( $legacy_match == 7 && $columns_count == 7 ) {
 						);
 		bind_values( $gifs_insert, $query_values );
 		$gifs_insert->execute();
+
+		// Create flagged icon variants
+		$flags = imagecreatefrompng( 'img/flags.png' );
+		$icon  = imagecreatefromjpeg( $icons . $row['id'] . '.jpg' );
+
+		// Generate "View" icon
+		imagecopymerge( $icon, $flags, 64, 64, 0, 0, 64, 64, 100 );
+		imagejpeg( $icon, $icons . "view/" . $row['id'] . ".jpg", 10 );
+
+		// Generate "Edit" icon
+		imagecopymerge( $icon, $flags, 64, 64, 0, 64, 64, 64, 100 );
+		imagejpeg( $icon, $icons . "edit/" . $row['id'] . ".jpg", 10 );
+
+		// Release temp images from memory
+		imagedestroy( $icon );
+		imagedestroy( $flags );
+
 
 		// Prep statement for the tags table
 		$tags_insert = $db->prepare( 'INSERT OR IGNORE INTO tags ( tag ) VALUES ( :tag )' );

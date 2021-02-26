@@ -95,6 +95,7 @@ class GIF {
 	 * @var string
 	 */
 	public $icon;
+	public $view_icon;
 
 	/**
 	 * A list of the tags assigned to the GIF
@@ -160,9 +161,11 @@ class GIF {
 		// Set the tag list, if possible
 		$this->tags = $this->get_tags();
 
-		// Set icon path
+		// Set icon paths
 		global $icons;
-		$this->icon = $icons . $this->id . '.jpg';
+		$this->icon 	 = $icons . $this->id . '.jpg';
+		$this->view_icon = $icons . 'view/' . $this->id . '.jpg';
+		$this->edit_icon = $icons . 'edit/' . $this->id . '.jpg';
 
 		// Set the is_new flag
 		if ( $this->id == null ) {
@@ -372,5 +375,27 @@ class GIF {
 	 */
 	public function has_tag( $id ) {
 		return in_array( $id, array_column( $this->tags, 'id' ) );
+	}
+
+	/**
+	 * Prepare a temporary preview-flagged icon variant
+	 * 
+	 * Replaces the single preview icon each time the function runs.
+	 *
+	 * @since 2.0
+	 */
+	public function generate_preview_icon() {
+		// Create flagged icon variants
+		global $icons;
+		$flags = imagecreatefrompng( 'img/flags.png' );
+		$icon  = imagecreatefromjpeg( $this->icon );
+
+		// Generate "Preview" icon
+		imagecopymerge( $icon, $flags, 64, 64, 0, 128, 64, 64, 100 );
+		imagejpeg( $icon, 'img/preview.jpg', 10 );
+
+		// Release temp images from memory
+		imagedestroy( $icon );
+		imagedestroy( $flags );
 	}
 }

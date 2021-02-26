@@ -71,6 +71,8 @@ if ( $type == 'tag' ) {
 		$total_icon = 'nailed it icon.png';
 	}
 
+	// Update the reusable Preview icon file
+	$gif->generate_preview_icon();
 
 	// Add the GIF's details to the output array
 	$items['items'] = array(
@@ -94,11 +96,14 @@ if ( $type == 'tag' ) {
 					'variables' => array(
 						'item_type' => 'gif_preview',
 					),
+					'icon'	    => array(
+						'path'  => 'img/preview.jpg',
+					),
 				),
 				'shift'	=> array(
 					'subtitle' => "Edit this GIF",
 					'icon'	    => array(
-						'path'  => 'edit.png',
+						'path'  => $gif->edit_icon,
 					),
 				),
 			),
