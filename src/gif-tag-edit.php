@@ -59,18 +59,25 @@ if ( $mode == 'add_tags' || empty ( $gif->tags ) ) {
 		while ( $tags->have_tags() ) {
 			$the_tag = $tags->the_tag();
 
-			// Set up subtitle statement based on the existing GIF count on the current tag
-			if ($the_tag->gifs_with_tag == 0) {
-				$q = "No GIFs";
-				$u = "use";
-			} elseif ($the_tag->gifs_with_tag == 1) {
-				$q = "One other GIF";
-				$u = "uses";
-			} else {
-				$q = "$the_tag->gifs_with_tag other GIFs";
-				$u = "use";
-			}
-			$subtitle = 'Tag this GIF as "' . $the_tag->name . '" (%s currently %s this tag)';
+			// Prepare a quantity statement for the subtitle
+			$args = array(
+				'number' => $tag->gifs_with_tag,
+				'zero'   => array(
+					'No GIFs',
+					'',
+				),
+				'one'    => array(
+					'One other GIF',
+					's',
+				),
+				'many'   => array(
+					$tag->gifs_with_tag . ' other GIFs',
+					'',
+				),
+				'format' => 'Tag this GIF as "' . $tag->name . '" (%s currently use%s this tag)',
+			);
+			
+			$subtitle = gif_quantity( $args );
 
 			// Prep an array item for Alfred output
 			//	Disable any tags that are already assigned to this GIF and show a subtitle to that effect
@@ -93,9 +100,32 @@ if ( $mode == 'add_tags' || empty ( $gif->tags ) ) {
 } elseif ( $mode == 'remove_tags' ) {
 	// Add each of the GIF's tags to the items array
 	foreach ( $gif->tags as $tag ) {
+		// Prepare a quantity statement for the subtitle
+		$args = array(
+			'number' => $tag->gifs_with_tag - 1,
+			'zero'   => array (
+				'No',
+				's',
+				'',
+			),
+			'one'	 => array(
+				'One',
+				'',
+				's',
+			),
+			'many'   => array(
+				$tag->gifs_with_tag - 1,
+				's',
+				'',
+			),
+			'format' => '%s other GIF%s share%s this tag'
+		);
+		$subtitle = gif_quantity( $args );
+
+		// Prep an array item for Alfred output
 		$items['items'][] = array(
 			'title' => 'Remove "' . $tag->name . '" from this GIF',
-			'subtitle' => $tag->gifs_with_tag - 1 . " other GIFs share this tag",
+			'subtitle' => $subtitle,
 			'arg'   => $tag->id,
 			'icon'  => array(
 				'path' => 'img/remove tag.png',

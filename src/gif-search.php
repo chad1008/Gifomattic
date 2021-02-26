@@ -27,9 +27,19 @@ if ( $gifs->have_gifs() || $tags->have_tags() ) {
 	while ( $tags->have_tags() ) {
 		$the_tag = $tags->the_tag();
 
+		// Prepare a quantity statement for the subtitle
+		$args = array(
+			'number' => $the_tag->gifs_with_tag,
+			'zero'   => 'No GIFs',
+			'one'    => 'One GIF',
+			'many'   => $the_tag->gifs_with_tag . ' GIFs',
+			'format' => 'Share a randomly selected "' . $the_tag->name . '" GIF (%s available)',
+		);
+		$subtitle = gif_quantity( $args );
+
 		$items['items'][] = array(
 			'title'     => $the_tag->name,
-			'subtitle'  => 'Share a randomly selected ' . $the_tag->tag . ' GIF (' . $the_tag->gifs_with_tag . ' available)',
+			'subtitle'  => $subtitle,
 			'arg'	    => $the_tag->id,
 			'valid'		=> $the_tag->gifs_with_tag > 0 ? 'true' : 'false',
 			'icon'	    => array(
@@ -50,7 +60,7 @@ if ( $gifs->have_gifs() || $tags->have_tags() ) {
 			),
 		);
 	}
-	
+
 	// Add any GIFs returned by the current query to the array
 	while ( $gifs->have_gifs() ) {
 		$the_gif = $gifs->the_gif();

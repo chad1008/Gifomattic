@@ -178,6 +178,48 @@ function iconify( $gif ) {
 }
 
 /**
+ * Prepare a dynamic string to convey the number of GIFs available for a given request
+ *
+ * @param array $args      Defines the parameters of the statement to be prepared
+ * 		 int    [number]   Defines the value to be checked against
+ * 		 mixed    [zero]   A string or array of strings to be used when the value is zero
+ * 		 mixed     [one]   A string or array of strings to be used when the value is one
+ * 		 mixed    [many]   A string or array of strings to be used when the value is more than one
+ * 		 string [format]   The message that strings should be inserted into
+ *
+ * @since 2.0
+ *
+ * @return string
+ */
+
+function gif_quantity( array $args ) {
+	// Determine what kind of statement is needed
+	if ( $args['number'] == 0 ) {
+		$case = $args['zero'];
+	} elseif ( $args['number'] == 1 ) {
+		$case = $args['one'];
+	} else {
+		$case = $args['many'];
+	}
+
+	// Assign the provided string or array values to an array of values for the end statement
+	$values = array();
+	if ( is_array( $case ) ) {
+		foreach ( $case as $value ) {
+			$values[] = $value;
+		}
+	} else {
+		$values[] = $case;
+	}
+
+	// Initialize the statement
+	$format = $args['format'];
+
+	return vsprintf( $format, $values );
+//	return $values;
+}
+
+/**
  * Prepare a success/failure message
  *
  * @param string $message String to be appended to the random success message
@@ -216,7 +258,6 @@ function popup_notice( $message = '', $error = FALSE ) {
 			"I sense a disturbance in that gif",
 		);
 	}
-
 
 	$rand = $messages[array_rand( $messages )];
 	return $rand . "\r\n" . $message;

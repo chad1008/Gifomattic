@@ -61,7 +61,7 @@ if ( $type == 'tag' ) {
 	// Query the requested GIF
 	$gif = new GIF( $id );
 
-	// Set up the icon for th GIF's total count
+	// Set up the icon for the GIF's total count
 	$total = $gif->selected_count + $gif->random_count;
 	if ( $total == 0 ) {
 		$total_icon = 'img/sad.png';
@@ -198,9 +198,20 @@ if ( $type == 'tag' ) {
 		);
 	} else {
 		foreach ( $gif->tags as $tag ) {
+
+			// Set up subtitle statement based on the existing GIF count on the current tag
+			$args = array(
+				'number' => $tag->gifs_with_tag,
+				'one'	 => 'This is the only GIF',
+				'many'   => "View all $tag->gifs_with_tag GIFs",
+				'format' => '%s with this tag',
+			);
+			$subtitle = gif_quantity( $args );
+
+			// Prep an array item for Alfred output
 			$items['items'][] = array(
 				'title' => "Tagged as: $tag->name",
-				'subtitle' => "View all $tag->gifs_with_tag GIFs with this tag",
+				'subtitle' => $subtitle,
 				'arg'   => $tag->id,
 				'icon'  => array(
 					'path' => 'img/view tag.png',
@@ -212,14 +223,14 @@ if ( $type == 'tag' ) {
 				'mods'		=> array(
 					'cmd'	=> array(
 						'valid'		=> 'false',
-						'subtitle'  => "View all $tag->gifs_with_tag GIFs with this tag",
+						'subtitle' => $subtitle,
 						'icon'	    => array(
 							'path'  => 'img/view tag.png',
 						),
 					),
 					'shift'	=> array(
 						'valid'		=> 'false',
-						'subtitle'  => "View all $tag->gifs_with_tag GIFs with this tag",
+						'subtitle' => $subtitle,
 						'icon'	    => array(
 							'path'  => 'img/view tag.png',
 						),
