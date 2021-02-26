@@ -72,7 +72,7 @@ if ( $mode == 'add_tags' ) {
 	$stmt->execute();
 
 	// Prepare success message
-	$success = '"$selected_tag" removed from this GIF';
+	$success = '"' . $selected_tag . '" removed from this GIF';
 	$notification = popup_notice( $success );
 
 } else {
