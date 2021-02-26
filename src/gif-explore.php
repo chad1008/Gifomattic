@@ -44,13 +44,13 @@ if ( $type == 'tag' ) {
 					'cmd'	=> array(
 						'subtitle' => "View this GIF's details and stats",
 						'icon'	    => array(
-							'path'  => 'view.png',
+							'path'  => $the_gif->view_icon,
 						),
 					),
 					'shift'	=> array(
 						'subtitle' => "Edit this GIF",
 						'icon'	    => array(
-							'path'  => 'edit.png',
+							'path'  => $the_gif->edit_icon,
 						),
 					),
 				),
@@ -64,11 +64,11 @@ if ( $type == 'tag' ) {
 	// Set up the icon for th GIF's total count
 	$total = $gif->selected_count + $gif->random_count;
 	if ( $total == 0 ) {
-		$total_icon = 'sad icon.png';
+		$total_icon = 'img/sad.png';
 	} elseif ( $total == 1 ) {
-		$total_icon = 'thinking icon.png';
+		$total_icon = 'img/thinking.png';
 	} else {
-		$total_icon = 'nailed it icon.png';
+		$total_icon = 'img/nailed it.png';
 	}
 
 	// Update the reusable Preview icon file
@@ -114,7 +114,7 @@ if ( $type == 'tag' ) {
 			'subtitle' => '',
 			'valid'    => 'false',
 			'icon'	   => array(
-				'path' => 'checkmark icon.png',
+				'path' => 'img/checkmark.png',
 			),
 		),
 		// Random count
@@ -123,7 +123,7 @@ if ( $type == 'tag' ) {
 			'subtitle' => '(when choosing randomly from one of the tags assigned to this GIF)',
 			'valid'    => 'false',
 			'icon'	   => array(
-				'path' => 'random icon.png',
+				'path' => 'img/random.png',
 			),
 			'mods'		=> array(
 				'cmd'	=> array(
@@ -161,7 +161,7 @@ if ( $type == 'tag' ) {
 			'subtitle' => $gif->date == '' ? "If you saved this GIF recently, please open an issue on Github! Thanks!" : '',
 			'valid'    => $gif->date == '' ? 'true' : 'false',
 			'icon'	   => array(
-				'path' => 'calendar icon.png',
+				'path' => 'img/calendar.png',
 			),
 			'mods'		=> array(
 				'cmd'	=> array(
@@ -183,7 +183,7 @@ if ( $type == 'tag' ) {
 			'subtitle' => "It's sad, lonely, and probably difficult for you to find",
 			'valid'    => 'false',
 			'icon'     => array(
-				'path' => 'sad icon.png',
+				'path' => 'img/sad.png',
 			),
 			'mods'		=> array(
 				'cmd'	=> array(
@@ -203,7 +203,7 @@ if ( $type == 'tag' ) {
 				'subtitle' => "View all $tag->gifs_with_tag GIFs with this tag",
 				'arg'   => $tag->id,
 				'icon'  => array(
-					'path' => 'view tag.png',
+					'path' => 'img/view tag.png',
 				),
 				'variables' => array(
 					'item_type' => 'tag',
@@ -214,14 +214,14 @@ if ( $type == 'tag' ) {
 						'valid'		=> 'false',
 						'subtitle'  => "View all $tag->gifs_with_tag GIFs with this tag",
 						'icon'	    => array(
-							'path'  => 'view tag.png',
+							'path'  => 'img/view tag.png',
 						),
 					),
 					'shift'	=> array(
 						'valid'		=> 'false',
 						'subtitle'  => "View all $tag->gifs_with_tag GIFs with this tag",
 						'icon'	    => array(
-							'path'  => 'view tag.png',
+							'path'  => 'img/view tag.png',
 						),
 					),
 				),

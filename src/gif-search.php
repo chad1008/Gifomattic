@@ -32,7 +32,7 @@ if ( $gifs->have_gifs() || $tags->have_tags() ) {
 			'subtitle'  => 'Share a randomly selected ' . $the_tag->tag . ' GIF (' . $the_tag->gifs_with_tag . ' available)',
 			'arg'	    => $the_tag->id,
 			'icon'	    => array(
-				'path'  => 'randomize.png',
+				'path'  => 'img/randomize.png',
 			),
 			'variables' => array(
 				'item_type' => 'tag',
@@ -42,7 +42,7 @@ if ( $gifs->have_gifs() || $tags->have_tags() ) {
 				'cmd'	=> array(
 					'subtitle' => 'View GIFs with this tag',
 					'icon'	    => array(
-						'path'  => 'view tag.png',
+						'path'  => 'img/view tag.png',
 					),
 				),
 			),

@@ -25,7 +25,7 @@ if ( !getenv( 'next_step' ) ) {
 		'arg' 		=> 'filler to trigger notifications',
 		'valid'		=> $input == '' ? 'false' : 'true',
 		'icon'  => array(
-			'path' => 'edit.png',
+			'path' => 'img/edit.png',
 		),
 		'variables' => array(
 			'gif_url'   => $input,
@@ -56,7 +56,7 @@ if ( !getenv( 'next_step' ) ) {
 		'arg'		=> '',
 		'valid'		=> $input == '' ? 'false' : 'true',
 		'icon'  => array(
-			'path' => 'edit.png',
+			'path' => 'img/edit.png',
 		),
 		'variables' => array(
 			'gif_name'	=> $input,

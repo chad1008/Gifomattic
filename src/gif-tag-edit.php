@@ -28,7 +28,7 @@ if ( $mode == 'add_tags' || empty ( $gif->tags ) ) {
 			'arg'      => '',
 			'valid'    => false,
 			'icon'  => array(
-				'path' => 'add tag.png',
+				'path' => 'img/add tag.png',
 			),
 		);
 		$items['items'][] = array(
@@ -98,7 +98,7 @@ if ( $mode == 'add_tags' || empty ( $gif->tags ) ) {
 			'subtitle' => $tag->gifs_with_tag - 1 . " other GIFs share this tag",
 			'arg'   => $tag->id,
 			'icon'  => array(
-				'path' => 'remove tag.png',
+				'path' => 'img/remove tag.png',
 			),
 			'variables' => array(
 				'selected_tag'	=> $tag->name,
@@ -124,7 +124,7 @@ if ( $mode == 'add_tags' || empty ( $gif->tags ) ) {
 		'subtitle' => 'You can assign existing tags, or create new ones',
 		'arg'   => '',
 		'icon'  => array(
-			'path' => 'add tag.png',
+			'path' => 'img/add tag.png',
 		),
 		'variables' => array(
 			'tag_edit_mode'	=> 'add_tags',
@@ -136,7 +136,7 @@ if ( $mode == 'add_tags' || empty ( $gif->tags ) ) {
 		'subtitle' => 'You can always add them again later!',
 		'arg'   => '',
 		'icon'  => array(
-			'path' => 'remove tag.png',
+			'path' => 'img/remove tag.png',
 		),
 		'variables' => array(
 			'tag_edit_mode'	=> 'remove_tags',
