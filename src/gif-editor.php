@@ -9,6 +9,7 @@ require_once ( 'functions.php' );
 
 $input = $argv[1];
 $id = ( getenv( 'item_id' ) );
+$next_step = ( getenv( 'next_step' ) );
 $gif = new GIF( $id );
 
 // Initialize items array for Alfred output
@@ -17,7 +18,7 @@ $items = array(
 );
 
 // If this is the first step, start with the GIF URL prompt
-if ( !getenv( 'next_step' ) ) {
+if ( $next_step == 'gif_url' ) {
 	$items['items'][] = array(
 		'title' 	=> 'New GIF URL:',
 		'subtitle'  => $input !=null ? $input : 'Enter the new GIF URL',
@@ -48,7 +49,7 @@ if ( !getenv( 'next_step' ) ) {
 		);
 	}
 // If this is the gif_name step, output the New GIF Name prompt
-} elseif ( getenv( 'next_step' ) == 'gif_name' ) {
+} elseif ( $next_step == 'gif_name' ) {
 		$items['items'][] = array(
 		'title'		=> 'New GIF name:',
 		'subtitle'	=> $input !=null ? $input : 'Enter the new GIF name',

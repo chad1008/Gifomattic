@@ -104,6 +104,11 @@ if ( $gifs->have_gifs() || $tags->have_tags() ) {
 					'icon'	    => array(
 						'path'  => $the_gif->edit_icon,
 					),
+					'variables' => array(
+						'next_step' => 'gif_url',
+						'item_id'	=> $the_gif->id,
+						'item_type' => 'gif'
+					),
 				),
 			),
 		);
