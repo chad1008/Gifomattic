@@ -8,7 +8,6 @@
 require_once ( 'functions.php' );
 
 $input = $argv[1];
-$item_type = getenv( 'item_type' );
 $id = ( getenv( 'item_id' ) );
 $gif = new GIF( $id );
 

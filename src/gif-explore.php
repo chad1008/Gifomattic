@@ -11,7 +11,6 @@ require_once ( 'functions.php' );
 
 // Initialize query input details.
 $input = $argv[1];
-$type = getenv( 'item_type' );
 $id = getenv( 'item_id' );
 
 // Initialize items array for Alfred output
@@ -19,7 +18,7 @@ $items = array(
 	'items' => array(),
 );
 
-if ( $type == 'tag' ) {
+if ( is_tag() ) {
 	// Query the database
 	$list_gifs = new GIF_Query($input, $id);
 
@@ -57,7 +56,7 @@ if ( $type == 'tag' ) {
 			);
 		}
 	}
-} elseif (  $type == 'gif' ) {
+} elseif (  is_gif() ) {
 	// Query the requested GIF
 	$gif = new GIF( $id );
 

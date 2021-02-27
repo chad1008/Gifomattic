@@ -14,10 +14,9 @@ require_once ( 'functions.php' );
 
 // Set the query input to the ID passed in by Alfred, and store the item type
 $id = $argv[1];
-$item_type = getenv('item_type');
 
 // If the item selected was a tag, query the database for GIFs based on the tag ID
-if ( $item_type == 'tag' ) {
+if ( is_tag() ) {
 	$gifs = new GIF_Query( '', $id );
 
 	// Reassign $id with the GIF id of a random selection from GIFs ths tag is assigned to
@@ -25,7 +24,7 @@ if ( $item_type == 'tag' ) {
 
 	// Define the count to be increased as 'random_count'
 	$count = 'random_count';
-} elseif ( $item_type == 'gif' ) {
+} elseif ( is_gif() ) {
 	// If the item selected was a GIF, define the count to be incremented as 'selected_count'
 	$count = 'selected_count';
 }
