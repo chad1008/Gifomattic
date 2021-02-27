@@ -104,6 +104,11 @@ if ( is_tag() ) {
 					'icon'	    => array(
 						'path'  => $gif->edit_icon,
 					),
+					'variables' => array(
+						'next_step' => 'gif_url',
+						'item_id'	=> $gif->id,
+						'item_type' => 'gif'
+					),
 				),
 			),
 		),
