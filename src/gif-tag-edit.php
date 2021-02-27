@@ -61,7 +61,7 @@ if ( $mode == 'add_tags' || empty ( $gif->tags ) ) {
 
 			// Prepare a quantity statement for the subtitle
 			$args = array(
-				'number' => $tag->gifs_with_tag,
+				'number' => $the_tag->gifs_with_tag,
 				'zero'   => array(
 					'No GIFs',
 					'',
@@ -71,10 +71,10 @@ if ( $mode == 'add_tags' || empty ( $gif->tags ) ) {
 					's',
 				),
 				'many'   => array(
-					$tag->gifs_with_tag . ' other GIFs',
+					$the_tag->gifs_with_tag . ' other GIFs',
 					'',
 				),
-				'format' => 'Tag this GIF as "' . $tag->name . '" (%s currently use%s this tag)',
+				'format' => 'Tag this GIF as "' . $the_tag->name . '" (%s currently use%s this tag)',
 			);
 			
 			$subtitle = gif_quantity( $args );
