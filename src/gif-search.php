@@ -128,6 +128,9 @@ $items['items'][] = array(
 	'title' => 'Add a new GIF to your library',
 	'subtitle' => $subtitle,
 	'arg' => $input,
+	'icon' => array(
+		'path' => 'img/add.png'
+	),
 	'variables' => array(
 		'gif_url'   => is_valid_url( $input ) ? $input : '',
 		'next_step' => is_valid_url( $input ) ? 'gif_name' : 'gif_url',

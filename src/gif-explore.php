@@ -217,8 +217,9 @@ if ( is_tag() ) {
 				'title' => "Tagged as: $tag->name",
 				'subtitle' => $subtitle,
 				'arg'   => $tag->id,
+				'valid' => $tag->gifs_with_tag == 1 ? 'false' : 'true',
 				'icon'  => array(
-					'path' => 'img/view tag.png',
+					'path' => $tag->gifs_with_tag == 1 ? 'img/tag.png' : 'img/view tag.png',
 				),
 				'variables' => array(
 					'item_type' => 'tag',
@@ -229,14 +230,14 @@ if ( is_tag() ) {
 						'valid'		=> 'false',
 						'subtitle' => $subtitle,
 						'icon'	    => array(
-							'path'  => 'img/view tag.png',
+							'path' => $tag->gifs_with_tag == 1 ? 'img/tag.png' : 'img/view tag.png',
 						),
 					),
 					'shift'	=> array(
 						'valid'		=> 'false',
 						'subtitle' => $subtitle,
 						'icon'	    => array(
-							'path'  => 'img/view tag.png',
+							'path' => $tag->gifs_with_tag == 1 ? 'img/tag.png' : 'img/view tag.png',
 						),
 					),
 				),
