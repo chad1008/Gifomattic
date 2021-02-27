@@ -19,31 +19,12 @@ foreach( $folders as $folder ) {
 		mkdir( $folder, 0777, true );
 }
 
+if ( is_legacy_db() ) {
+	// Connect to the database
+	$file = $_SERVER['alfred_workflow_data'] . '/gifomattic.db';
+	$db = new sqlite3($file);
 
-
-// Gather the names of the columns in the 'gifs' table
-$db = new sqlite3( $file );
-$query = 'PRAGMA table_info( gifs )';
-$result = $db->query( $query );
-$columns = array();
-$legacy = array(
-			'id',
-			'url',
-			'name',
-			'tags',
-			'selectedcount',
-			'randomcount',
-			'date',
-		);
-
-// Build an array of current database's column names, then compare to that the legacy structure
-while ( $column = $result->fetchArray() ) {
-	$columns[] = $column['name'];
-}
-$columns_count = count( $columns );
-$legacy_match = count( array_intersect_assoc( $legacy, $columns ) );
-
-if ( $legacy_match == 7 && $columns_count == 7 ) {
+	// Rename existing table to make way for new database format
 	$rename = 'ALTER TABLE gifs RENAME TO legacydb';
 	$result = $db->exec( $rename );
 
@@ -124,4 +105,3 @@ if ( $legacy_match == 7 && $columns_count == 7 ) {
 }
 $db->close();
 unset($db);
-

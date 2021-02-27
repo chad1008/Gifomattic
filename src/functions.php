@@ -43,6 +43,45 @@ function is_tag() {
 }
 
 /**
+ * Determine if the database requires an update
+ *
+ * @raram bool   $error   Sets error state for output. Defaults to FALSE
+ * @since 2.0
+ *
+ * @return bool
+ */
+
+function is_legacy_db() {
+	$file = $_SERVER['alfred_workflow_data'] . '/gifomattic.db';
+	$db = new sqlite3( $file );
+	$query = 'PRAGMA table_info( gifs )';
+	$result = $db->query( $query );
+	$columns = array();
+	$legacy = array(
+		'id',
+		'url',
+		'name',
+		'tags',
+		'selectedcount',
+		'randomcount',
+		'date',
+	);
+
+	// Build an array of current database's column names, then compare to that the legacy structure
+	while ($column = $result->fetchArray()) {
+		$columns[] = $column['name'];
+	}
+	$columns_count = count($columns);
+	$legacy_match = count(array_intersect_assoc($legacy, $columns));
+
+	if ($legacy_match == 7 && $columns_count == 7) {
+		return TRUE;
+	} else {
+		return FALSE;
+	}
+}
+
+/**
  * Checks for and if needed creates the Gifomattic database
  *
  * @since 2.0
@@ -70,8 +109,10 @@ function prep_db() { //TODO Remove testing conditional
 	if ( !file_exists( $file ) ) {
 		mkdir( $_SERVER['alfred_workflow_data'] );
 	}
-		// Create the database and tables as needed
+		// Connect to the database
 		$db = new sqlite3( $file );
+
+		// Create the database and tables as needed
 		$create_gifs_table = 'CREATE TABLE IF NOT EXISTS gifs (
 		gif_id	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 		url	TEXT NOT NULL,
@@ -262,4 +303,3 @@ function popup_notice( $message = '', $error = FALSE ) {
 	$rand = $messages[array_rand( $messages )];
 	return $rand . "\r\n" . $message;
 }
-

@@ -9,15 +9,29 @@
 
 require_once ( 'functions.php' );
 
-// Initiate a new query
-$input = $argv[1];
-$gifs = new GIF_Query( $input );
-$tags = new Tag_Query( $input );
-
 // Initialize items array for Alfred output
 $items = array(
 	'items' => array(),
 );
+
+
+if ( is_legacy_db() ) {
+	$items['items'][] = array(
+		'title'     => 'Gifomattic update required: database and icon files',
+		'subtitle'  => 'Press RETURN to update now, or ESC to exit',
+		'arg'		=> 'filler arg',
+		'variables' => array(
+			'next_step' => 'update',
+		),
+	);
+	echo json_encode( $items );
+	die;
+}
+
+// Initiate a new query
+$input = $argv[1];
+$gifs = new GIF_Query( $input );
+$tags = new Tag_Query( $input );
 
 //The Gifomattic loop!
 // Imitation is the sincerest form of flattery...
@@ -48,6 +62,7 @@ if ( $gifs->have_gifs() || $tags->have_tags() ) {
 			'variables' => array(
 				'item_type' => 'tag',
 				'item_id'   => $the_tag->id,
+				'next_step' => 'output',
 			),
 			'mods'		=> array(
 				'cmd'	=> array(
@@ -75,6 +90,7 @@ if ( $gifs->have_gifs() || $tags->have_tags() ) {
 			'variables' => array(
 				'item_type' => 'gif',
 				'item_id'	=> $the_gif->id,
+				'next_step' => 'output',
 			),
 			'mods'		=> array(
 				'cmd'	=> array(
