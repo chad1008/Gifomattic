@@ -19,11 +19,20 @@ $items = array(
 
 // If this is the gif_url step, start with the GIF URL prompt
 if ( $next_step == 'gif_url' ) {
+	// Define subtitle based on validation of user input
+	if ( $input == '' ) {
+		$subtitle = 'Enter the new GIF URL';
+	} elseif ( is_valid_url( $input ) ) {
+		$subtitle = $input;
+	} else {
+		$subtitle = 'Please enter a valid URL';
+	}
+
 	$items['items'][] = array(
 		'title' 	=> 'New GIF URL:',
-		'subtitle'  => $input !=null ? $input : 'Enter the new GIF URL',
+		'subtitle'  => $subtitle,
 		'arg' 		=> 'filler to trigger notifications',
-		'valid'		=> $input == '' ? 'false' : 'true',
+		'valid'		=> is_valid_url( $input ) ? 'true' : 'false',
 		'icon'  => array(
 			'path' => 'img/edit.png',
 		),

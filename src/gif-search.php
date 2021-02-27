@@ -116,13 +116,21 @@ if ( $gifs->have_gifs() || $tags->have_tags() ) {
 }
 
 // Display an option to add a new GIF
+// Define subtitle based on validation of user input
+if ( is_valid_url( $input ) ) {
+	$subtitle = "Save GIF URL: $input";
+} else {
+	$subtitle = 'Enter the new GIF URL';
+}
+
+// If $input is a valid URL, save it and move to gif_name. Otherwise ignore $input and move to gif_url
 $items['items'][] = array(
 	'title' => 'Add a new GIF to your library',
-	'subtitle' => 'Enter the new GIF URL',
+	'subtitle' => $subtitle,
 	'arg' => $input,
 	'variables' => array(
-		'gif_url' => $input,
-		'next_step' => 'gif_name',
+		'gif_url'   => is_valid_url( $input ) ? $input : '',
+		'next_step' => is_valid_url( $input ) ? 'gif_name' : 'gif_url',
 		'standby_1' => 'Saving your GIF',
 		'standby_2' => 'This should only take a moment, please stand by',
 	),

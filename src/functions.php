@@ -15,6 +15,24 @@ function class_autoloader( $class ) {
 spl_autoload_register( 'class_autoloader' );
 
 /**
+ * Validates the URL entered by the user
+ *
+ * @param string $url The URL entered by the user
+ * 
+ * @since 2.0
+ * 
+ * @return bool
+ */
+function is_valid_url ( $url ) {
+	if( preg_match( '/^(https?:\/\/).*\..*\.(gif|jpe?g|png)$/i', $url ) ) {
+		return TRUE;
+	} else {
+		return FALSE;
+	}
+}
+
+
+/**
  * Checks if the currently selected item in Alfred is a GIF
  *
  * @since 2.0
