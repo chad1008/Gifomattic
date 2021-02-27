@@ -123,6 +123,8 @@ $items['items'][] = array(
 	'variables' => array(
 		'gif_url' => $input,
 		'next_step' => 'gif_name',
+		'standby_1' => 'Saving your GIF',
+		'standby_2' => 'This should only take a moment, please stand by',
 	),
 );
 

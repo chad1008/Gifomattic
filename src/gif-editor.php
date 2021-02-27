@@ -17,7 +17,7 @@ $items = array(
 	'items' => array(),
 );
 
-// If this is the first step, start with the GIF URL prompt
+// If this is the gif_url step, start with the GIF URL prompt
 if ( $next_step == 'gif_url' ) {
 	$items['items'][] = array(
 		'title' 	=> 'New GIF URL:',
@@ -53,7 +53,7 @@ if ( $next_step == 'gif_url' ) {
 		$items['items'][] = array(
 		'title'		=> 'New GIF name:',
 		'subtitle'	=> $input !=null ? $input : 'Enter the new GIF name',
-		'arg'		=> '',
+		'arg' 		=> 'filler to trigger notifications',
 		'valid'		=> $input == '' ? 'false' : 'true',
 		'icon'  => array(
 			'path' => 'img/edit.png',
@@ -65,12 +65,12 @@ if ( $next_step == 'gif_url' ) {
 		),
 	);
 
-	// While on the second step, if this is an existing GIF, provide an option to keep the current name
+	// While on the gif_name step, if this is an existing GIF provide an option to keep the current name
 	if ( is_gif() ) {
 		$items['items'][] = array(
 			'title'		=> "Keep the GIF's current name",
 			'subtitle'	=> $gif->name,
-			'arg'		=> '',
+			'arg' 		=> 'filler to trigger notifications',
 			'variables' => array(
 				'gif_name'	=> '',
 				'next_step' => 'save_gif',
