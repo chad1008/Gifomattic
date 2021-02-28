@@ -179,8 +179,21 @@ function bind_values( $stmt, $args ) {
  */
 
 function iconify( $gif ) {
+	// Determine image type based on file extension (not infallible but should be good for most cases)
+	$path_bits = pathinfo( $gif['url'] );
+
 	// Create a new file from the url, read it's dimensions
-	$original_gif = imagecreatefromgif( $gif['url'] );
+
+	if ( $path_bits['extension'] == 'gif' ) {
+		$original_gif = imagecreatefromgif( $gif['url'] );
+	} elseif ( $path_bits['extension'] == 'jpg' || $path_bits['extension'] == 'jpeg' ) {
+		$original_gif = imagecreatefromjpeg( $gif['url'] );
+	} elseif ( $path_bits['extension'] == 'png' ) {
+		$original_gif = imagecreatefrompng( $gif['url'] );
+	} else {
+		// URL validation should prevent this but better safe than sorry
+		die( 'Unrecognized image format' );
+	}
 
 	// Gather sizes to decide crop direction
 	$original_gif_x = getimagesize( $gif['url'] )[0];
