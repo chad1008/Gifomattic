@@ -171,82 +171,31 @@ function bind_values( $stmt, $args ) {
 }
 
 /**
- * Generate/Update the icon file for a newly added or edited GIF
+ * Generate/Update various flagged version of a GIF icon
  *
- * @param array $gif Array of relevant details for the GIF in question (ID and URL, plus the name although that isn't used here)
+ * @param string $id The ID of the GIF whose icon needs to be flagged
  *
  * @since 2.0
  */
-
-function iconify( $gif ) {
-	// Determine image type based on file extension (not infallible but should be good for most cases)
-	$path_bits = pathinfo( $gif['url'] );
-
-	// Create a new file from the url, read it's dimensions
-
-	if ( $path_bits['extension'] == 'gif' ) {
-		$original_gif = imagecreatefromgif( $gif['url'] );
-	} elseif ( $path_bits['extension'] == 'jpg' || $path_bits['extension'] == 'jpeg' ) {
-		$original_gif = imagecreatefromjpeg( $gif['url'] );
-	} elseif ( $path_bits['extension'] == 'png' ) {
-		$original_gif = imagecreatefrompng( $gif['url'] );
-	} else {
-		// URL validation should prevent this but better safe than sorry
-		die( 'Unrecognized image format' );
-	}
-
-	// Gather sizes to decide crop direction
-	$original_gif_x = getimagesize( $gif['url'] )[0];
-	$original_gif_y = getimagesize( $gif['url'] )[1];
-
-	// Set a centered crop area: if landscape, center horizontally otherwise center vertically
-	if ($original_gif_x > $original_gif_y) {
-		$crop_x = ($original_gif_x - $original_gif_y) / 2;
-		$crop_y = 0;
-	} else {
-		$crop_x = 0;
-		$crop_y = ($original_gif_y - $original_gif_x) / 2;
-	}
-
-	// Determine which side is shorter to use as our crop value
-	$crop_measure = min($original_gif_x, $original_gif_y);
-
-	// Crop it
-	$crop_vals = array(
-		'x'		 => $crop_x,
-		'y'		 => $crop_y,
-		'width'  => $crop_measure,
-		'height' => $crop_measure,
-		);
-	$thumbnail = imagecrop($original_gif, $crop_vals);
-
-	// Save a new cropped thumbnail file
-	global $icons;
-	imagejpeg( $thumbnail, $icons . $gif['id'] . ".jpg" );
-
-	// Create an image resource to scale from the cropped jpeg
-	$new_jpeg = imagecreatefromjpeg( "$icons" . $gif['id'] . ".jpg") ;
-
-	//Scale the new image to 128px, respecting aspect ratio
-	$scaled_jpeg = imagescale( $new_jpeg, 128, -1, IMG_BICUBIC_FIXED );
-
-	// Save the scaled image as a jpeg
-	imagejpeg( $scaled_jpeg, $icons . $gif['id'] . ".jpg", 10 );
-
-	// Create the view/edit flagged icon variants
+function flag_icon( $id ) {
+	// Prepare the flag sprite
 	$flags = imagecreatefrompng('img/flags.png');
 
+	// Prepare the icon and save path
+	global $icons;
+	$icon = imagecreatefromjpeg( $icons . $id . '.jpg');
+
 	// Generate "View" icon
-	imagecopymerge($scaled_jpeg, $flags, 64, 64, 0, 0, 64, 64, 100);
-	imagejpeg($scaled_jpeg, $icons . "view/" . $gif['id'] . ".jpg", 10);
+	imagecopymerge($icon, $flags, 64, 64, 0, 0, 64, 64, 100);
+	imagejpeg($icon, $icons . "view/" . $id . ".jpg", 10);
 
 	// Generate "Edit" icon
-	imagecopymerge($scaled_jpeg, $flags, 64, 64, 0, 64, 64, 64, 100);
-	imagejpeg($scaled_jpeg, $icons . "edit/" . $gif['id'] . ".jpg", 10);
+	imagecopymerge($icon, $flags, 64, 64, 0, 64, 64, 64, 100);
+	imagejpeg($icon, $icons . "edit/" . $id . ".jpg", 10);
 
-	imagedestroy($new_jpeg);
-	imagedestroy($scaled_jpeg);
-	imagedestroy($flags);
+	// Release images from memory
+	imagedestroy( $flags );
+	imagedestroy ( $icon );
 }
 
 /**

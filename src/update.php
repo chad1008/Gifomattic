@@ -50,21 +50,7 @@ if ( is_legacy_db() ) {
 		$gifs_insert->execute();
 
 		// Create flagged icon variants
-		$flags = imagecreatefrompng( 'img/flags.png' );
-		$icon  = imagecreatefromjpeg( $icons . $row['id'] . '.jpg' );
-
-		// Generate "View" icon
-		imagecopymerge( $icon, $flags, 64, 64, 0, 0, 64, 64, 100 );
-		imagejpeg( $icon, $icons . "view/" . $row['id'] . ".jpg", 10 );
-
-		// Generate "Edit" icon
-		imagecopymerge( $icon, $flags, 64, 64, 0, 64, 64, 64, 100 );
-		imagejpeg( $icon, $icons . "edit/" . $row['id'] . ".jpg", 10 );
-
-		// Release temp images from memory
-		imagedestroy( $icon );
-		imagedestroy( $flags );
-
+		flag_icon( $row['id'] );
 
 		// Prep statement for the tags table
 		$tags_insert = $db->prepare( 'INSERT OR IGNORE INTO tags ( tag ) VALUES ( :tag )' );
