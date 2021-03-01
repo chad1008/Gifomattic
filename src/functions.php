@@ -179,19 +179,19 @@ function bind_values( $stmt, $args ) {
  */
 function flag_icon( $id ) {
 	// Prepare the flag sprite
-	$flags = imagecreatefrompng('img/flags.png');
+	$flags = imagecreatefrompng( 'img/flags.png' );
 
 	// Prepare the icon and save path
 	global $icons;
 	$icon = imagecreatefromjpeg( $icons . $id . '.jpg');
 
 	// Generate "View" icon
-	imagecopymerge($icon, $flags, 64, 64, 0, 0, 64, 64, 100);
-	imagejpeg($icon, $icons . "view/" . $id . ".jpg", 10);
+	imagecopymerge( $icon, $flags, 64, 64, 0, 0, 64, 64, 100 );
+	imagejpeg( $icon, $icons . "view/" . $id . ".jpg", 10 ) ;
 
 	// Generate "Edit" icon
-	imagecopymerge($icon, $flags, 64, 64, 0, 64, 64, 64, 100);
-	imagejpeg($icon, $icons . "edit/" . $id . ".jpg", 10);
+	imagecopymerge( $icon, $flags, 64, 64, 0, 64, 64, 64, 100 );
+	imagejpeg( $icon, $icons . "edit/" . $id . ".jpg", 10 );
 
 	// Release images from memory
 	imagedestroy( $flags );

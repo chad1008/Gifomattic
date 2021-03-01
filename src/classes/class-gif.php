@@ -297,14 +297,14 @@ class GIF {
 	 */
 	private function generate_icon() {
 		// Determine image type based on file extension (not infallible but should be good for most cases)
-		$path_bits = pathinfo( $this->new_props['url'] );
+		$image_type = exif_imagetype( $this->new_props['url'] );
 
 		// Create a new file from the url, read it's dimensions
-		if ( $path_bits['extension'] == 'gif' ) {
+		if ( $image_type == 1 ) {
 			$original_gif = imagecreatefromgif( $this->new_props['url'] );
-		} elseif ( $path_bits['extension'] == 'jpg' || $path_bits['extension'] == 'jpeg' ) {
+		} elseif ( $image_type == 2 ) {
 			$original_gif = imagecreatefromjpeg( $this->new_props['url'] );
-		} elseif ( $path_bits['extension'] == 'png' ) {
+		} elseif ( $image_type == 3 ) {
 			$original_gif = imagecreatefrompng( $this->new_props['url'] );
 		} else {
 			// URL validation should prevent this but better safe than sorry
