@@ -20,6 +20,9 @@ if ( is_legacy_db() ) {
 		'title'     => 'Gifomattic update required: database and icon files',
 		'subtitle'  => 'Press RETURN to update now, or ESC to exit',
 		'arg'		=> 'filler arg',
+		'icon'		=> array(
+			'path'  => 'img/update.png',
+		),
 		'variables' => array(
 			'next_step' => 'update',
 		),

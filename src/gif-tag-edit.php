@@ -35,8 +35,8 @@ if ( $mode == 'add_tags' || empty ( $gif->tags ) ) {
 			'title' => 'Go back',
 			'subtitle' => 'Choose between adding or editing tags',
 			'arg'   => '',
-			'icon'  => array(
-				'path' => '',
+			'icon'		=> array(
+				'path'  => 'img/back.png'
 			),
 			'variables' => array(
 				'tag_edit_mode'	=> '',
@@ -140,8 +140,8 @@ if ( $mode == 'add_tags' || empty ( $gif->tags ) ) {
 		'title' => 'Go back',
 		'subtitle' => 'Choose between adding or editing tags',
 		'arg'   => '',
-		'icon'  => array(
-			'path' => '',
+		'icon'		=> array(
+			'path'  => 'img/back.png'
 		),
 		'variables' => array(
 			'tag_edit_mode'	=> '',
@@ -177,6 +177,9 @@ if ( $mode == 'add_tags' || empty ( $gif->tags ) ) {
 		'title'     => 'Exit',
 		'subtitle'  => 'Close the GIF editor',
 		'arg'	    => '',
+		'icon'		=> array(
+			'path'  => 'img/back.png'
+		),
 		'variables' => array(
 			'exit'  => 'true',
 		),

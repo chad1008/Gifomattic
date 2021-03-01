@@ -51,6 +51,9 @@ if ( $next_step == 'gif_url' ) {
 			'title'		=> "Keep the GIF's current URL",
 			'subtitle'  => $gif->url,
 			'arg'		=> '',
+			'icon'		=> array(
+				'path'  => 'img/checkmark.png'
+			),
 			'variables' => array(
 				'gif_url'	=> '',
 				'next_step' => 'gif_name',
@@ -80,6 +83,9 @@ if ( $next_step == 'gif_url' ) {
 			'title'		=> "Keep the GIF's current name",
 			'subtitle'	=> $gif->name,
 			'arg' 		=> 'filler to trigger notifications',
+			'icon'		=> array(
+				'path'  => 'img/checkmark.png'
+			),
 			'variables' => array(
 				'gif_name'	=> '',
 				'next_step' => 'save_gif',
