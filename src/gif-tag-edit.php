@@ -174,14 +174,16 @@ if ( $mode == 'add_tags' || empty ( $gif->tags ) ) {
 	);
 	// Display prompt to exit the GIF editor
 	$items['items'][] = array(
-		'title'     => 'Exit',
-		'subtitle'  => 'Close the GIF editor',
+		'title'     => 'Go back',
+		'subtitle'  => 'Edit GIF URL or name',
 		'arg'	    => '',
 		'icon'		=> array(
 			'path'  => 'img/back.png'
 		),
 		'variables' => array(
-			'exit'  => 'true',
+			'next_step'		=> 'gif_url',
+			'tag_edit_mode'	=> '',
+			'exit'			=> 'true',
 		),
 	);
 }

@@ -41,7 +41,8 @@ if ( $next_step == 'gif_url' ) {
 			'next_step' => 'gif_name',
 			'standby_1' => 'Saving your GIF',
 			'standby_2' => 'This should only take a moment, please stand by',
-			'gif_saved' => popup_notice( "GIF saved: $gif->name" )
+			'gif_saved' => popup_notice( "GIF saved: $gif->name" ),
+			'exit'			=> 'false',
 		),
 	);
 
@@ -57,6 +58,7 @@ if ( $next_step == 'gif_url' ) {
 			'variables' => array(
 				'gif_url'	=> '',
 				'next_step' => 'gif_name',
+				'exit'			=> 'false',
 			),
 		);
 	}
@@ -73,7 +75,8 @@ if ( $next_step == 'gif_url' ) {
 		'variables' => array(
 			'gif_name'	=> $input,
 			'next_step' => 'save_gif',
-			'gif_saved' => popup_notice( "GIF saved: $input" )
+			'gif_saved' => popup_notice( "GIF saved: $input" ),
+			'exit'			=> 'false',
 		),
 	);
 
@@ -89,6 +92,7 @@ if ( $next_step == 'gif_url' ) {
 			'variables' => array(
 				'gif_name'	=> '',
 				'next_step' => 'save_gif',
+				'exit'			=> 'false',
 			),
 		);
 	}
