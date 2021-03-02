@@ -30,7 +30,15 @@ class Tag {
 	 */
 	public $name;
 
-	public function __construct( int $id=null ) {
+	/**
+	 * The new name that the tag should be updated to when edited
+	 *
+	 * @since 2.0
+	 * @var string
+	 */
+	public $new_name;
+
+	public function __construct( int $id = null ) {
 		// Set database connection
 		$this->db = prep_db();
 		
@@ -71,5 +79,21 @@ class Tag {
 		$the_tag = $result->fetchArray( SQLITE3_ASSOC );
 		
 		return $the_tag;
+	}
+
+	/**
+	 * Save the tag's updated info
+	 *
+	 * @since 2.0
+	 */
+	public function save() {
+		$stmt = $this->db->prepare( "UPDATE tags SET tag = :new_name WHERE tag_id IS :id" );
+		$args = array(
+			':new_name' => $this->new_name,
+			':id'		=> $this->id,
+		);
+		bind_values( $stmt, $args );
+		
+		$stmt->execute();
 	}
 }

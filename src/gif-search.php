@@ -14,7 +14,6 @@ $items = array(
 	'items' => array(),
 );
 
-
 if ( is_legacy_db() ) {
 	$items['items'][] = array(
 		'title'     => 'Gifomattic update required: database and icon files',
@@ -73,6 +72,16 @@ if ( $gifs->have_gifs() || $tags->have_tags() ) {
 					'valid'		=> $the_tag->gifs_with_tag > 0 ? 'true' : 'false',
 					'icon'	    => array(
 						'path'  => 'img/view tag.png',
+					),
+				),
+				'shift'	=> array(
+					'subtitle' => 'Edit this tag',
+					'icon'	    => array(
+						'path'  => 'img/edit tag.png',
+					),
+					'variables' => array(
+						'item_type' => 'tag',
+						'item_id'   => $the_tag->id,
 					),
 				),
 			),
