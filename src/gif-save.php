@@ -48,19 +48,28 @@ if ( is_gif() ) {
 
 // If the current item is a tag, enter the tag saving flow
 } elseif ( is_tag() ) {
-	
-	// Query the tag in the database and set it's new name
 	$tag = new Tag( $id );
-	$tag->new_name = getenv( 'tag_name' );
-	
-	// Save the tag with it's new name
-	$tag->save();
+
+	// If tag deletion is confirmed, delete the current tag
+	if ( getenv( 'confirmed_delete' ) == 'true' ) {
+
+		$tag->delete();
+
+	// Otherwise, proceed with updating the tag
+	} else {
+		// Set the tag's new name
+		$tag->new_name = getenv('tag_name');
+
+		// Save the tag with it's new name
+		$tag->save();
+
+	}
 
 	// Set the output array to exit the workflow
 	$output = array(
 		'alfredworkflow' => array(
 			'variables'  => array(
-				'exit'   => 'true',
+			'exit'  	 => 'true',
 			),
 		),
 	);

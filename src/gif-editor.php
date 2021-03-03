@@ -107,20 +107,65 @@ if ( is_gif() ) {
 
 	$tag = new Tag ($id );
 
-	$items['items'][] = array(
-		'title' => "New tag name: $input",
-		'subtitle' => "Current name: $tag->name",
-		'arg' => $input,
-		'icon' => array(
-			'path' => 'img/edit.png'
-		),
-		'variables' => array(
-			'tag_name'  => $input,
-			'next_step' => 'save_gif',
-			'gif_saved' => popup_notice("Tag updated: $input"),
-		),
-	);
+	// If the next step is 'confirm_delete' display a confirmation prompts
+	if ( getenv( 'next_step' ) == 'confirm_delete' ) {
 
+		// First the option to confirm the deletion
+		$items['items'][] = array(
+			'title'	   => 'Yes, I\'m sure I want to delete the "' . $tag->name . '" tag',
+			'subtitle' => "This cannot be undone!",
+			'icon'	   => array(
+				'path' => 'img/destroy.png',
+			),
+			'variables' => array(
+				'next_step'		   => 'save_gif',
+				'confirmed_delete' =>'true',
+				'gif_saved'		   => popup_notice( "Tag deleted: $tag->name" ),
+			),
+		);
+
+		// Next show the option to cancel the deletion
+		$items['items'][] = array(
+			'title'	   => 'No, wait! I don\'t want to delete the "' . $tag->name . '" tag!',
+			'subtitle' => "Go back to tag editing",
+			'icon'	   => array(
+				'path' => 'img/thinking.png',
+			),
+			'variables' => array(
+				'next_step'		   => '',
+				'confirmed_delete' =>'',
+			),
+		);
+
+		// If this isn't the 'confirm_delete' step, proceed with the editing prompts
+	} else {
+		// Display a prompt to update the tag's name
+		$items['items'][] = array(
+			'title'    => "New tag name: $input",
+			'subtitle' => "Current name: $tag->name",
+			'arg'	   => $input,
+			'icon' 	   => array(
+				'path' => 'img/edit.png'
+			),
+			'variables' => array(
+				'tag_name'  => $input,
+				'next_step' => 'save_gif',
+				'gif_saved' => popup_notice( "Tag updated: $input" ),
+			),
+		);
+
+		// Display an option to delete the tag
+		$items['items'][] = array(
+			'title'    => 'Delete the "' . $tag->name . '" tag',
+			'subtitle' => '(No GIFs will be deleted)',
+			'icon' 	   => array(
+				'path' => 'img/destroy.png',
+			),
+			'variables' => array(
+				'next_step' => 'confirm_delete'
+			),
+		);
+	}
 // If the selected item was neither a GIF or a tag, abandon all hope
 } else {
 	$items['items'][] = array(

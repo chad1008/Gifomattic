@@ -93,7 +93,22 @@ class Tag {
 			':id'		=> $this->id,
 		);
 		bind_values( $stmt, $args );
-		
+
 		$stmt->execute();
+	}
+
+	/**
+	 * Delete the tag from the database
+	 *
+	 * @since 2.0
+	 */
+	public function delete() {
+		$delete_tag = $this->db->prepare( "DELETE FROM tags WHERE tag_id = :tag_id;" );
+		$delete_relationships = $this->db->prepare( "DELETE FROM tag_relationships WHERE tag_id = :tag_id;" );
+		$delete_tag->bindValue( ':tag_id', $this->id );
+		$delete_relationships->bindValue( ':tag_id', $this->id );
+
+		$delete_tag->execute();
+		$delete_relationships->execute();
 	}
 }
