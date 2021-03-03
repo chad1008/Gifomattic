@@ -137,13 +137,15 @@ if ( is_valid_url( $input ) ) {
 
 // If $input is a valid URL, save it and move to gif_name. Otherwise ignore $input and move to gif_url
 $items['items'][] = array(
-	'title' => 'Add a new GIF to your library',
+	'title'    => 'Add a new GIF to your library',
 	'subtitle' => $subtitle,
-	'arg' => $input,
-	'icon' => array(
+	'arg'	   => $input,
+	'valid'    => is_valid_url( $input ) ? 'true' : 'false',
+	'icon' 	   => array(
 		'path' => 'img/add.png'
 	),
 	'variables' => array(
+		'item_type' => 'gif',
 		'gif_url'   => is_valid_url( $input ) ? $input : '',
 		'next_step' => is_valid_url( $input ) ? 'gif_name' : 'gif_url',
 		'standby_1' => 'Saving your GIF',
