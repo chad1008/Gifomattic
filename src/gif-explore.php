@@ -52,7 +52,7 @@ if ( is_tag() ) {
 							'path'  => $the_gif->edit_icon,
 						),
 						'variables' => array(
-							'next_step' => 'gif_url',
+							'next_step' => 'launch_editor',
 							'item_id'	=> $the_gif->id,
 							'item_type' => 'gif'
 						),
@@ -110,7 +110,7 @@ if ( is_tag() ) {
 						'path'  => $gif->edit_icon,
 					),
 					'variables' => array(
-						'next_step' => 'gif_url',
+						'next_step' => 'launch_editor',
 						'item_id'	=> $gif->id,
 						'item_type' => 'gif'
 					),

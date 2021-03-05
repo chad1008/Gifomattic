@@ -20,9 +20,37 @@ $items = array(
 if ( is_gif() ) {
 
 	$gif = new GIF( $id );
+	
+	// If this is the initial editing step, display prompts to either edit or trash the GIF
+	if ( $next_step == 'launch_editor' ) {
+		$items['items'][] = array(
+			'title' => 'Edit "' . $gif->name . '"',
+			'subtitle' => "Modify the URL, name, or the tags assigned to this GIF",
+			'arg' => 'filler to trigger notifications',
+			'icon' => array(
+				'path' => 'img/edit.png'
+			),
+			'variables' => array(
+				'next_step' => 'gif_url',
+				'exit'		=> 'false',
+			),
+		);
+		$items['items'][] = array(
+			'title' => 'Trash "' . $gif->name . '"',
+			'subtitle' => "Once trashed, the GIF will be deleted in 30 days",
+			'arg' => 'filler to trigger notifications',
+			'icon' => array(
+				'path' => 'img/trash.png'
+			),
+			'variables' => array(
+				'next_step' => 'save_gif',
+				'trash_gif' => 'true',
+				'exit'		=> 'false',
+			),
+		);
 
-	// If this is the gif_url step, start with the GIF URL prompt
-	if ($next_step == 'gif_url') {
+		// If this is the gif_url step, start with the GIF URL prompt
+	} elseif ($next_step == 'gif_url') {
 		// Define subtitle based on validation of user input
 		if ($input == '') {
 			$subtitle = 'Enter the new GIF URL';
