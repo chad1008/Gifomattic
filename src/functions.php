@@ -137,7 +137,9 @@ function prep_db() { //TODO Remove testing conditional
 		name	TEXT NOT NULL,
 		selected_count	INTEGER NOT NULL DEFAULT 0,
 		random_count	INTEGER NOT NULL DEFAULT 0,
-		date	TEXT NOT NULL
+		date	TEXT NOT NULL,
+		in_trash INTEGER NOT NULL DEFAULT 0 CHECK ( in_trash IN ( 0,1 ) ),
+		trash_date INTEGER
 		)';
 		$create_tags_table = 'CREATE TABLE IF NOT EXISTS tags (
 		tag_id	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,

@@ -37,7 +37,7 @@ if ( is_legacy_db() ) {
 
 	while ( $row = $legacy_data->fetchArray( SQLITE3_ASSOC ) ) {
 		// Prep statement for the gifs table, and execute
-		$gifs_insert = $db->prepare( 'INSERT INTO gifs VALUES ( :gif_id, :url, :name, :selected_count, :random_count, :date )' );
+		$gifs_insert = $db->prepare( 'INSERT INTO gifs VALUES ( :gif_id, :url, :name, :selected_count, :random_count, :date, :in_trash, :trash_date )' );
 		$query_values = array(
 							':gif_id' 		  => $row['id'],
 							':url'			  => $row['url'],
@@ -45,6 +45,7 @@ if ( is_legacy_db() ) {
 							':selected_count' => $row['selectedcount'],
 							':random_count'   => $row['randomcount'],
 							':date' 		  => $row['date'],
+							':in_trash'		  => 0,
 						);
 		bind_values( $gifs_insert, $query_values );
 		$gifs_insert->execute();
