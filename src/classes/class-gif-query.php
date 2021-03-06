@@ -13,10 +13,12 @@ class GIF_Query {
 	 * @var $input string The Alfred input query
 	 * @var $query string Custom query string based on the parameters provided
 	 * @var $tag_to_search int An optional, specific tag that query results should be filtered against
+	 * @var $is_trash_query bool Determines if the query should return trashed or untrashed GIFs Defaults to FALSE
 	 */
 	public $input;
 	private $query;
 	public $tag_to_search;
+	public $is_trash_query;
 
 	/**
 	 * The sqlite3 object for the Gifomattic database
@@ -60,12 +62,14 @@ class GIF_Query {
 	 *
 	 * @param mixed $input Alfred user input
 	 * @param int $tag Optional tag to filter GIFs from
+	 * @param bool $trash Set if the query should return trashed or untrashed GIFs
 	 */
-	public function __construct( $input, $tag=null) {
+	public function __construct( $input, $tag = null, $trash = FALSE ) {
 		// Store query and it's properties
 		$this->input = $input;
 		$this->tag_to_search = $tag;
 		$this->query = $this->parse_query();
+		$this->is_trash_query = $trash;
 
 		// Initialize counts
 		$this->current_gif = -1;
@@ -89,35 +93,38 @@ class GIF_Query {
 	 *
 	 * @return string
 	 */
-	private function parse_query() {
+	public function parse_query() {
 		// Start with selecting IDs for all of the results of the query
 		$query = "SELECT gifs.gif_id FROM gifs";
 
-		// If a tag to filter against was provided, set up a LEFT JOIN
+		// If a tag to filter against was provided, set up a LEFT JOIN (with leading AND for next condition)
 		if ( $this->tag_to_search != null ) {
 			$query .= " LEFT JOIN tag_relationships
 						ON gifs.gif_id = tag_relationships.gif_id
-							WHERE tag_relationships.tag_id IS :tag";
+							WHERE tag_relationships.tag_id IS :tag AND";
 		// Or, if no tag filter was provided, append a WHERE
 		} else {
 			$query .= " WHERE";
 		}
 
-		// Combine statements with AND only if both user input and a tag to filter
+/*		// Combine statements with AND only if both user input and a tag to filter
 		if ( $this->tag_to_search != null && $this->input != '' ) {
 			$query .= " AND";
+		}*/
+
+		// Append LIKE matching for $input if $input is provided (with leading AND for next condition)
+		if ( $this->input != '' ) {
+			$query .= " gifs.name LIKE  '%' || :input ||'%' AND";
 		}
 
-		// Append LIKE matching for $input if $input is provided
-		if ( $this->input != '' ) {
-			$query .= " gifs.name LIKE  '%' || :input ||'%'";
-		}
+		// Append filter for trashed status
+		$query .= " in_trash IS :trashed";
 
 		return $query;
 	}
 
 	/**
-	 * Query GIFs using the custom built query statment
+	 * Query GIFs using the custom built query statement
 	 *
 	 * Generates the GIFs array.
 	 *
@@ -130,6 +137,7 @@ class GIF_Query {
 		$args = array(
 			':tag' => $this->tag_to_search,
 			':input' => $this->input,
+			':trashed' => $this->is_trash_query == FALSE ? 0 : 1,
 		);
 		bind_values( $stmt, $args );
 

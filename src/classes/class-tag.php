@@ -65,12 +65,14 @@ class Tag {
 	 * @return array
 	 */
 	public function get_tag_data() { 
-		$stmt = $this->db->prepare( "SELECT tag,
- 											COUNT(tag_relationships.tag_id) as gifs_with_tag
-									FROM tags 
-										LEFT JOIN tag_relationships
-											USING ( tag_id )
-									WHERE tag_id IS :id"
+		$stmt = $this->db->prepare( "SELECT tags.tag,
+											SUM( CASE WHEN gifs.in_trash = 0 THEN 1 ELSE 0 END ) as gifs_with_tag
+									 FROM tags
+									 JOIN tag_relationships
+									 	USING( tag_id )
+									 JOIN gifs
+									 	USING (gif_id)
+									 WHERE tags.tag_id IS :id"
 								  );
 
 		$stmt->bindValue( ':id', $this->id );
