@@ -24,11 +24,11 @@ if ( is_gif() ) {
 	// If this is the initial editing step, display prompts to either edit or trash the GIF
 	if ( $next_step == 'launch_editor' ) {
 		$items['items'][] = array(
-			'title' => 'Edit "' . $gif->name . '"',
-			'subtitle' => "Modify the URL, name, or the tags assigned to this GIF",
-			'arg' => 'filler to trigger notifications',
-			'icon' => array(
-				'path' => 'img/edit.png'
+			'title' 	=> 'Edit "' . $gif->name . '"',
+			'subtitle'  => "Modify the URL, name, or the tags assigned to this GIF",
+			'arg'		=> 'filler to trigger notifications',
+			'icon'		=> array(
+				'path'  => 'img/edit.png'
 			),
 			'variables' => array(
 				'next_step' => 'gif_url',
@@ -36,16 +36,18 @@ if ( is_gif() ) {
 			),
 		);
 		$items['items'][] = array(
-			'title' => 'Trash "' . $gif->name . '"',
+			'title'    => 'Trash "' . $gif->name . '"',
 			'subtitle' => "Once trashed, the GIF will be deleted in 30 days",
-			'arg' => 'filler to trigger notifications',
-			'icon' => array(
+			'arg' 	   => 'filler to trigger notifications',
+			'icon'	   => array(
 				'path' => 'img/trash.png'
 			),
 			'variables' => array(
-				'next_step' => 'save_gif',
-				'trash_gif' => 'true',
-				'exit'		=> 'false',
+				'next_step' 		 => 'save_gif',
+				'trash_gif'			 => 'true',
+				'notification_title' => "GIF trashed!",
+				'notification_text'  => '"' . $gif->name . '" will be permanently deleted in 30 days.',
+				'exit'				 => 'true',
 			),
 		);
 
@@ -73,7 +75,7 @@ if ( is_gif() ) {
 				'next_step' => 'gif_name',
 				'standby_1' => 'Saving your GIF',
 				'standby_2' => 'This should only take a moment, please stand by',
-				'gif_saved' => popup_notice("GIF saved: $gif->name"),
+				'notification_text' => popup_notice("GIF saved: $gif->name"),
 				'exit' => 'false',
 			),
 		);
@@ -107,7 +109,7 @@ if ( is_gif() ) {
 			'variables' => array(
 				'gif_name' => $input,
 				'next_step' => 'save_gif',
-				'gif_saved' => popup_notice("GIF saved: $input"),
+				'notification_text' => popup_notice("GIF saved: $input"),
 				'exit' => 'false',
 			),
 		);
@@ -148,7 +150,7 @@ if ( is_gif() ) {
 			'variables' => array(
 				'next_step'		   => 'save_gif',
 				'confirmed_delete' =>'true',
-				'gif_saved'		   => popup_notice( "Tag deleted: $tag->name" ),
+				'notification_text'		   => popup_notice( "Tag deleted: $tag->name" ),
 			),
 		);
 
@@ -178,7 +180,7 @@ if ( is_gif() ) {
 			'variables' => array(
 				'tag_name'  => $input,
 				'next_step' => 'save_gif',
-				'gif_saved' => popup_notice( "Tag updated: $input" ),
+				'notification_text' => popup_notice( "Tag updated: $input" ),
 			),
 		);
 
