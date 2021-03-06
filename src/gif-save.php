@@ -8,13 +8,14 @@
 require_once( 'functions.php' );
 
 $id = getenv( 'item_id' );
+$trash_mode = getenv( 'trash_gif' );
 
 // If the current item is a GIF, enter the GIF saving flow
 if ( is_gif() ) {
 
 	// If the selected item is an existing GIF, query it using the ID
 	if ( $id != false ) {
-		$gif = new GIF( getenv('item_id') );
+		$gif = new GIF( $id );
 
 	// Otherwise, initialize a new, empty GIF object
 	} else {
@@ -24,27 +25,36 @@ if ( is_gif() ) {
 		$gif->new_props['date'] = date('F d, Y');
 	}
 
-// Stage new/updated values for saving later, skipping any that haven't been provided
-	if (getenv('gif_url')) {
-		$gif->new_props['url'] = getenv('gif_url');
-	}
-	if (getenv('gif_name')) {
-		$gif->new_props['name'] = getenv('gif_name');
-	}
+	// If this GIF was marked to be trashed, trash it
+	if ( $trash_mode == 'true' ) {
+		
+		// Trash the GIF
+		$gif->trash();
+		
+	// Otherwise, prep and save the new GIF info
+	} else {
+		// Stage new/updated values for saving later, skipping any that haven't been provided
+		if (getenv('gif_url')) {
+			$gif->new_props['url'] = getenv('gif_url');
+		}
+		if (getenv('gif_name')) {
+			$gif->new_props['name'] = getenv('gif_name');
+		}
 
-// Save the GIF
-	$gif->save();
+		// Save the GIF
+		$gif->save();
 
-// Set up the next step
-	$output = array(
-		'alfredworkflow' => array(
-			'arg' => '',
-			'variables' => array(
-				'item_id' => $gif->new_props['id'],
-				'tag_edit_mode' => $gif->is_new ? 'add_tags' : '',
+		// Set up the next step
+		$output = array(
+			'alfredworkflow' => array(
+				'arg' => '',
+				'variables' => array(
+					'item_id' => $gif->new_props['id'],
+					'tag_edit_mode' => $gif->is_new ? 'add_tags' : '',
+				),
 			),
-		),
-	);
+		);
+	}
 
 // If the current item is a tag, enter the tag saving flow
 } elseif ( is_tag() ) {

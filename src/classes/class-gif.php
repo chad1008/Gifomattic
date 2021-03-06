@@ -464,4 +464,20 @@ class GIF {
 		imagedestroy( $icon );
 		imagedestroy( $flags );
 	}
+
+	/**
+	 * Put the GIF in the trash
+	 *
+	 * @since 2.0
+	 */
+	public function trash() {
+		$today = date( 'U' );
+		$stmt = $this->db->prepare( "UPDATE gifs SET in_trash = 1, trash_date = :today WHERE gif_id IS :id" );
+		$args = array(
+			':today' => $today,
+			':id' => $this->id,
+		);
+		bind_values( $stmt, $args );
+		$stmt->execute();
+	}
 }
