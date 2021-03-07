@@ -30,10 +30,11 @@ if ( is_legacy_db() ) {
 	die;
 }
 
-// Initiate a new query
+// Initialize all the data
 $input = $argv[1];
 $gifs = new GIF_Query( $input );
 $tags = new Tag_Query( $input );
+$trash = new GIF_Query('','',TRUE);
 
 //The Gifomattic loop!
 // Imitation is the sincerest form of flattery...
@@ -150,6 +151,41 @@ $items['items'][] = array(
 		'next_step' => is_valid_url( $input ) ? 'gif_name' : 'gif_url',
 		'standby_1' => 'Saving your GIF',
 		'standby_2' => 'This should only take a moment, please stand by',
+	),
+);
+
+// Display prompt to view Trash, but make sure it's invalid if the trash is empty
+// Set up the subtitle
+$args = array(
+	'number' => $trash->gif_count,
+	'zero'   => array(
+		'are',
+		'no GIFs',
+		),
+	'one'    => array(
+		'is',
+		'one GIF',
+	),
+	'many'   => array(
+		'are',
+		$trash->gif_count . 'GIFs',
+	),
+	'format' => 'There %s currently %s in the trash',
+);
+
+$subtitle = gif_quantity( $args );
+
+// Build the trash prompt
+$items['items'][] = array(
+	'title'	    => 'View and manage trashed GIFs',
+	'subtitle'  => $subtitle,
+	'arg'	    => 'filler arg',
+	'valid'		=> $trash->gif_count == 0 ? 'false' : 'true',
+	'icon'	    => array(
+		'path'  => 'img/trash.png'
+	),
+	'variables' => array(
+		'next_step' => 'launch_trash'
 	),
 );
 

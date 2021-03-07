@@ -107,11 +107,6 @@ class GIF_Query {
 			$query .= " WHERE";
 		}
 
-/*		// Combine statements with AND only if both user input and a tag to filter
-		if ( $this->tag_to_search != null && $this->input != '' ) {
-			$query .= " AND";
-		}*/
-
 		// Append LIKE matching for $input if $input is provided (with leading AND for next condition)
 		if ( $this->input != '' ) {
 			$query .= " gifs.name LIKE  '%' || :input ||'%' AND";
@@ -137,7 +132,7 @@ class GIF_Query {
 		$args = array(
 			':tag' => $this->tag_to_search,
 			':input' => $this->input,
-			':trashed' => $this->is_trash_query == FALSE ? 0 : 1,
+			':trashed' => $this->is_trash_query == FALSE ? 0 : 1, // 0 and 1 act a boolean value for 'trashed' status
 		);
 		bind_values( $stmt, $args );
 

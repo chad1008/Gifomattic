@@ -480,4 +480,37 @@ class GIF {
 		bind_values( $stmt, $args );
 		$stmt->execute();
 	}
+
+	/**
+	 * Permanently delete the GIF
+	 *
+	 * @since 2.0
+	 */
+	public function delete() {
+		// First, prepare a statement to delete any relevant entries from the tag_relationships table
+		$delete_relationships = $this->db->prepare( "DELETE FROM tag_relationships WHERE gif_id IS :id" );
+		$delete_relationships->bindValue( ':id', $this->id );
+
+		// Next, prepare a statement to delete the tag itself
+		$delete_gif = $this->db->prepare( "DELETE FROM gifs WHERE gif_id IS :id" );
+		$delete_gif->bindValue( ':id', $this->id );
+
+		// Execute both DELETE statements
+		$delete_relationships->execute();
+		$delete_gif->execute();
+
+		// Remove any icons for the deleted GIF
+		// GIF icon
+		if ( file_exists( $this->icon ) ) {
+			unlink( $this->icon );
+		}
+		// View icon
+		if ( file_exists( $this->view_icon ) ) {
+			unlink( $this->view_icon );
+		}
+		// Edit icon
+		if ( file_exists( $this->edit_icon ) ) {
+			unlink( $this->edit_icon );
+		}
+	}
 }
