@@ -159,6 +159,25 @@ function prep_db() { //TODO Remove testing conditional
 }
 
 /**
+ * Automatically remove an GIFs that have been in the trash for >30 days
+ *
+ * @since 2.0
+ */
+function trash_cleanup() {
+	
+	$gifs = new GIF_Query( '','',TRUE,TRUE );
+	
+	if ( $gifs->have_gifs() ) {
+		while ( $gifs->have_gifs() ) {
+			
+			$gif = $gifs->the_gif();
+			
+			$gif->delete();
+		}
+	}
+}
+
+/**
  * Binds an array of values for a provided prepared sqlite statement
  * 
  * @param string $stmt Prepared SQL statement
@@ -239,7 +258,6 @@ function gif_quantity( array $args ) {
 	$format = $args['format'];
 
 	return vsprintf( $format, $values );
-//	return $values;
 }
 
 /**

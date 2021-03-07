@@ -30,6 +30,9 @@ if ( is_legacy_db() ) {
 	die;
 }
 
+// Cleanup any old GIFs that have been in the trash for >30 days
+trash_cleanup();
+
 // Initialize all the data
 $input = $argv[1];
 $gifs = new GIF_Query( $input );
