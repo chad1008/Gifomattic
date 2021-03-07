@@ -278,6 +278,7 @@ function popup_notice( $message = '', $error = FALSE ) {
 			"Nailed It!",
 			"You're my hero",
 			"Beep Beep Boop...",
+			"It's GIF. Not JIF.",
 			"Mission accomplished!",
 			"Oh, that's a good one!",
 			"Your GIF is my command",
@@ -288,15 +289,15 @@ function popup_notice( $message = '', $error = FALSE ) {
 		);
 	} else {
 		$messages = array(
-			"Oops. Something went wrong.",
 			"FAIL!",
 			"Womp Womp",
-			"Need more info. Or maybe less info. I don't know, something's borked.",
-			"Are you sure you know what you're doing?",
-			"You must be new here",
-			"I don't know what any of those words mean",
 			"Ummmmm.... no.",
+			"You must be new here",
+			"Oops. Something went wrong.",
 			"I sense a disturbance in that gif",
+			"Are you sure you know what you're doing?",
+			"I don't know what any of those words mean",
+			"Need more info. Or maybe less info. I don't know, something's borked.",
 		);
 	}
 
