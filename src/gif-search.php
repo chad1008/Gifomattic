@@ -168,7 +168,7 @@ $args = array(
 	),
 	'many'   => array(
 		'are',
-		$trash->gif_count . 'GIFs',
+		$trash->gif_count . ' GIFs',
 	),
 	'format' => 'There %s currently %s in the trash',
 );
@@ -186,6 +186,24 @@ $items['items'][] = array(
 	),
 	'variables' => array(
 		'next_step' => 'launch_trash'
+	),
+	'mods'		=> array(
+		'cmd' => array(
+			'subtitle'  => $subtitle,
+			'valid'	  	=> 'false',
+		),
+		'option' => array(
+			'subtitle'  => $subtitle,
+			'valid'	  	=> 'false',
+		),
+		'ctrl' => array(
+			'subtitle'  => $subtitle,
+			'valid'	  	=> 'false',
+		),
+		'shift' => array(
+			'subtitle'  => $subtitle,
+			'valid'	  	=> 'false',
+		),
 	),
 );
 
