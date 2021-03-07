@@ -154,58 +154,60 @@ $items['items'][] = array(
 	),
 );
 
-// Display prompt to view Trash, but make sure it's invalid if the trash is empty
-// Set up the subtitle
-$args = array(
-	'number' => $trash->gif_count,
-	'zero'   => array(
-		'are',
-		'no GIFs',
+// Using 'trash' as a keyword, display prompt to view Trash, but make sure it's invalid if the trash is empty
+if ( $input == 'trash' ) {
+	// Set up the subtitle
+	$args = array(
+		'number' => $trash->gif_count,
+		'zero'   => array(
+			'are',
+			'no GIFs',
+			),
+		'one'    => array(
+			'is',
+			'one GIF',
 		),
-	'one'    => array(
-		'is',
-		'one GIF',
-	),
-	'many'   => array(
-		'are',
-		$trash->gif_count . ' GIFs',
-	),
-	'format' => 'There %s currently %s in the trash',
-);
+		'many'   => array(
+			'are',
+			$trash->gif_count . ' GIFs',
+		),
+		'format' => 'There %s currently %s in the trash',
+	);
+	$subtitle = gif_quantity( $args );
 
-$subtitle = gif_quantity( $args );
-
-// Build the trash prompt
-$items['items'][] = array(
-	'title'	    => 'View and manage trashed GIFs',
-	'subtitle'  => $subtitle,
-	'arg'	    => 'filler arg',
-	'valid'		=> $trash->gif_count == 0 ? 'false' : 'true',
-	'icon'	    => array(
-		'path'  => 'img/trash.png'
-	),
-	'variables' => array(
-		'next_step' => 'launch_trash'
-	),
-	'mods'		=> array(
-		'cmd' => array(
-			'subtitle'  => $subtitle,
-			'valid'	  	=> 'false',
+	// Build the trash prompt
+	$items['items'][] = array(
+		'title'	    => 'View and manage trashed GIFs',
+		'subtitle'  => $subtitle,
+		'arg'	    => 'filler arg',
+		'valid'		=> $trash->gif_count == 0 ? 'false' : 'true',
+		'icon'	    => array(
+			'path'  => 'img/trash.png'
 		),
-		'option' => array(
-			'subtitle'  => $subtitle,
-			'valid'	  	=> 'false',
+		'match'		=> 'trash',
+		'variables' => array(
+			'next_step' => 'launch_trash'
 		),
-		'ctrl' => array(
-			'subtitle'  => $subtitle,
-			'valid'	  	=> 'false',
+		'mods'		=> array(
+			'cmd' => array(
+				'subtitle'  => $subtitle,
+				'valid'	  	=> 'false',
+			),
+			'option' => array(
+				'subtitle'  => $subtitle,
+				'valid'	  	=> 'false',
+			),
+			'ctrl' => array(
+				'subtitle'  => $subtitle,
+				'valid'	  	=> 'false',
+			),
+			'shift' => array(
+				'subtitle'  => $subtitle,
+				'valid'	  	=> 'false',
+			),
 		),
-		'shift' => array(
-			'subtitle'  => $subtitle,
-			'valid'	  	=> 'false',
-		),
-	),
-);
+	);
+}
 
 // Encode our array as JSON for Alfred's output
 echo json_encode( $items );
