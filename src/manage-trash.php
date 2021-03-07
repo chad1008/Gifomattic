@@ -44,7 +44,7 @@ if ( $next_step == 'launch_trash') {
 
 		$items['items'][] = array(
 			'title' => "Trashed: $gif->name",
-			'subtitle' => 'Restore this GIF',
+			'subtitle' => 'Restore this GIF (hold CTRL to permanently delete this GIF)',
 			'arg' => $gif->id,
 			'icon' => array(
 				'path' => $gif->icon,

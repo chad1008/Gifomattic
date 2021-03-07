@@ -8,9 +8,28 @@ require_once( 'functions.php' );
 // Determine the next step based on user actions
 $next_step = getenv( 'next_step' );
 $id		   = getenv( 'item_id' );
+$gif	   = $id != false ? new GIF( $id) : '';
 
-// If the next step is to empty the trash, loop through all trashed GIFs and delete each one
-if ( $next_step == 'empty_trash' ) {
+// If the next step is to restore an individual GIF
+if ( $next_step == 'restore_gif' ) {
+	
+	$gif->restore();
+
+	// Prepare notification message
+	$subtitle = '"' . $gif->name . '" has been has been returned to your library';
+
+	// Prepare script output
+	$output = array(
+		'alfredworkflow' => array(
+			'variables' => array(
+				'notification_title' => 'GIF restored!',
+				'notification_text'  => popup_notice( $subtitle ),
+			),
+		),
+	);
+
+// If the next step is to empty the trash
+} elseif ( $next_step == 'empty_trash' ) {
 
 	// Query all currently trashed GIFs
 	$trash = new GIF_Query( '','',TRUE );
@@ -44,12 +63,9 @@ if ( $next_step == 'empty_trash' ) {
 			),
 		),
 	);
-// Or, if the next step is to delete an individual GIF, find and delete it
+// Or, if the next step is to delete an individual GIF
 } elseif ( $next_step == 'delete_gif' ) {
-
-	// Query the selected GIF
-	$gif = new GIF( $id );
-
+	
 	// Delete the GIF
 	$gif->delete();
 

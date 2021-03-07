@@ -482,6 +482,19 @@ class GIF {
 	}
 
 	/**
+	 * Restore the GIF from the trash
+	 *
+	 * @since 2.0
+	 */
+	public function restore() {
+
+		// Reset in_trash to 0 and clear the trash_date
+		$stmt = $this->db->prepare( "UPDATE gifs SET in_trash = 0, trash_date = NULL WHERE gif_id IS :id" );
+		$stmt->bindValue( ':id', $this->id );
+		$stmt->execute();
+	}
+
+	/**
 	 * Permanently delete the GIF
 	 *
 	 * @since 2.0
