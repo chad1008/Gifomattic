@@ -303,3 +303,35 @@ function popup_notice( $message = '', $error = FALSE ) {
 	$rand = $messages[array_rand( $messages )];
 	return $rand . "\r\n" . $message;
 }
+
+/**
+ * Randomze the workflow icon
+ *
+ * Resets the workflow icon to a randomly selected color variant whenever the workflow is activated
+ *
+ * @since 2.0
+ *
+ * @return string
+ */
+function update_icon() {
+	
+	// List possible source file numbers
+	$logos = array(
+		'1',
+		'2',
+		'3',
+		'4',
+		'5',
+	);
+	// Select a random file number
+	$number = array_rand( $logos );
+	
+	// Grab the sourece file using the randomly generated number
+	$source = 'img/logos/logo' . $logos[$number] . '.png';
+	
+	// Set destination path and filename
+	$destination = 'icon.png';
+	
+	// Copy the source file over the destination file
+	copy( $source, $destination );
+}

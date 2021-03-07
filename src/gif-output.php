@@ -12,6 +12,9 @@
 
 require_once ( 'functions.php' );
 
+// Just for fun, update the workflow's icon
+update_icon();
+
 // Set the query input to the ID passed in by Alfred, and store the item type
 $id = $argv[1];
 
