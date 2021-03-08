@@ -150,6 +150,7 @@ $items['items'][] = array(
 	),
 	'variables' => array(
 		'item_type' => 'gif',
+		'new_gif'   => 'true',
 		'gif_url'   => is_valid_url( $input ) ? $input : '',
 		'next_step' => is_valid_url( $input ) ? 'gif_name' : 'gif_url',
 		'standby_1' => 'Saving your GIF',

@@ -81,7 +81,7 @@ if ( is_gif() ) {
 		);
 
 		// While on the first step, if this is an existing GIF, provide an option to keep the current url
-		if ( is_gif() ) {
+		if ( getenv( 'new_gif' ) != 'true' ) {
 			$items['items'][] = array(
 				'title' => "Keep the GIF's current URL",
 				'subtitle' => $gif->url,
@@ -115,7 +115,7 @@ if ( is_gif() ) {
 		);
 
 		// While on the gif_name step, if this is an existing GIF provide an option to keep the current name
-		if ( is_gif() ) {
+		if ( getenv( 'new_gif' ) != 'true' ) {
 			$items['items'][] = array(
 				'title' => "Keep the GIF's current name",
 				'subtitle' => $gif->name,
