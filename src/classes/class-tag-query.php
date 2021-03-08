@@ -142,11 +142,9 @@ class Tag_Query {
 	/**
 	 * The current tag being accessed by the loop
 	 *
-	 * Outputs XML list elements formatted for Alfred
-	 *
 	 * @since 2.0
 	 *
-	 * @return array
+	 * @return object
 	 */
 	public function the_tag() {
 		// Increment the current_tag pointer, and then use it to identify the current tag from the tag array
