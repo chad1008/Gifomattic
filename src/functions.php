@@ -317,13 +317,10 @@ function popup_notice( $message = '', $error = FALSE ) {
 function update_icon() {
 	
 	// List possible source file numbers
-	$logos = array(
-		'1',
-		'2',
-		'3',
-		'4',
-		'5',
-	);
+	for ( $i = 1; $i<=12; ++$i ) {
+		$logos[] = $i;
+	}
+
 	// Select a random file number
 	$number = array_rand( $logos );
 	
