@@ -68,7 +68,6 @@ function is_tag() {
  *
  * @return bool
  */
-
 function is_legacy_db() {
 	$file = $_SERVER['alfred_workflow_data'] . '/gifomattic.db';
 	$db = new sqlite3( $file );
@@ -89,10 +88,10 @@ function is_legacy_db() {
 	while ($column = $result->fetchArray()) {
 		$columns[] = $column['name'];
 	}
-	$columns_count = count($columns);
-	$legacy_match = count(array_intersect_assoc($legacy, $columns));
+	$columns_count = count( $columns );
+	$legacy_match = count( array_intersect_assoc( $legacy, $columns ) );
 
-	if ($legacy_match == 7 && $columns_count == 7) {
+	if ( $legacy_match == 7 && $columns_count == 7 ) {
 		return TRUE;
 	} else {
 		return FALSE;
@@ -306,7 +305,7 @@ function popup_notice( $message = '', $error = FALSE ) {
 }
 
 /**
- * Randomze the workflow icon
+ * Randomize the workflow icon
  *
  * Resets the workflow icon to a randomly selected color variant whenever the workflow is activated
  *
@@ -332,4 +331,87 @@ function update_icon() {
 	
 	// Copy the source file over the destination file
 	copy( $source, $destination );
+}
+
+/**
+ * Fill out placeholder mods in an Alfred script filter item
+ *
+ * @param array  $array    The array placeholder mods should be added to
+ * @param mixed  $format   The structure of the required placeholder mods
+ * @param string $subtitle The subtitle to be applied if the default format is being used
+ *
+ * @return array
+ */
+function fill_out_mods( $array, $format = '', $subtitle = '' ) {
+	// Set default format
+	if ( '' === $format ) {
+		$format = $mod_format = array(
+			'subtitle' => $subtitle,
+		);
+	}
+
+	// List all possible mods
+	$mods = array(
+		'cmd',
+		'option',
+		'ctrl',
+		'shift',
+	);
+
+	// Add any missing mods to the array using provided format
+	foreach ( $mods as $mod ) {
+		if ( !array_key_exists( $mod, $array['mods'] ) ) {
+			$array['mods'][$mod] = $format;
+		}
+	}
+
+	return $array;
+}
+/**
+ * Prevent Alfred from displaying his default actions on unused modifier keys
+ *
+ * @param array $items The array that placeholder mods should be added to
+ * 
+ * @return array
+ */
+function fix_mods( $items ) {
+	// Initialize an array of fixed items
+	$fixed_items = array();
+
+	// List all possible mods
+	$mods = array(
+		'cmd',
+		'option',
+		'ctrl',
+		'shift',
+	);
+
+	// Loop through each provided list items
+	foreach ( $items['items'] as $item ) {
+		// Initialize the main item subtitle and validity (if missing, default validity to 'true')
+		$subtitle = $item['subtitle'];
+		$valid = isset ( $item ['valid'] ) ? $item['valid'] : 'true';
+
+		// If the 'mods' sub-array is missing, initialize it
+		if ( !array_key_exists( 'mods', $item ) ) {
+			$item['mods'] = array();
+		}
+		
+		// Initialize default format
+		$format = array(
+			'subtitle' => $subtitle,
+			'valid'    => $valid,
+		);
+		
+		// Loop through each possible mod and if it's missing, insert it with default values 
+		foreach ( $mods as $mod ) {
+			if ( !array_key_exists( $mod, $item['mods'] ) ) {
+				$item['mods'][$mod] = $format;
+			}
+		}
+
+		$fixed_items['items'][] = $item;
+	}
+
+	return $fixed_items;
 }

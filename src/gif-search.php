@@ -9,22 +9,27 @@
 
 require_once ( 'functions.php' );
 
-// Initialize all the data
-$input = $argv[1];
+// Initialize the workflow data
 $flow  = new Workflow();
+
+// Check database and prompt for update if needed
+if ( is_legacy_db() ) {
+	$flow->initiate_update();
+
+	$items = fix_mods( $flow->items );
+
+	// Encode the items array as JSON for Alfred's output
+	echo json_encode( $items );
+	die;
+}
+
+// Initialize the remaining data
+$input = $argv[1];
 $gifs  = new GIF_Query( $input );
 $tags  = new Tag_Query( $input );
 $trash = new GIF_Query( '','',TRUE );
 
-// Initialize the items array
-$flow->initialize_items();
 
-if ( is_legacy_db() ) {
-	$flow->initiate_update();
-
-	echo json_encode( $flow->items );
-	die;
-}
 
 // Clean up any old GIFs that have been in the trash for >30 days
 trash_cleanup();
@@ -44,7 +49,7 @@ if ( $gifs->have_gifs() || $tags->have_tags() ) {
 	while ( $gifs->have_gifs() ) {
 		$the_gif = $gifs->the_gif();
 
-		$flow->the_gif( $the_gif, 'search' );
+		$flow->the_gif( $the_gif );
 	}
 } else {
 	$flow->no_results( 'both' );
@@ -58,5 +63,8 @@ if ( 'trash' === $input ) {
 	$flow->view_trash( $trash );
 }
 
-// Encode our array as JSON for Alfred's output
-echo json_encode( $flow->items );
+// Fix unused modifier keys
+$items = fix_mods( $flow->items );
+
+// Encode the items array as JSON for Alfred's output
+echo json_encode( $items );
