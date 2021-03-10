@@ -34,6 +34,16 @@ $trash = new GIF_Query( '','',TRUE );
 // Clean up any old GIFs that have been in the trash for >30 days
 trash_cleanup();
 
+// Using 'add' or a valid URL as a keyword, display prompt to add a new GIF
+if ( 'add' === $input || is_valid_url( $input ) ) {
+	$flow->add_gif($input);
+}
+
+// Using 'trash' as a keyword, display prompt to view trash
+if ( 'trash' === $input ) {
+	$flow->view_trash( $trash );
+}
+
 //The Gifomattic loop!
 // Imitation is the sincerest form of flattery...
 if ( $gifs->have_gifs() || $tags->have_tags() ) {
@@ -53,14 +63,6 @@ if ( $gifs->have_gifs() || $tags->have_tags() ) {
 	}
 } else {
 	$flow->no_results( 'both' );
-}
-
-// Display an option to add a new GIF
-$flow->add_gif( $input );
-
-// Using 'trash' as a keyword, display prompt to view Trash, but make sure it's invalid if the trash is empty
-if ( 'trash' === $input ) {
-	$flow->view_trash( $trash );
 }
 
 // Output the list of items

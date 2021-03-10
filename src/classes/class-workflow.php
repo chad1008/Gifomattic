@@ -202,7 +202,7 @@ class Workflow {
 		if ( is_valid_url( $input ) ) {
 			$subtitle = "Save GIF URL: $input";
 		} else {
-			$subtitle = 'Enter a valid URL';
+			$subtitle = 'Add a new GIF to your library (please have the URL ready!)';
 		}
 
 		// Build the list item
@@ -211,7 +211,7 @@ class Workflow {
 			'title'    => 'Add a new GIF to your library',
 			'subtitle' => $subtitle,
 			'arg'	   => $input,
-			'valid'    => is_valid_url( $input ) ? 'true' : 'false',
+			'valid'    => 'true',
 			'icon' 	   => array(
 				'path' => 'img/add.png'
 			),
@@ -252,7 +252,7 @@ class Workflow {
 		);
 		$subtitle = gif_quantity( $args );
 
-		// Build the trash prompt
+		// Build the trash prompt (invalid if trash is empty)
 		$this->items['items'][] = array(
 			'title'	    => 'View and manage trashed GIFs',
 			'subtitle'  => $subtitle,
