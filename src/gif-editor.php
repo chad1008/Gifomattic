@@ -8,137 +8,33 @@
 require_once ( 'functions.php' );
 
 $input = $argv[1];
-$id = ( getenv( 'item_id' ) );
-$next_step = ( getenv( 'next_step' ) );
 
-// Initialize items array for Alfred output
-$items = array(
-	'items' => array(),
-);
+// Initialize the Workflow object
+$flow = new Workflow();
 
 // If the selected item was a GIF, enter the GIF editing flow
 if ( is_gif() ) {
-
-	$gif = new GIF( $id );
+	$the_gif = new GIF( $flow->item_id );
 	
 	// If this is the initial editing step, display prompts to either edit or trash the GIF
-	if ( $next_step == 'launch_editor' ) {
-		$items['items'][] = array(
-			'title' 	=> 'Edit "' . $gif->name . '"',
-			'subtitle'  => "Modify the URL, name, or the tags assigned to this GIF",
-			'arg'		=> 'filler to trigger notifications',
-			'icon'		=> array(
-				'path'  => 'img/edit.png'
-			),
-			'variables' => array(
-				'next_step' => 'gif_url',
-				'exit'		=> 'false',
-			),
-		);
-		$items['items'][] = array(
-			'title'    => 'Trash "' . $gif->name . '"',
-			'subtitle' => "Once trashed, the GIF will be deleted in 30 days",
-			'arg' 	   => 'filler to trigger notifications',
-			'icon'	   => array(
-				'path' => 'img/trash.png'
-			),
-			'variables' => array(
-				'next_step' 		 => 'save_gif',
-				'trash_gif'			 => 'true',
-				'notification_title' => "GIF trashed!",
-				'notification_text'  => '"' . $gif->name . '" will be permanently deleted in 30 days.',
-				'exit'				 => 'true',
-			),
-		);
+	if ( 'launch_editor' === $flow->next_step ) {
+		$flow->launch_editor( $the_gif );
 
-		// If this is the gif_url step, start with the GIF URL prompt
-	} elseif ($next_step == 'gif_url') {
-		// Define subtitle based on validation of user input
-		if ($input == '') {
-			$subtitle = 'Enter the new GIF URL';
-		} elseif (is_valid_url($input)) {
-			$subtitle = $input;
-		} else {
-			$subtitle = 'Please enter a valid URL';
-		}
+	// If this is the gif_url step, start with the GIF URL prompts
+	} elseif ( 'gif_url' === $flow->next_step ) {
+		$flow->edit_gif_url( $the_gif, $input );
 
-		$items['items'][] = array(
-			'title' => 'New GIF URL:',
-			'subtitle' => $subtitle,
-			'arg' => 'filler to trigger notifications',
-			'valid' => is_valid_url($input) ? 'true' : 'false',
-			'icon' => array(
-				'path' => 'img/edit.png',
-			),
-			'variables' => array(
-				'gif_url' => $input,
-				'next_step' => 'gif_name',
-				'standby_1' => 'Saving your GIF',
-				'standby_2' => 'This should only take a moment, please stand by',
-				'notification_text' => popup_notice("GIF saved: $gif->name"),
-				'exit' => 'false',
-			),
-		);
-
-		// While on the first step, if this is an existing GIF, provide an option to keep the current url
-		if ( getenv( 'new_gif' ) != 'true' ) {
-			$items['items'][] = array(
-				'title' => "Keep the GIF's current URL",
-				'subtitle' => $gif->url,
-				'arg' => '',
-				'icon' => array(
-					'path' => 'img/checkmark.png'
-				),
-				'variables' => array(
-					'gif_url' => '',
-					'next_step' => 'gif_name',
-					'exit' => 'false',
-				),
-			);
-		}
-		// If this is the gif_name step, output the New GIF Name prompt
-	} elseif ( $next_step == 'gif_name' ) {
-		$items['items'][] = array(
-			'title' => 'New GIF name:',
-			'subtitle' => $input != null ? $input : 'Enter the new GIF name',
-			'arg' => 'filler to trigger notifications',
-			'valid' => $input == '' ? 'false' : 'true',
-			'icon' => array(
-				'path' => 'img/edit.png',
-			),
-			'variables' => array(
-				'gif_name' => $input,
-				'next_step' => 'save_gif',
-				'notification_text' => popup_notice("GIF saved: $input"),
-				'exit' => 'false',
-			),
-		);
-
-		// While on the gif_name step, if this is an existing GIF provide an option to keep the current name
-		if ( getenv( 'new_gif' ) != 'true' ) {
-			$items['items'][] = array(
-				'title' => "Keep the GIF's current name",
-				'subtitle' => $gif->name,
-				'arg' => 'filler to trigger notifications',
-				'icon' => array(
-					'path' => 'img/checkmark.png'
-				),
-				'variables' => array(
-					'gif_name'  => '',
-					'next_step' => 'save_gif',
-					'exit'		=> 'false',
-				),
-			);
-		}
+	// If this is the gif_name step, output the New GIF Name prompt
+	} elseif ( 'gif_name' === $flow->next_step ) {
+		$flow->edit_gif_name( $the_gif, $input );
 	}
 
 // If the selected item was a tag, enter the tag editing flow
 } elseif ( is_tag () ) {
-
-	$tag = new Tag ($id );
+	$tag = new Tag ( $flow->item_id );
 
 	// If the next step is 'confirm_delete' display a confirmation prompts
-	if ( getenv( 'next_step' ) == 'confirm_delete' ) {
+	if ( 'confirm_delete' === $flow->next_step ) {
 
 		// First the option to confirm the deletion
 		$items['items'][] = array(
@@ -205,5 +101,8 @@ if ( is_gif() ) {
 	);
 }
 
-// Encode our array as JSON for Alfred's output
+// Fix unused modifier keys
+$items = fix_mods( $flow->items );
+
+// Encode the items array as JSON for Alfred's output
 echo json_encode( $items );

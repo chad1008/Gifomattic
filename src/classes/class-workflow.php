@@ -13,9 +13,12 @@ class Workflow {
 	 *
 	 * @since 2.0
 	 *
-	 * @var integer $item_id The ID of the GIF or tag that's currently being worked on
+	 * @var integer $item_id   The ID of the GIF or tag that's currently being worked on
+	 * @var string  $next_step The next step the workflow should enter. Used for workflow nodes that get looped through multiple times
 	 */
 	public $item_id;
+	public $next_step;
+	public $new_gif;
 	
 	/**
 	 * The items array for script filter output
@@ -34,7 +37,9 @@ class Workflow {
 	 * @since 2.0
 	 */
 	public function __construct() {
-		$this->item_id = getenv( 'item_id' );
+		$this->item_id	 = getenv( 'item_id' );
+		$this->next_step = getenv( 'next_step' );
+		$this->new_gif   = getenv( 'new_gif' );
 
 		$this->items = array(
 			'items' => array(),
@@ -216,8 +221,8 @@ class Workflow {
 				'new_gif'   => 'true',
 				'gif_url'   => is_valid_url( $input ) ? $input : '',
 				'next_step' => is_valid_url( $input ) ? 'gif_name' : 'gif_url',
-				'notification_title' => 'Saving your GIF',
-				'notification_text'  => 'This should only take a moment, please stand by',
+				'standby_title' => 'Saving your GIF...',
+				'standby_text'  => 'This should only take a moment, please stand by',
 			),
 		);
 	}
@@ -266,6 +271,9 @@ class Workflow {
 	public function display_gif_name( $the_gif ) {
 		// Update the reusable Preview icon file
 		$the_gif->generate_preview_icon();
+
+		// Just for fun, update the workflow's icon
+		update_icon();
 
 		// Initialize subtitle statement
 		$subtitle = 'Share this GIF (CMD to preview in browser)';
@@ -401,24 +409,120 @@ class Workflow {
 						'item_type' => 'tag',
 						'item_id'   => $tag->id,
 					),
-					'mods'		=> array(
-						'cmd'	=> array(
-							'valid'		=> 'false',
-							'subtitle' => $subtitle,
-							'icon'	    => array(
-								'path' => $tag->gifs_with_tag == 1 ? 'img/tag.png' : 'img/view tag.png',
-							),
-						),
-						'shift'	=> array(
-							'valid'		=> 'false',
-							'subtitle' => $subtitle,
-							'icon'	    => array(
-								'path' => $tag->gifs_with_tag == 1 ? 'img/tag.png' : 'img/view tag.png',
-							),
-						),
-					),
 				);
 			}
+		}
+	}
+	
+	public function launch_editor( $the_gif ) {
+		// Build 'Edit GIF' list item
+		$this->items['items'][] = array(
+			'title' 	=> 'Edit "' . $the_gif->name . '"',
+			'subtitle'  => "Modify the URL, name, or the tags assigned to this GIF",
+			'arg'		=> 'filler arg',
+			'icon'		=> array(
+				'path'  => 'img/edit.png'
+			),
+			'variables' => array(
+				'next_step' => 'gif_url',
+				'exit'		=> 'false',
+			),
+		);
+
+		// Build 'Trash GIF' list item
+		$this->items['items'][] = array(
+			'title'    => 'Trash "' . $the_gif->name . '"',
+			'subtitle' => "Once trashed, the GIF will be deleted in 30 days",
+			'arg' 	   => 'filler arg',
+			'icon'	   => array(
+				'path' => 'img/trash.png'
+			),
+			'variables' => array(
+				'next_step' 		 => 'save_gif',
+				'trash_gif'			 => 'true',
+				'notification_title' => "GIF trashed!",
+				'notification_text'  => '"' . $the_gif->name . '" will be permanently deleted in 30 days.',
+				'exit'				 => 'true',
+			),
+		);
+	}
+
+	public function edit_gif_url( $the_gif, $input ) {
+		// Define subtitle based on validation of user input
+		if ( '' === $input ) {
+			$subtitle = 'Enter the new GIF URL';
+		} elseif ( is_valid_url( $input ) ) {
+			$subtitle = $input;
+		} else {
+			$subtitle = 'Please enter a valid URL';
+		}
+
+		// Build the 'New URL' list item
+		$this->items['items'][] = array(
+			'title' => 'New GIF URL:',
+			'subtitle' => $subtitle,
+			'arg' => 'filler arg',
+			'valid' => is_valid_url( $input ) ? 'true' : 'false',
+			'icon' => array(
+				'path' => 'img/edit.png',
+			),
+			'variables' => array(
+				'gif_url' => $input,
+				'next_step' => 'gif_name',
+				'standby_title' => 'Saving your GIF...',
+				'standby_text'  => 'This should only take a moment, please stand by',
+				'exit' => 'false',
+			),
+		);
+		// While on the first step, if this is an existing GIF build the 'Keep current URL' list item
+		if ( 'true' != $this->new_gif ) {
+			$this->items['items'][] = array(
+				'title'    => "Keep the GIF's current URL",
+				'subtitle' => $the_gif->url,
+				'arg'	   => '',
+				'icon'	   => array(
+					'path' => 'img/checkmark.png'
+				),
+				'variables' => array(
+					'gif_url'   => '',
+					'next_step' => 'gif_name',
+					'exit'		=> 'false',
+				),
+			);
+		}
+	}
+
+	public function edit_gif_name( $the_gif, $input ) {
+		$this->items['items'][] = array(
+			'title'    => 'New GIF name:',
+			'subtitle' => null != $input ? $input : 'Enter the new GIF name',
+			'arg'	   => 'filler arg',
+			'valid'	   => '' === $input ? 'false' : 'true',
+			'icon'	   => array(
+				'path' => 'img/edit.png',
+			),
+			'variables' => array(
+				'gif_name'  		=> $input,
+				'next_step' 		=> 'save_gif',
+				'exit' 				=> 'false',
+			),
+		);
+
+		// While on the gif_name step, if this is an existing GIF provide an option to keep the current name
+		if ( 'true' != $this->new_gif ) {
+			$this->items['items'][] = array(
+				'title'	   => "Keep the GIF's current name",
+				'subtitle' => $the_gif->name,
+				'arg'	   => 'filler to trigger notifications',
+				'icon'	   => array(
+					'path' => 'img/checkmark.png'
+				),
+				'variables' => array(
+					'gif_name'  => '',
+					'next_step' => 'save_gif',
+					'exit'		=> 'false',
+				),
+			);
 		}
 	}
 }

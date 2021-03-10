@@ -50,7 +50,7 @@ if ( is_gif() ) {
 				'arg' => '',
 				'variables' => array(
 					'item_id' => $gif->new_props['id'],
-					'tag_edit_mode' => $gif->is_new ? 'add_tags' : '',
+					'tag_edit_mode' => $gif->is_new ? 'add_tags' : '', //TODO fix 'GIF saved' notification
 				),
 			),
 		);
