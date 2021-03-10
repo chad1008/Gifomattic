@@ -263,45 +263,49 @@ function gif_quantity( array $args ) {
  * Prepare a success/failure message
  *
  * @param string $message String to be appended to the random success message
- * @raram bool   $error   Sets error state for output. Defaults to FALSE
+ * @param bool   $error   Sets error state for output. Defaults to FALSE
+ * 
  * @since 2.0
  * 
  * @return string
  */
-function popup_notice( $message = '', $error = FALSE ) {
+function popup_notice( $message = '', $error = false, $inline = false ) {
 	// Conditionally define outputs for random selection
 	if ( !$error ) {
 		$messages = array(
 			"Boom!",
 			"Huzzah!",
-			"Nailed It!",
-			"You're my hero",
+			"Nailed it!",
+			"You're my hero.",
 			"Beep Beep Boop...",
-			"It's GIF. Not JIF.",
 			"Mission accomplished!",
 			"Oh, that's a good one!",
-			"Your GIF is my command",
+			"Your GIF is my command.",
 			"Is it hard to be so awesome?",
+			"Remember, it's 'GIF'. Not 'JIF.'",
 			"The GIF is strong with this one...",
-			"I love it when a plan comes together",
-			"With great GIF comes great responsibility",
+			"I love it when a plan comes together.",
+			"With great GIF comes great responsibility.",
 		);
 	} else {
 		$messages = array(
 			"FAIL!",
-			"Womp Womp",
-			"Ummmmm.... no.",
-			"You must be new here",
+			"Womp Womp...",
+			"You must be new here.",
 			"Oops. Something went wrong.",
-			"I sense a disturbance in that gif",
+			"I sense a disturbance in the GIF.",
 			"Are you sure you know what you're doing?",
-			"I don't know what any of those words mean",
+			"I don't know what any of those words mean.",
 			"Need more info. Or maybe less info. I don't know, something's borked.",
 		);
 	}
 
 	$rand = $messages[array_rand( $messages )];
-	return $rand . "\r\n" . $message;
+
+	// Set up an optional line break
+	$join = true === $inline ? ' ' : "\r\n";
+
+	return $rand . $join . $message;
 }
 
 /**
@@ -314,7 +318,6 @@ function popup_notice( $message = '', $error = FALSE ) {
  * @return string
  */
 function update_icon() {
-	
 	// List possible source file numbers
 	for ( $i = 1; $i<=12; ++$i ) {
 		$logos[] = $i;
@@ -323,7 +326,7 @@ function update_icon() {
 	// Select a random file number
 	$number = array_rand( $logos );
 	
-	// Grab the sourece file using the randomly generated number
+	// Grab the source file using the randomly generated number
 	$source = 'img/logos/logo' . $logos[$number] . '.png';
 	
 	// Set destination path and filename

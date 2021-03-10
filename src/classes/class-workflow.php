@@ -540,14 +540,96 @@ class Workflow {
 	}
 
 	/**
+	 * Display tag deletion confirmation interface
+	 *
+	 * @param object $the_tag The Tag() object currently slated for deletion
+	 */
+	public function confirm_tag_delete( $the_tag ) {
+		// Build confirmation list item
+		$this->items['items'][] = array(
+			'title'	   => 'Yes, I\'m sure I want to delete the "' . $the_tag->name . '" tag',
+			'subtitle' => "This cannot be undone!",
+			'icon'	   => array(
+				'path' => 'img/destroy.png',
+			),
+			'variables' => array(
+				'next_step'		     => 'save_gif',
+				'confirmed_delete'   =>'true',
+				'notification_title' => "Tag deleted",
+				'notification_text'	 => popup_notice( "\"$the_tag->name\" has been removed from all GIFs" ),
+			),
+		);
+
+		// Build cancellation list item
+		$this->items['items'][] = array(
+			'title'	   => 'No, wait! I don\'t want to delete the "' . $the_tag->name . '" tag!',
+			'subtitle' => "Go back to tag editing",
+			'icon'	   => array(
+				'path' => 'img/thinking.png',
+			),
+			'variables' => array(
+				'next_step'		   => '',
+				'confirmed_delete' =>'',
+			),
+		);
+	}
+
+	/**
+	 * Display tag editing interface
+	 *
+	 * @param object $the_tag The Tag() object currently being edited
+	 * @param string $input   User input to be saved as a new tag name
+	 */
+	public function edit_tag( $the_tag, $input ) {
+		// Build tag name list item
+		$this->items['items'][] = array(
+			'title'    => "New tag name: $input",
+			'subtitle' => "Current name: $the_tag->name",
+			'arg'	   => $input,
+			'icon' 	   => array(
+				'path' => 'img/edit.png'
+			),
+			'variables' => array(
+				'tag_name'  => $input,
+				'next_step' => 'save_gif',
+				'notification_title' => 'Tag updated',
+				'notification_text' => popup_notice( "Tag name changed to: \"$input\"" ),
+			),
+		);
+
+		// Display an option to delete the tag
+		$this->items['items'][] = array(
+			'title'    => 'Delete the "' . $the_tag->name . '" tag',
+			'subtitle' => '(No GIFs will be deleted)',
+			'icon' 	   => array(
+				'path' => 'img/destroy.png',
+			),
+			'variables' => array(
+				'next_step' => 'confirm_delete'
+			),
+		);
+	}
+
+	/**
+	 * Display a generic error message
+	 */
+	public function error() {
+		$this->items['items'][] = array(
+			'title' 	=> "Sorry, there was an error... Please try again.",
+			'subtitle'  => popup_notice( '', true, true  ),
+			'valid'		=> 'false',
+		);
+
+	}
+
+	/**
 	 * Output the items array
 	 * 
 	 * Prevents Alfred from displaying his default actions on unused modifier keys
 	 *
 	 * @return array
 	 */
-	public function output_items()
-	{
+	public function output_items() {
 		// List all possible mods
 		$mods = array(
 			'cmd',
