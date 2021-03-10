@@ -31,7 +31,7 @@ if ( is_tag() ) {
 	$the_gif = new GIF( $flow->item_id );
 	
 	// Display the various GIF details
-	$flow->display_gif_name( $the_gif );
+	$flow->display_gif_details( $the_gif );
 
 	// Display the tags assigned to the GIF
 	$flow->display_gif_tags( $the_gif );

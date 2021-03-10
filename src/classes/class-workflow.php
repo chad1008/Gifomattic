@@ -268,7 +268,12 @@ class Workflow {
 		);
 	}
 
-	public function display_gif_name( $the_gif ) {
+	/**
+	 * Display the details for an individual GIF
+	 *
+	 * @param object $the_gif The GIF object currently being displayed
+	 */
+	public function display_gif_details( $the_gif ) {
 		// Update the reusable Preview icon file
 		$the_gif->generate_preview_icon();
 
@@ -362,6 +367,11 @@ class Workflow {
 		);
 	}
 
+	/**
+	 * Display the tags assigned to an individual GIF
+	 *
+	 * @param object $the_gif The GIF() object currently being displayed
+	 */
 	public function display_gif_tags( $the_gif ) {
 		// Add the GIF's tags to the output array, display a message if there are none
 		if ( empty( $the_gif->tags ) ) {
@@ -401,7 +411,12 @@ class Workflow {
 			}
 		}
 	}
-	
+
+	/**
+	 * Display prompts to launch the GIF editor
+	 *
+	 * @param object $the_gif The GIF() object to be opened in the Editor
+	 */
 	public function launch_editor( $the_gif ) {
 		// Build 'Edit GIF' list item
 		$this->items['items'][] = array(
@@ -435,6 +450,11 @@ class Workflow {
 		);
 	}
 
+	/**
+	 * Display interface to edit the URL of a GIF
+	 *
+	 * @param object $the_gif The GIF() object currently being edited
+	 */
 	public function edit_gif_url( $the_gif, $input ) {
 		// Define subtitle based on validation of user input
 		if ( '' === $input ) {
@@ -480,6 +500,11 @@ class Workflow {
 		}
 	}
 
+	/**
+	 * Display interface to edit the name of a GIF
+	 *
+	 * @param object $the_gif The GIF() object currently being edited
+	 */
 	public function edit_gif_name( $the_gif, $input ) {
 		$this->items['items'][] = array(
 			'title'    => 'New GIF name:',
@@ -558,8 +583,7 @@ class Workflow {
 			// Update the items array with the updated item
 			$this->items['items'][$k] = $item;
 		}
-
-
+		
 		// Encode items array into JSON for Alfred to parse
 		$output = json_encode( $this->items );
 
