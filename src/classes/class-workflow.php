@@ -525,4 +525,58 @@ class Workflow {
 			);
 		}
 	}
+
+	/**
+	 * Output the items array
+	 * 
+	 * Prevents Alfred from displaying his default actions on unused modifier keys
+	 *
+	 * @return array
+	 */
+	public function output_items()
+	{
+		// List all possible mods
+		$mods = array(
+			'cmd',
+			'option',
+			'ctrl',
+			'shift',
+		);
+
+		// Loop through each provided list items
+		foreach ( $this->items['items'] as $k => $item ) {
+			// Initialize the main item subtitle and validity (if missing, default validity to 'true')
+			$subtitle = $item['subtitle'];
+			$valid = isset ( $item ['valid'] ) ? $item['valid'] : 'true';
+
+			// If the 'mods' sub-array is missing, initialize it
+			if ( !array_key_exists('mods', $item ) ) {
+				$item['mods'] = array();
+			}
+
+			// Initialize default format
+			$format = array(
+				'subtitle' => $subtitle,
+				'valid' => $valid,
+			);
+
+			// Loop through each possible mod and if it's missing, insert it with default values
+			foreach ( $mods as $mod ) {
+				if ( !array_key_exists($mod, $item['mods'] ) ) {
+					$item['mods'][$mod] = $format;
+				}
+			}
+
+			// Update the items array with the updated item
+			$this->items['items'][$k] = $item;
+		}
+
+
+		// Encode items array into JSON for Alfred to parse
+		$output = json_encode( $this->items );
+
+		// Echo the encoded array to Alfred
+		echo $output;
+	}
+
 }

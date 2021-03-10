@@ -101,8 +101,5 @@ if ( is_gif() ) {
 	);
 }
 
-// Fix unused modifier keys
-$items = fix_mods( $flow->items );
-
-// Encode the items array as JSON for Alfred's output
-echo json_encode( $items );
+// Output the list of items
+$flow->output_items();
