@@ -32,10 +32,8 @@ if ( is_tag() ) {
 	
 	// Display the various GIF details
 	$flow->display_gif_name( $the_gif );
-	$flow->display_gif_selected_count( $the_gif );
-	$flow->display_gif_random_count( $the_gif );
-	$flow->display_gif_total_count( $the_gif );
-	$flow->display_gif_date( $the_gif );
+
+	// Display the tags assigned to the GIF
 	$flow->display_gif_tags( $the_gif );
 }
 

@@ -130,7 +130,7 @@ class Workflow {
 	/**
 	 * Show an individual GIF in script filter results
 	 *
-	 * @param object $the_gif  The current Tag() object being displayed
+	 * @param object $the_gif  The current GIF() object being displayed
 	 */
 	public function the_gif( $the_gif ) {
 		// Build the list item
@@ -275,13 +275,10 @@ class Workflow {
 		// Just for fun, update the workflow's icon
 		update_icon();
 
-		// Initialize subtitle statement
-		$subtitle = 'Share this GIF (CMD to preview in browser)';
-
-		// Build GIF name display
+		// Build GIF name list item
 		$this->items['items'][] = array(
 			'title'    => $the_gif->name,
-			'subtitle' => $subtitle,
+			'subtitle' => 'Share this GIF (CMD to preview in browser)',
 			'arg'	   => $the_gif->id,
 			'valid'    => 'true',
 			'icon'	   => array(
@@ -313,11 +310,8 @@ class Workflow {
 				),
 			),
 		);
-	}
-
-	public function display_gif_selected_count( $the_gif ) {
-
-		// Build selected_count display
+		
+		// Build selected_count list item
 		$this->items['items'][] = array(
 			'title' => $the_gif->selected_count_statement,
 			'subtitle' => '',
@@ -326,10 +320,8 @@ class Workflow {
 				'path' => 'img/checkmark.png',
 			),
 		);
-	}
 
-	public function display_gif_random_count( $the_gif ) {
-		// Random count
+		// Build random count list item
 		$this->items['items'][] = array(
 			'title' => $the_gif->random_count_statement,
 			'subtitle' => '',
@@ -338,9 +330,7 @@ class Workflow {
 				'path' => 'img/random.png',
 			),
 		);
-	}
 
-	public function display_gif_total_count( $the_gif ) {
 		// Set up the icon for the GIF's total count
 		$total = $the_gif->selected_count + $the_gif->random_count;
 		if ( 0 === $total ) {
@@ -351,7 +341,7 @@ class Workflow {
 			$total_icon = 'img/nailed it.png';
 		}
 
-		// Total count
+		// Build total count list item
 		$this->items['items'][] = array(
 			'title' => $the_gif->total_count_statement['title'],
 			'subtitle' => $the_gif->total_count_statement['subtitle'],
@@ -360,10 +350,8 @@ class Workflow {
 				'path' => $total_icon,
 			),
 		);
-	}
 
-	public function display_gif_date( $the_gif ) {
-		// Date (conditional values for bug reporting if the date is missing)
+		// Build date list item (conditional values for bug reporting if the date is missing)
 		$this->items['items'][] = array(
 			'title'    => $the_gif->date == '' ? "The date for this GIF appears to be missing!" : "This GIF was saved on $the_gif->date",
 			'subtitle' => $the_gif->date == '' ? "If you saved this GIF recently, please open an issue on Github! Thanks!" : '',
@@ -387,7 +375,7 @@ class Workflow {
 			);
 		} else {
 			foreach ( $the_gif->tags as $tag ) {
-				// Set up subtitle statement based on the existing GIF count on the current tag
+				// Set up subtitle statement based on the GIF count for the current tag
 				$args = array(
 					'number' => $tag->gifs_with_tag,
 					'one'	 => 'This is the only GIF',
@@ -398,11 +386,11 @@ class Workflow {
 
 				// Build the list item
 				$this->items['items'][] = array(
-					'title' => "Tagged as: $tag->name",
+					'title'    => "Tagged as: $tag->name",
 					'subtitle' => $subtitle,
-					'arg'   => $tag->id,
-					'valid' => $tag->gifs_with_tag == 1 ? 'false' : 'true',
-					'icon'  => array(
+					'arg'	   => $tag->id,
+					'valid'	   => $tag->gifs_with_tag == 1 ? 'false' : 'true',
+					'icon'     => array(
 						'path' => $tag->gifs_with_tag == 1 ? 'img/tag.png' : 'img/view tag.png',
 					),
 					'variables' => array(
