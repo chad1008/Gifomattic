@@ -661,6 +661,210 @@ class Workflow {
 	}
 
 	/**
+	 * Display prompts to launch the tag management interface
+	 *
+	 * @since 2.0
+	 */
+
+	public function launch_tag_management() {
+		// Build 'Add tags' list item
+		$this->items['items'][] = array(
+			'title' => 'Add tags to this GIF',
+			'subtitle' => 'You can assign existing tags, or create new ones',
+			'arg'   => '',
+			'icon'  => array(
+				'path' => 'img/add tag.png',
+			),
+			'variables' => array(
+				'next_step'	=> 'add_tags',
+			),
+		);
+
+		// Build 'Remove tags' list item
+		$this->items['items'][] = array(
+			'title' => 'Remove tags from this GIF',
+			'subtitle' => 'You can always add them again later!',
+			'arg'   => '',
+			'icon'  => array(
+				'path' => 'img/remove tag.png',
+			),
+			'variables' => array(
+				'next_step'	=> 'remove_tags',
+			),
+		);
+
+		// Display 'Go back' list item
+		$this->items['items'][] = array(
+			'title'     => 'Go back',
+			'subtitle'  => 'Edit GIF URL or name',
+			'arg'	    => '',
+			'icon'		=> array(
+				'path'  => 'img/back.png'
+			),
+			'variables' => array(
+				'next_step'		=> 'gif_url',
+				'next_step'	=> '',
+				'exit'			=> 'true',
+			),
+		);
+	}
+
+	/**
+	 * Display options for adding tags to an individual GIF
+	 *
+	 * @param string $input   User input to use for tag searches
+	 * @param object $the_gif The GIF() object tags are being added to
+	 * @param object $tags    The Tag_Query object being generated based on $input
+	 *
+	 * @since 2.0
+	 */
+	public function add_tags( $input, $the_gif, $tags ){
+		// If user input is empty
+		if ( $input == '' ) {
+			// Build the 'Add a tag' list item
+			$this->items['items'][] = array(
+				'title'    => 'Add a tag',
+				'subtitle' => 'Begin typing to select an existing tag, or create a new one',
+				'arg'      => '',
+				'valid'    => false,
+				'icon'  => array(
+					'path' => 'img/add tag.png',
+				),
+			);
+			
+			// Build the 'Go back' list item
+			$this->items['items'][] = array(
+				'title' => 'Go back',
+				'subtitle' => 'Choose between adding or editing tags',
+				'arg'   => '',
+				'icon'		=> array(
+					'path'  => 'img/back.png'
+				),
+				'variables' => array(
+					'next_step'	=> '',
+				),
+			);
+			
+		// If use input is not empty	
+		} else {
+			// Check user input matches any existing tags. If it doesn't, prepare to create a new tag
+			if ( !in_array( $input, array_column( $tags->tags, 'tag') ) )  {
+				// Build the 'Create a new tag" list item
+				$items['items'][] = array(
+					'title' 	=> "Create a new tag: $input",
+					'arg'   	=> $input,
+					'variables'	=> array(
+						'is_new_tag' 	=> 'true',
+						'next_step' => 'add_tags',
+						'selected_tag'	=> $input,
+					),
+				);
+			}
+			
+			// Loop through and display existing tags that match the user input
+			while ( $tags->have_tags() ) {
+				$the_tag = $tags->the_tag();
+
+				// Prepare a quantity statement for the subtitle
+				$args = array(
+					'number' => $the_tag->gifs_with_tag,
+					'zero'   => array(
+						'No GIFs',
+						'',
+					),
+					'one'    => array(
+						'One other GIF',
+						's',
+					),
+					'many'   => array(
+						$the_tag->gifs_with_tag . ' other GIFs',
+						'',
+					),
+					'format' => 'Tag this GIF as "' . $the_tag->name . '" (%s currently use%s this tag)',
+				);
+
+				$subtitle = gif_quantity( $args );
+
+				// Build individual tag list items.  Disable any tags that are already assigned to this GIF and show a subtitle to that effect
+				$this->items['items'][] = array(
+					'title' => $the_tag->name,
+					'subtitle' => $the_gif->has_tag( $the_tag->id ) ? 'This GIF is already tagged as "' . $the_tag->name . '"' : $subtitle,
+					'arg' => $the_tag->id,
+					'icon' => array(
+						'path' => '',
+					),
+					'variables' => array(
+						'is_new_tag' => false,
+						'next_step' => 'add_tags',
+						'selected_tag'	=> $the_tag->name,
+					),
+					'valid' => $the_gif->has_tag( $the_tag->id ) ? 'false' : 'true',
+				);
+			}
+		}
+	}
+
+	/**
+	 * Display options for removing tags from an individual GIF
+	 *
+	 * @param object $the_gif The GIF() object tags are being removed from
+	 *
+	 * @since 2.0
+	 */
+	public function remove_tags( $the_gif ) {
+		// Iterate through each currently assigned tag
+		foreach ( $the_gif->tags as $tag ) {
+			// Prepare a quantity statement for the subtitle
+			$args = array(
+				'number' => $tag->gifs_with_tag - 1,
+				'zero'   => array (
+					'No',
+					's',
+					'',
+				),
+				'one'	 => array(
+					'One',
+					'',
+					's',
+				),
+				'many'   => array(
+					$tag->gifs_with_tag - 1,
+					's',
+					'',
+				),
+				'format' => '%s other GIF%s share%s this tag'
+			);
+			$subtitle = gif_quantity( $args );
+
+			// Build the list item
+			$this->items['items'][] = array(
+				'title' => 'Remove "' . $tag->name . '" from this GIF',
+				'subtitle' => $subtitle,
+				'arg'   => $tag->id,
+				'icon'  => array(
+					'path' => 'img/remove tag.png',
+				),
+				'variables' => array(
+					'selected_tag'	=> $tag->name,
+				),
+			);
+		}
+		
+		// Build navigation list item
+		$this->items['items'][] = array(
+			'title' => 'Go back',
+			'subtitle' => 'Choose between adding or editing tags',
+			'arg'   => '',
+			'icon'		=> array(
+				'path'  => 'img/back.png'
+			),
+			'variables' => array(
+				'next_step'	=> '',
+			),
+		);
+	}
+	
+	/**
 	 * Output the items array for an Alfred script filter
 	 * 
 	 * Prevents Alfred from displaying his default actions on unused modifier keys

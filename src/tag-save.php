@@ -17,7 +17,7 @@ require_once( 'functions.php' );
  * @var $db object The Gifomattic database connection
  */
 
-$mode		  = getenv( 'tag_edit_mode' );
+$mode		  = getenv( 'next_step' );
 $is_new_tag	  = getenv( 'is_new_tag' );
 $gif_id		  = getenv( 'item_id' );
 $input		  = $argv[1];
@@ -87,7 +87,7 @@ $output = array (
 		'arg'		 => '',
 		'variables'	 => array(
 			'item_id'   => $gif_id,
-			'tag_edit_mode' => $mode,
+			'next_step' => $mode,
 			'notification'  => $notification
 		),
 	),
