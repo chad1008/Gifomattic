@@ -751,5 +751,4 @@ class Workflow {
 		// Encode the config array into JSON for Alfred to parse and echo it out
 		echo json_encode( $config );
 	}
-
 }

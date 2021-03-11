@@ -7,11 +7,12 @@
 
 require_once( 'functions.php' );
 
-$input = $argv[1];
-$gif_id =  getenv( 'item_id' );
-$gif = new GIF( $gif_id );
-$tags = new Tag_Query( $input );
-$mode = getenv( 'tag_edit_mode' );
+// Initialize all the data
+$input	 = $argv[1];
+$flow	 = new Workflow();
+$the_gif = new GIF( $flow->item_id );
+$tags	 = new Tag_Query( $input );
+$mode	 = getenv( 'tag_edit_mode' );
 
 // Initialize items array for Alfred output
 $items = array(
@@ -19,7 +20,7 @@ $items = array(
 );
 
 // Determine if tags should be added or removed
-if ( $mode == 'add_tags' || empty ( $gif->tags ) ) {
+if ( $mode == 'add_tags' || empty ( $the_gif->tags ) ) {
 	// Display prompts to add a tag or go back to mode selection
 	if ( $input == '' ) {
 		$items['items'][] = array(
@@ -83,7 +84,7 @@ if ( $mode == 'add_tags' || empty ( $gif->tags ) ) {
 			//	Disable any tags that are already assigned to this GIF and show a subtitle to that effect
 			$items['items'][] = array(
 				'title' => $the_tag->name,
-				'subtitle' => $gif->has_tag( $the_tag->id ) ? 'This GIF is already tagged as "' . $the_tag->name . '"' : sprintf($subtitle, $q, $u),
+				'subtitle' => $the_gif->has_tag( $the_tag->id ) ? 'This GIF is already tagged as "' . $the_tag->name . '"' : sprintf($subtitle, $q, $u),
 				'arg' => $the_tag->id,
 				'icon' => array(
 					'path' => '',
@@ -93,13 +94,13 @@ if ( $mode == 'add_tags' || empty ( $gif->tags ) ) {
 					'tag_edit_mode' => 'add_tags',
 					'selected_tag'	=> $the_tag->name,
 				),
-				'valid' => $gif->has_tag( $the_tag->id ) ? 'false' : 'true',
+				'valid' => $the_gif->has_tag( $the_tag->id ) ? 'false' : 'true',
 			);
 		}
 	}
 } elseif ( $mode == 'remove_tags' ) {
 	// Add each of the GIF's tags to the items array
-	foreach ( $gif->tags as $tag ) {
+	foreach ( $the_gif->tags as $tag ) {
 		// Prepare a quantity statement for the subtitle
 		$args = array(
 			'number' => $tag->gifs_with_tag - 1,
