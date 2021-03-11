@@ -7,89 +7,68 @@
 
 require_once( 'functions.php' );
 
-$id = getenv( 'item_id' );
-$trash_mode = getenv( 'trash_gif' );
+$flow = new Workflow();
 
 // If the current item is a GIF, enter the GIF saving flow
 if ( is_gif() ) {
-
 	// If the selected item is an existing GIF, query it using the ID
-	if ( $id != false ) {
-		$gif = new GIF( $id );
+	if ( false != $flow->item_id ) {
+		$the_gif = new GIF( $flow->item_id );
 
 	// Otherwise, initialize a new, empty GIF object
 	} else {
-		$gif = new GIF();
+		$the_gif = new GIF();
 
 		// Stage the date for saving later
-		$gif->new_props['date'] = date('F d, Y');
+		$the_gif->new_props['date'] = date('F d, Y');
 	}
 
 	// If this GIF was marked to be trashed, trash it
-	if ( $trash_mode == 'true' ) {
-		
+	if ( 'true' === $flow->trash_mode ) {
 		// Trash the GIF
-		$gif->trash();
+		$the_gif->trash();
 		
 	// Otherwise, prep and save the new GIF info
 	} else {
-		// Stage new/updated values for saving later, skipping any that haven't been provided
-		if (getenv('gif_url')) {
-			$gif->new_props['url'] = getenv('gif_url');
+		// Stage new/updated values for saving, skipping any that haven't been provided
+		if ( $flow->gif_url ) {
+			$the_gif->new_props['url'] = $flow->gif_url;
 		}
-		if (getenv('gif_name')) {
-			$gif->new_props['name'] = getenv('gif_name');
+		if ( $flow->gif_name ) {
+			$the_gif->new_props['name'] = $flow->gif_name;
 		}
 
 		// Save the GIF
-		$gif->save();
+		$the_gif->save();
 
-		// Set up the next step
-		$output = array(
-			'alfredworkflow' => array(
-				'arg' => '',
-				'variables' => array(
-					'item_id' => $gif->new_props['id'],
-					'tag_edit_mode' => $gif->is_new ? 'add_tags' : '', //TODO fix 'GIF saved' notification
-				),
-			),
-		);
+		// Output workflow configuration
+		$flow->output_config( 'save_gif', $the_gif );
 	}
 
 // If the current item is a tag, enter the tag saving flow
 } elseif ( is_tag() ) {
-	$tag = new Tag( $id );
+	$the_tag = new Tag( $flow->item_id );
 
 	// If tag deletion is confirmed, delete the current tag
-	if ( getenv( 'confirmed_delete' ) == 'true' ) {
+	if ( 'true' === $flow->confirmed_delete ) {
 
-		$tag->delete();
+		$the_tag->delete();
 
 	// Otherwise, proceed with updating the tag
 	} else {
 		// Set the tag's new name
-		$tag->new_name = getenv('tag_name');
+		$the_tag->new_name = $flow->tag_name;
 
 		// Save the tag with it's new name
-		$tag->save();
+		$the_tag->save();
 
 	}
 
-	// Set the output array to exit the workflow
-	$output = array(
-		'alfredworkflow' => array(
-			'variables'  => array(
-			'exit'  	 => 'true',
-			),
-		),
-	);
+	// Output workflow configuration
+	$flow->output_config( 'save_tag' );
+
 // If the selected item was neither a GIF or a tag, abandon all hope
 } else {
-	$output = array(
-		'alfredworkflow' => array(
-			'arg' => 'Something unexpected happened. Please try again.',
-		),
-	);
+	// Output workflow error configuration
+	$flow->output_config( 'error' );
 }
-
-echo json_encode( $output );

@@ -17,8 +17,13 @@ class Workflow {
 	 * @var string  $next_step The next step the workflow should enter. Used for workflow nodes that get looped through multiple times
 	 */
 	public $item_id;
+	public $gif_url;
+	public $gif_name;
+	public $tag_name;
 	public $next_step;
 	public $new_gif;
+	public $trash_mode;
+	public $confirmed_delete;
 	
 	/**
 	 * The items array for script filter output
@@ -37,9 +42,14 @@ class Workflow {
 	 * @since 2.0
 	 */
 	public function __construct() {
-		$this->item_id	 = getenv( 'item_id' );
-		$this->next_step = getenv( 'next_step' );
-		$this->new_gif   = getenv( 'new_gif' );
+		$this->item_id	 		= getenv( 'item_id' );
+		$this->gif_url	 		= getenv( 'gif_url' );
+		$this->gif_name	 		= getenv( 'gif_name' );
+		$this->tag_name	 		= getenv( 'tag_name' );
+		$this->next_step 		= getenv( 'next_step' );
+		$this->new_gif   		= getenv( 'new_gif' );
+		$this->trash_mode		= getenv( 'trash_mode' );
+		$this->confirmed_delete = getenv( 'confirmed_delete' );
 
 		$this->items = array(
 			'items' => array(),
@@ -72,6 +82,8 @@ class Workflow {
 	 *
 	 * @param object $the_tag  The current Tag() object being displayed
 	 * @param string $mode     Declares the format currently needed
+	 *
+	 * @since 2.0
 	 */
 	public function the_tag( $the_tag, $mode ) {
 
@@ -131,6 +143,8 @@ class Workflow {
 	 * Show an individual GIF in script filter results
 	 *
 	 * @param object $the_gif  The current GIF() object being displayed
+	 *
+	 * @since 2.0
 	 */
 	public function the_gif( $the_gif ) {
 		// Build the list item
@@ -172,6 +186,8 @@ class Workflow {
 	 * Show a 'no results found' message
 	 *
 	 * @param string $mode Determines if this search was for GIFs, tags, or both. Defaults to 'both'
+	 *
+	 * @since 2.0
 	 */
 	public function no_results( $mode = 'both' ) {
 		// Set item type
@@ -181,6 +197,8 @@ class Workflow {
 			$missing_items = 'tags';
 		} elseif ( 'both' === $mode ) {
 			$missing_items = 'GIFs or tags';
+		} else {
+			$missing_items = 'results';
 		}
 
 		// Build the list item
@@ -196,6 +214,8 @@ class Workflow {
 	 * Display option for saving a new GIF
 	 * 
 	 * @param string $input User input for URL validation and saving
+	 *
+	 * @since 2.0
 	 */
 	public function add_gif( $input ) {
 		// Prepare subtitle based on validation of user input
@@ -231,6 +251,8 @@ class Workflow {
 	 * Display option to view trashed GIFs
 	 * 
 	 * @param object $trash The GIF_Query() object containing all of the currently trashed GIFs
+	 *
+	 * @since 2.0
 	 */
 	public function view_trash( $trash ) {
 		// Set up the subtitle
@@ -272,6 +294,8 @@ class Workflow {
 	 * Display the details for an individual GIF
 	 *
 	 * @param object $the_gif The GIF object currently being displayed
+	 *
+	 * @since 2.0
 	 */
 	public function display_gif_details( $the_gif ) {
 		// Update the reusable Preview icon file
@@ -371,6 +395,8 @@ class Workflow {
 	 * Display the tags assigned to an individual GIF
 	 *
 	 * @param object $the_gif The GIF() object currently being displayed
+	 *
+	 * @since 2.0
 	 */
 	public function display_gif_tags( $the_gif ) {
 		// Add the GIF's tags to the output array, display a message if there are none
@@ -416,6 +442,8 @@ class Workflow {
 	 * Display prompts to launch the GIF editor
 	 *
 	 * @param object $the_gif The GIF() object to be opened in the Editor
+	 *
+	 * @since 2.0
 	 */
 	public function launch_editor( $the_gif ) {
 		// Build 'Edit GIF' list item
@@ -442,7 +470,7 @@ class Workflow {
 			),
 			'variables' => array(
 				'next_step' 		 => 'save_gif',
-				'trash_gif'			 => 'true',
+				'trash_mode'			 => 'true',
 				'notification_title' => "GIF trashed!",
 				'notification_text'  => '"' . $the_gif->name . '" will be permanently deleted in 30 days.',
 				'exit'				 => 'true',
@@ -454,6 +482,8 @@ class Workflow {
 	 * Display interface to edit the URL of a GIF
 	 *
 	 * @param object $the_gif The GIF() object currently being edited
+	 *
+	 * @since 2.0
 	 */
 	public function edit_gif_url( $the_gif, $input ) {
 		// Define subtitle based on validation of user input
@@ -504,6 +534,8 @@ class Workflow {
 	 * Display interface to edit the name of a GIF
 	 *
 	 * @param object $the_gif The GIF() object currently being edited
+	 *
+	 * @since 2.0
 	 */
 	public function edit_gif_name( $the_gif, $input ) {
 		$this->items['items'][] = array(
@@ -543,6 +575,8 @@ class Workflow {
 	 * Display tag deletion confirmation interface
 	 *
 	 * @param object $the_tag The Tag() object currently slated for deletion
+	 *
+	 * @since 2.0
 	 */
 	public function confirm_tag_delete( $the_tag ) {
 		// Build confirmation list item
@@ -579,6 +613,8 @@ class Workflow {
 	 *
 	 * @param object $the_tag The Tag() object currently being edited
 	 * @param string $input   User input to be saved as a new tag name
+	 *
+	 * @since 2.0
 	 */
 	public function edit_tag( $the_tag, $input ) {
 		// Build tag name list item
@@ -612,6 +648,8 @@ class Workflow {
 
 	/**
 	 * Display a generic error message
+	 *
+	 * @since 2.0
 	 */
 	public function error() {
 		$this->items['items'][] = array(
@@ -623,11 +661,11 @@ class Workflow {
 	}
 
 	/**
-	 * Output the items array
+	 * Output the items array for an Alfred script filter
 	 * 
 	 * Prevents Alfred from displaying his default actions on unused modifier keys
 	 *
-	 * @return array
+	 * @since 2.0
 	 */
 	public function output_items() {
 		// List all possible mods
@@ -671,6 +709,47 @@ class Workflow {
 
 		// Echo the encoded array to Alfred
 		echo $output;
+	}
+
+	/**
+	 * Output workflow configuration for an Alfred script
+	 *
+	 * @param string $action The workflow action to generate configuration for
+	 * @param mixed $object The GIF() or Tag() object being acted on and drawn from (optional)
+	 *
+	 *
+	 * @since 2.0
+	 */
+	public function output_config( $action, $object='' ) {
+		// Initialize the configuration array
+		$config = array(
+			'alfredworkflow' => array(),
+		);
+
+		// Initialize workflow variables for various use cases
+		if ( 'save_gif' === $action ) {
+			$variables = array(
+				'item_id' => $object->new_props['id'],
+				'tag_edit_mode' => $object->is_new ? 'add_tags' : '',
+				'notification_title' => 'GIF saved!',
+				'notification_text' => popup_notice(),
+			);
+		} elseif ( 'save_tag' === $action ) {
+			$variables = array(
+				'exit'  	 => 'true',
+			);
+		} elseif ( 'error' === $action ) {
+			$variables = array(
+				'notification_title' => 'Sorry, there was an error...',
+				'notification_text' => popup_notice('Please try again', true),
+			);
+		}
+
+		// Build the configuration array
+		$config['alfredworkflow']['variables'] = $variables;
+
+		// Encode the config array into JSON for Alfred to parse and echo it out
+		echo json_encode( $config );
 	}
 
 }
