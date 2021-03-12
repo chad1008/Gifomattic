@@ -23,7 +23,7 @@ if ( is_tag() ) {
 		while ( $gifs->have_gifs() ) {
 			$the_gif = $gifs->the_gif();
 
-			$flow->the_gif( $the_gif );
+			$flow->the_gif( $the_gif, $input );
 		}
 	}
 } elseif ( is_gif() ) {

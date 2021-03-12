@@ -16,10 +16,8 @@ $flow  = new Workflow();
 if ( is_legacy_db() ) {
 	$flow->initiate_update();
 
-	$items = fix_mods( $flow->items );
-
-	// Encode the items array as JSON for Alfred's output
-	echo json_encode( $items );
+// Output the update list item
+	$flow->output_items();
 	die;
 }
 
