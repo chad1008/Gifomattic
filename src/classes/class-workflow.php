@@ -15,6 +15,7 @@ class Workflow {
 	 *
 	 * @var integer $item_id   The ID of the GIF or tag that's currently being worked on
 	 * @var string  $next_step The next step the workflow should enter. Used for workflow nodes that get looped through multiple times
+	 * TODO update all vars with individual notes
 	 */
 	public $item_id;
 	public $gif_url;
@@ -22,6 +23,8 @@ class Workflow {
 	public $tag_name;
 	public $next_step;
 	public $new_gif;
+	public $is_new_tag;
+	public $selected_tag;
 	public $trash_mode;
 	public $confirmed_delete;
 	
@@ -48,6 +51,8 @@ class Workflow {
 		$this->tag_name	 		= getenv( 'tag_name' );
 		$this->next_step 		= getenv( 'next_step' );
 		$this->new_gif   		= getenv( 'new_gif' );
+		$this->is_new_tag		= getenv( 'is_new_tag' );
+		$this->selected_tag		= getenv( 'selected_tag' );
 		$this->trash_mode		= getenv( 'trash_mode' );
 		$this->confirmed_delete = getenv( 'confirmed_delete' );
 
@@ -933,19 +938,33 @@ class Workflow {
 		// Initialize workflow variables for various use cases
 		if ( 'save_gif' === $action ) {
 			$variables = array(
-				'item_id' => $object->new_props['id'],
-				'tag_edit_mode' => $object->is_new ? 'add_tags' : '',
+				'item_id'			 => $object->new_props['id'],
+				'next_step'			 => $object->is_new ? 'add_tags' : '',
 				'notification_title' => 'GIF saved!',
-				'notification_text' => popup_notice(),
+				'notification_text'  => popup_notice(),
 			);
 		} elseif ( 'save_tag' === $action ) {
 			$variables = array(
-				'exit'  	 => 'true',
+				'exit' => 'true',
+			);
+		} elseif ( 'add_tag' === $action ) {
+			$tag_message = 'GIF tagged as "' . $this->selected_tag . '"';
+			$variables = array (
+				'arg'				 => '',
+				'notification_title' => 'Tag added!',
+				'notification_text'  => popup_notice( $tag_message ),
+			);
+		} elseif ( 'remove_tag' === $action ) {
+			$tag_message = '"' . $this->selected_tag . '" removed from this GIF';
+			$variables = array (
+				'arg'				 => '',
+				'notification_title' => 'Tag removed!',
+				'notification_text'  => popup_notice( $tag_message ),
 			);
 		} elseif ( 'error' === $action ) {
 			$variables = array(
 				'notification_title' => 'Sorry, there was an error...',
-				'notification_text' => popup_notice('Please try again', true),
+				'notification_text'  => popup_notice('Please try again', true),
 			);
 		}
 
