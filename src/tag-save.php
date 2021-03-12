@@ -6,27 +6,14 @@
 
 require_once( 'functions.php' );
 
-/**
- * Script vars
- *
- * @var $mode string Passed from script filter. Used to determine if tags are to be added or removed
- * @var $is_new_tag bool Passed from script filter. Establishes if a new tag should be created, or if an existing tag is being assigned
- * @var $gif_id int Passed from script filter. Contains the ID of the GIF tags should be added to
- * @var $input mixed Passed from script filter. Either the name of the tag being created, or ID of a tag selected for assignment/removal
- * @var $selected_tag string Passed from script filter. Name of the existing tag that was selected for this GIF
- * @var $db object The Gifomattic database connection
- */
-
-$mode		  = getenv( 'tag_edit_mode' );
-$is_new_tag	  = getenv( 'is_new_tag' );
-$gif_id		  = getenv( 'item_id' );
+// Initialize all the data
+$flow		  = new Workflow();
 $input		  = $argv[1];
-$selected_tag = getenv( 'selected_tag' );
 $db			  = prep_db();
 
 // If this is a new tag, insert the user-input name into the database and use the new ID
-if ( $mode == 'add_tags' ) {
-	if ( $is_new_tag == 'true' ) {
+if ( $flow->next_step == 'add_tags' ) {
+	if ( $flow->is_new_tag == 'true' ) {
 		$stmt = $db->prepare( "INSERT INTO tags ( tag ) VALUES ( :tag )" );
 		$stmt->bindValue( ':tag', $input );
 		$stmt->execute();
@@ -42,55 +29,38 @@ if ( $mode == 'add_tags' ) {
 		$tag_id = $input;
 
 		// If this isn't a new tag, the recently selected tag name should be used instead of user input
-		$tag_name = $selected_tag;
+		$tag_name = $flow->selected_tag;
 	}
 
 	// Update the tag_relationships table to assign the chosen tag to the GIF
 	$stmt = $db->prepare( "INSERT INTO tag_relationships ( tag_id,gif_id ) VALUES ( :tag_id,:gif_id )" );
 	$args = array(
 		':tag_id' => $tag_id,
-		':gif_id' => $gif_id,
+		':gif_id' => $flow->item_id,
 	);
 	bind_values( $stmt, $args );
 	$stmt->execute();
 
-	// Set the mode for the next step
-	$mode = 'add_tags';
+	// Output workflow configuration
+	$flow->output_config( 'add_tag' );
 
-	// Prepare success message
-	$success = 'GIF tagged as "' . $selected_tag . '"';
-	$notification = popup_notice( $success );
 
-} elseif ( $mode == 'remove_tags' ) {
+} elseif ( $flow->next_step == 'remove_tags' ) {
 	// Prepare DELETE statement to remove record from the tag relationships table
 	$stmt = $db->prepare( "DELETE FROM tag_relationships WHERE tag_id IS :tag_id AND gif_id IS :gif_id" );
 	$args = array(
 		':tag_id' => $input,
-		':gif_id' => $gif_id,
+		':gif_id' => $flow->item_id,
 	);
 	bind_values( $stmt, $args );
 	$stmt->execute();
 
-	// Prepare success message
-	$success = '"' . $selected_tag . '" removed from this GIF';
-	$notification = popup_notice( $success );
+	// Output workflow configuration
+	$flow->output_config( 'remove_tag' );
 
 } else {
-	// In case of emergency, break glass
-	$error = 'Error: GIF could not be updated...';
-	$notification = popup_notice( $error, TRUE );
+	// Output workflow error configuration
+	$flow->output_config( 'error' );
+
 }
 
-// Set up the next step
-$output = array (
-	'alfredworkflow' => array(
-		'arg'		 => '',
-		'variables'	 => array(
-			'item_id'   => $gif_id,
-			'tag_edit_mode' => $mode,
-			'notification'  => $notification
-		),
-	),
-);
-
-echo json_encode( $output );

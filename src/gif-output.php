@@ -15,7 +15,7 @@ require_once ( 'functions.php' );
 // Just for fun, update the workflow's icon
 update_icon();
 
-// Set the query input to the ID passed in by Alfred, and store the item type
+// Set the query input to the ID passed in by Alfred
 $id = $argv[1];
 
 // If the item selected was a tag, query the database for GIFs based on the tag ID
@@ -33,10 +33,10 @@ if ( is_tag() ) {
 }
 
 // Pull the desired GIF out of the database
-$gif = new GIF( $id );
+$the_gif = new GIF( $id );
 
 // Increment the appropriate counter
-$gif->increment_count( $count );
+$the_gif->increment_count( $count );
 
 // Output the GIF's URL
-echo $gif->url;
+echo $the_gif->url;

@@ -68,7 +68,6 @@ function is_tag() {
  *
  * @return bool
  */
-
 function is_legacy_db() {
 	$file = $_SERVER['alfred_workflow_data'] . '/gifomattic.db';
 	$db = new sqlite3( $file );
@@ -89,10 +88,10 @@ function is_legacy_db() {
 	while ($column = $result->fetchArray()) {
 		$columns[] = $column['name'];
 	}
-	$columns_count = count($columns);
-	$legacy_match = count(array_intersect_assoc($legacy, $columns));
+	$columns_count = count( $columns );
+	$legacy_match = count( array_intersect_assoc( $legacy, $columns ) );
 
-	if ($legacy_match == 7 && $columns_count == 7) {
+	if ( $legacy_match == 7 && $columns_count == 7 ) {
 		return TRUE;
 	} else {
 		return FALSE;
@@ -264,48 +263,53 @@ function gif_quantity( array $args ) {
  * Prepare a success/failure message
  *
  * @param string $message String to be appended to the random success message
- * @raram bool   $error   Sets error state for output. Defaults to FALSE
+ * @param bool   $error   Sets error state for output. Defaults to FALSE
+ * 
  * @since 2.0
  * 
  * @return string
  */
-function popup_notice( $message = '', $error = FALSE ) {
+function popup_notice( $message = '', $error = false, $inline = false ) {
 	// Conditionally define outputs for random selection
 	if ( !$error ) {
 		$messages = array(
 			"Boom!",
 			"Huzzah!",
-			"Nailed It!",
-			"You're my hero",
+			"Nailed it!",
+			"You're my hero.",
 			"Beep Beep Boop...",
 			"Mission accomplished!",
 			"Oh, that's a good one!",
-			"Your GIF is my command",
+			"Your GIF is my command.",
 			"Is it hard to be so awesome?",
+			"Remember, it's 'GIF'. Not 'JIF.'",
 			"The GIF is strong with this one...",
-			"I love it when a plan comes together",
-			"With great GIF comes great responsibility",
+			"I love it when a plan comes together.",
+			"With great GIF comes great responsibility.",
 		);
 	} else {
 		$messages = array(
-			"Oops. Something went wrong.",
 			"FAIL!",
-			"Womp Womp",
-			"Need more info. Or maybe less info. I don't know, something's borked.",
+			"Womp Womp...",
+			"You must be new here.",
+			"Oops. Something went wrong.",
+			"I sense a disturbance in the GIF.",
 			"Are you sure you know what you're doing?",
-			"You must be new here",
-			"I don't know what any of those words mean",
-			"Ummmmm.... no.",
-			"I sense a disturbance in that gif",
+			"I don't know what any of those words mean.",
+			"Need more info. Or maybe less info. I don't know, something's borked.",
 		);
 	}
 
 	$rand = $messages[array_rand( $messages )];
-	return $rand . "\r\n" . $message;
+
+	// Set up an optional line break
+	$join = true === $inline ? ' ' : "\r\n";
+
+	return $rand . $join . $message;
 }
 
 /**
- * Randomze the workflow icon
+ * Randomize the workflow icon
  *
  * Resets the workflow icon to a randomly selected color variant whenever the workflow is activated
  *
@@ -314,19 +318,15 @@ function popup_notice( $message = '', $error = FALSE ) {
  * @return string
  */
 function update_icon() {
-	
 	// List possible source file numbers
-	$logos = array(
-		'1',
-		'2',
-		'3',
-		'4',
-		'5',
-	);
+	for ( $i = 1; $i<=12; ++$i ) {
+		$logos[] = $i;
+	}
+
 	// Select a random file number
 	$number = array_rand( $logos );
 	
-	// Grab the sourece file using the randomly generated number
+	// Grab the source file using the randomly generated number
 	$source = 'img/logos/logo' . $logos[$number] . '.png';
 	
 	// Set destination path and filename
