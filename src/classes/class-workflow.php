@@ -868,6 +868,71 @@ class Workflow {
 			),
 		);
 	}
+
+	/**
+	 * Display the interface to launch trash management
+	 *
+	 * @since 2.0
+	 */
+	public function launch_trash() {
+		// Build 'view trash' list item
+		$this->items['items'][] = array(
+			'title' => "View all trashed GIFs",
+			'subtitle' => 'Restore or delete individual GIFs',
+			'icon' => array(
+				'path' => 'img/trash.png',
+			),
+			'variables' => array(
+				'next_step' => 'view_trash'
+			),
+		);
+		
+		// View 'empty trash' list item
+		$this->items['items'][] = array(
+			'title' => "Empty trash",
+			'subtitle' => 'Permanently delete ALL trashed GIFs. CAUTION: there is no undo!',
+			'icon' => array(
+				'path' => 'img/destroy.png',
+			),
+			'variables' => array(
+				'next_step' => 'empty_trash'
+			),
+		);
+	}
+
+	/**
+	 * Display trashed GIFs
+	 *
+	 * @since 2.0
+	 * @param object $the_gif The GIF() object being display in the trash view
+	 */
+	public function trashed_gif( $the_gif ) {
+		$this->items['items'][] = array(
+			'title' => "Trashed: $the_gif->name",
+			'subtitle' => 'Restore this GIF (hold CTRL to permanently delete this GIF)',
+			'arg' => $the_gif->id,
+			'icon' => array(
+				'path' => $the_gif->icon,
+			),
+			'variables' => array(
+				'item_type' => 'gif',
+				'item_id' => $the_gif->id,
+				'next_step' => 'restore_gif',
+			),
+			'mods' => array(
+				'ctrl' => array(
+					'subtitle' => 'Delete forever. CAUTION: there is no undo!',
+					'icon' => array(
+						'path' => 'img/destroy.png',
+					),
+					'variables' => array(
+						'item_id'   => $the_gif->id,
+						'next_step' => 'delete_gif',
+					),
+				),
+			),
+		);
+	}
 	
 	/**
 	 * Output the items array for an Alfred script filter
