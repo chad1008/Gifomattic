@@ -26,6 +26,7 @@ class Workflow {
 	public $is_new_tag;
 	public $selected_tag;
 	public $trash_mode;
+	public $original_input;
 	public $confirmed_delete;
 	
 	/**
@@ -54,6 +55,7 @@ class Workflow {
 		$this->is_new_tag		= getenv( 'is_new_tag' );
 		$this->selected_tag		= getenv( 'selected_tag' );
 		$this->trash_mode		= getenv( 'trash_mode' );
+		$this->original_input	= getenv( 'original_input' );
 		$this->confirmed_delete = getenv( 'confirmed_delete' );
 
 		$this->items = array(
@@ -148,10 +150,11 @@ class Workflow {
 	 * Show an individual GIF in script filter results
 	 *
 	 * @param object $the_gif  The current GIF() object being displayed
+	 * @param string $input	   User input to be saved for retrieval later on
 	 *
 	 * @since 2.0
 	 */
-	public function the_gif( $the_gif ) {
+	public function the_gif( $the_gif, $input ) {
 		// Build the list item
 		$this->items['items'][] = array(
 			'title'		=> $the_gif->name,
@@ -180,7 +183,8 @@ class Workflow {
 					'variables' => array(
 						'next_step' => 'launch_editor',
 						'item_id'	=> $the_gif->id,
-						'item_type' => 'gif'
+						'item_type' => 'gif',
+						'original_input' => $input,
 					),
 				),
 			),
@@ -435,8 +439,9 @@ class Workflow {
 						'path' => $tag->gifs_with_tag == 1 ? 'img/tag.png' : 'img/view tag.png',
 					),
 					'variables' => array(
-						'item_type' => 'tag',
-						'item_id'   => $tag->id,
+						'item_type'  => 'tag',
+						'item_id'    => $tag->id,
+						'trash_mode' => '',
 					),
 				);
 			}
@@ -475,7 +480,7 @@ class Workflow {
 			),
 			'variables' => array(
 				'next_step' 		 => 'save_gif',
-				'trash_mode'			 => 'true',
+				'trash_mode'		 => 'true',
 				'notification_title' => "GIF trashed!",
 				'notification_text'  => '"' . $the_gif->name . '" will be permanently deleted in 30 days.',
 				'exit'				 => 'true',
@@ -994,7 +999,8 @@ class Workflow {
 	 *
 	 * @since 2.0
 	 */
-	public function output_config( $action, $object='' ) {
+	public function output_config( $action, $object='' )
+	{
 		// Initialize the configuration array
 		$config = array(
 			'alfredworkflow' => array(),
@@ -1003,10 +1009,10 @@ class Workflow {
 		// Initialize workflow variables for various use cases
 		if ( 'save_gif' === $action ) {
 			$variables = array(
-				'item_id'			 => $object->new_props['id'],
-				'next_step'			 => $object->is_new ? 'add_tags' : '',
+				'item_id' => $object->new_props['id'],
+				'next_step' => $object->is_new ? 'add_tags' : '',
 				'notification_title' => 'GIF saved!',
-				'notification_text'  => popup_notice(),
+				'notification_text' => popup_notice(),
 			);
 		} elseif ( 'save_tag' === $action ) {
 			$variables = array(
@@ -1014,17 +1020,49 @@ class Workflow {
 			);
 		} elseif ( 'add_tag' === $action ) {
 			$tag_message = 'GIF tagged as "' . $this->selected_tag . '"';
-			$variables = array (
-				'arg'				 => '',
+			$variables = array(
+				'arg' => '',
 				'notification_title' => 'Tag added!',
-				'notification_text'  => popup_notice( $tag_message ),
+				'notification_text' => popup_notice( $tag_message ),
 			);
 		} elseif ( 'remove_tag' === $action ) {
 			$tag_message = '"' . $this->selected_tag . '" removed from this GIF';
-			$variables = array (
-				'arg'				 => '',
+			$variables = array(
+				'arg' => '',
 				'notification_title' => 'Tag removed!',
-				'notification_text'  => popup_notice( $tag_message ),
+				'notification_text' => popup_notice( $tag_message ),
+			);
+		} elseif ( 'restore_gif' === $action ) {
+			$subtitle = '"' . $object->name . '" has been has been returned to your library';
+			$variables = array(
+						'notification_title' => 'GIF restored!',
+						'notification_text'  => popup_notice( $subtitle ),
+			);
+		} elseif ( 'empty_trash' === $action ) {
+			// Prepare notification message
+			$args = array(
+				'number' => $object->gif_count,
+				'zero' => 'No GIFs',
+				'one' => 'One GIF',
+				'many' => "$object->gif_count GIFs",
+				'format' => '%s permanently deleted',
+			);
+			$subtitle = gif_quantity($args);
+
+			$variables = array(
+				'notification_title' => 'Trash emptied!',
+				'notification_text' => popup_notice($subtitle),
+			);
+		} elseif ('delete_gif' === $action ) {
+			$subtitle = '"' . $object->name . '" has been permanently removed from your library';
+			// Prepare script output
+			$output = array(
+				'alfredworkflow' => array(
+					'variables' => array(
+						'notification_title' => 'GIF deleted!',
+						'notification_text'  => popup_notice( $subtitle ),
+					),
+				),
 			);
 		} elseif ( 'error' === $action ) {
 			$variables = array(
@@ -1034,8 +1072,10 @@ class Workflow {
 		}
 
 		// Build the configuration array
-		$config['alfredworkflow']['variables'] = $variables;
-
+		// If needed, add the variables
+		if ( isset( $variables ) ) {
+			$config['alfredworkflow']['variables'] = $variables;
+		}
 		// Encode the config array into JSON for Alfred to parse and echo it out
 		echo json_encode( $config );
 	}

@@ -29,8 +29,6 @@ $gifs  = new GIF_Query( $input );
 $tags  = new Tag_Query( $input );
 $trash = new GIF_Query( '','',TRUE );
 
-
-
 // Clean up any old GIFs that have been in the trash for >30 days
 trash_cleanup();
 
@@ -59,7 +57,7 @@ if ( $gifs->have_gifs() || $tags->have_tags() ) {
 	while ( $gifs->have_gifs() ) {
 		$the_gif = $gifs->the_gif();
 
-		$flow->the_gif( $the_gif );
+		$flow->the_gif( $the_gif, $input );
 	}
 } else {
 	$flow->no_results( 'both' );
