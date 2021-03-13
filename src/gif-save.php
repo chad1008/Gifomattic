@@ -12,10 +12,10 @@ $flow = new Workflow();
 // If the current item is a GIF, enter the GIF saving flow
 if ( is_gif() ) {
 	// If the selected item is an existing GIF, query it using the ID
-	if ( false != $flow->item_id ) {
-		$the_gif = new GIF( $flow->item_id );
+	if (false != $flow->item_id) {
+		$the_gif = new GIF($flow->item_id);
 
-	// Otherwise, initialize a new, empty GIF object
+		// Otherwise, initialize a new, empty GIF object
 	} else {
 		$the_gif = new GIF();
 
@@ -24,11 +24,28 @@ if ( is_gif() ) {
 	}
 
 	// If this GIF was marked to be trashed, trash it
-	if ( 'true' === $flow->trash_mode ) {
+	if ('true' === $flow->trash_mode) {
 		// Trash the GIF
 		$the_gif->trash();
-		
+
+	// If save mode is 'add_tag' assign the selected tag to the GIF
+	} elseif ( 'add_tag' === $flow->save_mode ) {
+		// If this is a new tag, pass in the user provided name. Otherwise, pass the ID via the workflow 'argv[1] value
+		$tag_to_add = true === $flow->is_new_tag ? $flow->selected_tag : $argv[1];
+		$the_gif->add_tag( $tag_to_add, $flow->is_new_tag );
+
+		// Output workflow configuration
+		$flow->output_config( 'add_tag', $the_gif );
+
 	// Otherwise, prep and save the new GIF info
+	} elseif ( 'remove_tag' === $flow->save_mode ) {
+		// Pass the selected tag's ID from the current workflow 'argv[1]'
+		$the_gif->remove_tag( $argv[1] );
+
+		// Output workflow configuration
+		$flow->output_config( 'remove_tag' );
+		
+		// If we're in the default save mode, save the GIF name and/or URL
 	} else {
 		// Stage new/updated values for saving, skipping any that haven't been provided
 		if ( $flow->gif_url ) {
@@ -61,7 +78,6 @@ if ( is_gif() ) {
 
 		// Save the tag with it's new name
 		$the_tag->save();
-
 	}
 
 	// Output workflow configuration

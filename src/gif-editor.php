@@ -8,6 +8,7 @@
 require_once ( 'functions.php' );
 
 $input = $argv[1];
+$tags	 = new Tag_Query( $input );
 
 // Initialize the Workflow object
 $flow = new Workflow();
@@ -22,11 +23,38 @@ if ( is_gif() ) {
 
 	// If this is the gif_url step, start with the GIF URL prompts
 	} elseif ( 'gif_url' === $flow->next_step ) {
-		$flow->edit_gif_url( $the_gif, $input );
+		$flow->edit_gif_url( $input );
 
 	// If this is the gif_name step, output the New GIF Name prompt
 	} elseif ( 'gif_name' === $flow->next_step ) {
-		$flow->edit_gif_name( $the_gif, $input );
+		$flow->edit_gif_name( $input ); 
+
+	// If this is the manage_tags step, output the tag management interface
+	} elseif ( 'manage_tags' === $flow->next_step ) {
+		// If the current GIF has no tags, skip ahead to the adding tags interface
+		if ( empty ( $the_gif->tags ) ) {
+			$flow->add_tags( $input, $the_gif, $tags );
+		} else {
+			$flow->launch_tag_management();
+		}
+		
+		//TODO add navigation
+		
+	// If this is the add_tags step, launch the tag addition interface
+	} elseif ( 'add_tags' === $flow->next_step ) {
+		$flow->add_tags( $input, $the_gif, $tags );
+
+		//TODO add navigation
+
+	// If this is the remove_tags step, launch the tag removal interface
+	} elseif ( 'remove_tags' === $flow->next_step ) {
+		$flow->remove_tags( $the_gif ); //TODO test
+
+		//TODO add navigation
+		
+	// If an unexpected step is detected, display an error
+	} else {
+		$flow->error();
 	}
 
 // If the selected item was a tag, enter the tag editing flow

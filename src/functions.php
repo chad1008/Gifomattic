@@ -233,7 +233,7 @@ function flag_icon( $id ) {
  * @return string
  */
 
-function gif_quantity( array $args ) {
+function quantity_statement(array $args ) {
 	// Determine what kind of statement is needed
 	if ( $args['number'] == 0 ) {
 		$case = $args['zero'];

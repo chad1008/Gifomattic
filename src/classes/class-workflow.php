@@ -25,6 +25,7 @@ class Workflow {
 	public $new_gif;
 	public $is_new_tag;
 	public $selected_tag;
+	public $save_mode;
 	public $trash_mode;
 	public $original_input;
 	public $confirmed_delete;
@@ -52,8 +53,9 @@ class Workflow {
 		$this->tag_name	 		= getenv( 'tag_name' );
 		$this->next_step 		= getenv( 'next_step' );
 		$this->new_gif   		= getenv( 'new_gif' );
-		$this->is_new_tag		= getenv( 'is_new_tag' );
+		$this->is_new_tag		= 'true' === getenv( 'is_new_tag' ) ? true : false;
 		$this->selected_tag		= getenv( 'selected_tag' );
+		$this->save_mode		= getenv( 'save_mode' );
 		$this->trash_mode		= getenv( 'trash_mode' );
 		$this->original_input	= getenv( 'original_input' );
 		$this->confirmed_delete = getenv( 'confirmed_delete' );
@@ -104,7 +106,7 @@ class Workflow {
 				'many'	 => $the_tag->gifs_with_tag . ' GIFs',
 				'format' => 'Share a randomly selected "' . $the_tag->name . '" GIF (%s available)',
 			);
-			$subtitle = gif_quantity( $args );
+			$subtitle = quantity_statement( $args );
 
 			// Build the list item
 			$this->items['items'][] = array(
@@ -281,7 +283,7 @@ class Workflow {
 			),
 			'format' => 'There %s currently %s in the trash',
 		);
-		$subtitle = gif_quantity( $args );
+		$subtitle = quantity_statement( $args );
 
 		// Build the trash prompt (invalid if trash is empty)
 		$this->items['items'][] = array(
@@ -427,7 +429,7 @@ class Workflow {
 					'many'   => "View all $tag->gifs_with_tag GIFs",
 					'format' => '%s with this tag',
 				);
-				$subtitle = gif_quantity( $args );
+				$subtitle = quantity_statement( $args );
 
 				// Build the list item
 				$this->items['items'][] = array(
@@ -456,17 +458,52 @@ class Workflow {
 	 * @since 2.0
 	 */
 	public function launch_editor( $the_gif ) {
-		// Build 'Edit GIF' list item
+		// Build "Edit GIF name" list item
 		$this->items['items'][] = array(
-			'title' 	=> 'Edit "' . $the_gif->name . '"',
-			'subtitle'  => "Modify the URL, name, or the tags assigned to this GIF",
-			'arg'		=> 'filler arg',
-			'icon'		=> array(
-				'path'  => 'img/edit.png'
+			'title' => 'Edit GIF name',
+			'subtitle' => 'Current name: "' . $the_gif->name . '"',
+			'arg' => 'filler arg',
+			'icon' => array(
+				'path' => 'img/edit.png',
+			),
+			'variables' => array(
+				'next_step' => 'gif_name',
+			),
+		);
+
+		// Build "Edit GIF URL" list item
+		$this->items['items'][] = array(
+			'title' => 'Edit GIF URL',
+			'subtitle' => "Current URL: $the_gif->url",
+			'arg' => 'filler arg',
+			'icon' => array(
+				'path' => 'img/edit.png',
 			),
 			'variables' => array(
 				'next_step' => 'gif_url',
-				'exit'		=> 'false',
+			),
+		);
+
+		// Build "manage GIF tags" list item
+		// Prep subtitle statement
+		$args = array(
+			'number' => count( $the_gif->tags ),
+			'zero' => 'no tags',
+			'one'  => 'one tag',
+			'many' => count( $the_gif->tags ) . ' tags',
+			'format' => 'This GIF currently has %s'
+		);
+		$subtitle = quantity_statement( $args );
+
+		$this->items['items'][] = array(
+			'title' => 'Manage GIF tags',
+			'subtitle' => $subtitle,
+			'arg' => 'filler arg',
+			'icon' => array(
+				'path' => 'img/edit.png',
+			),
+			'variables' => array(
+				'next_step' => 'manage_tags', //TODO this is a new thing, make sure it actually functions
 			),
 		);
 
@@ -491,11 +528,11 @@ class Workflow {
 	/**
 	 * Display interface to edit the URL of a GIF
 	 *
-	 * @param object $the_gif The GIF() object currently being edited
+	 * @param string $input User input to be used for the new GIF URL
 	 *
 	 * @since 2.0
 	 */
-	public function edit_gif_url( $the_gif, $input ) {
+	public function edit_gif_url( $input ) {
 		// Define subtitle based on validation of user input
 		if ( '' === $input ) {
 			$subtitle = 'Enter the new GIF URL';
@@ -516,38 +553,36 @@ class Workflow {
 			),
 			'variables' => array(
 				'gif_url' => $input,
-				'next_step' => 'gif_name',
+				'next_step' => 'true' === $this->new_gif ? 'gif_name' : 'save_gif',
 				'standby_title' => 'Saving your GIF...',
 				'standby_text'  => 'This should only take a moment, please stand by',
 				'exit' => 'false',
 			),
 		);
-		// While on the first step, if this is an existing GIF build the 'Keep current URL' list item
-		if ( 'true' != $this->new_gif ) {
-			$this->items['items'][] = array(
-				'title'    => "Keep the GIF's current URL",
-				'subtitle' => $the_gif->url,
-				'arg'	   => '',
-				'icon'	   => array(
-					'path' => 'img/checkmark.png'
-				),
-				'variables' => array(
-					'gif_url'   => '',
-					'next_step' => 'gif_name',
-					'exit'		=> 'false',
-				),
-			);
-		}
+
+		// Build navigation list item
+		$this->items['items'][] = array(
+			'title' => 'Go back',
+			'subtitle' => 'Return to GIF Editor',
+			'arg'   => '',
+			'icon'		=> array(
+				'path'  => 'img/back.png'
+			),
+			'variables' => array(
+				'next_step'	=> 'launch_editor',
+			),
+		);
 	}
 
 	/**
 	 * Display interface to edit the name of a GIF
 	 *
-	 * @param object $the_gif The GIF() object currently being edited
+	 * @param string $input User input to be used for the new GIF name
 	 *
 	 * @since 2.0
 	 */
-	public function edit_gif_name( $the_gif, $input ) {
+	public function edit_gif_name( $input ) {
+		// Build the 'New name' list item
 		$this->items['items'][] = array(
 			'title'    => 'New GIF name:',
 			'subtitle' => null != $input ? $input : 'Enter the new GIF name',
@@ -563,22 +598,19 @@ class Workflow {
 			),
 		);
 
-		// While on the gif_name step, if this is an existing GIF provide an option to keep the current name
-		if ( 'true' != $this->new_gif ) {
-			$this->items['items'][] = array(
-				'title'	   => "Keep the GIF's current name",
-				'subtitle' => $the_gif->name,
-				'arg'	   => 'filler to trigger notifications',
-				'icon'	   => array(
-					'path' => 'img/checkmark.png'
-				),
-				'variables' => array(
-					'gif_name'  => '',
-					'next_step' => 'save_gif',
-					'exit'		=> 'false',
-				),
-			);
-		}
+		// Build navigation list item
+		$this->items['items'][] = array(
+			'title' => 'Go back',
+			'subtitle' => 'Return to GIF Editor',
+			'arg'   => '',
+			'icon'		=> array(
+				'path'  => 'img/back.png'
+			),
+			'variables' => array(
+				'next_step'	=> 'launch_editor',
+			),
+		);
+
 	}
 
 	/**
@@ -667,7 +699,6 @@ class Workflow {
 			'subtitle'  => popup_notice( '', true, true  ),
 			'valid'		=> 'false',
 		);
-
 	}
 
 	/**
@@ -703,18 +734,16 @@ class Workflow {
 			),
 		);
 
-		// Display 'Go back' list item
+		// Build navigation list item
 		$this->items['items'][] = array(
-			'title'     => 'Go back',
-			'subtitle'  => 'Edit GIF URL or name',
-			'arg'	    => '',
+			'title' => 'Go back',
+			'subtitle' => 'Return to GIF Editor',
+			'arg'   => '',
 			'icon'		=> array(
 				'path'  => 'img/back.png'
 			),
 			'variables' => array(
-				'next_step'		=> 'gif_url',
-				'next_step'	=> '',
-				'exit'			=> 'true',
+				'next_step'	=> 'launch_editor',
 			),
 		);
 	}
@@ -742,35 +771,23 @@ class Workflow {
 				),
 			);
 			
-			// Build the 'Go back' list item
-			$this->items['items'][] = array(
-				'title' => 'Go back',
-				'subtitle' => 'Choose between adding or editing tags',
-				'arg'   => '',
-				'icon'		=> array(
-					'path'  => 'img/back.png'
-				),
-				'variables' => array(
-					'next_step'	=> '',
-				),
-			);
-			
-		// If use input is not empty	
+		// If user input is not empty, show appropriate tags
 		} else {
-			// Check user input matches any existing tags. If it doesn't, prepare to create a new tag
+			// If user input does NOT match any existing tags, prepare to create a new tag
 			if ( !in_array( $input, array_column( $tags->tags, 'tag') ) )  {
 				// Build the 'Create a new tag" list item
-				$items['items'][] = array(
+				$this->items['items'][] = array(
 					'title' 	=> "Create a new tag: $input",
-					'arg'   	=> $input,
+					'arg'   	=> '',
 					'variables'	=> array(
 						'is_new_tag' 	=> 'true',
-						'next_step' => 'add_tags',
+						'next_step'		=> 'save_gif',
+						'save_mode' 	=> 'add_tag',
 						'selected_tag'	=> $input,
 					),
 				);
 			}
-			
+
 			// Loop through and display existing tags that match the user input
 			while ( $tags->have_tags() ) {
 				$the_tag = $tags->the_tag();
@@ -793,9 +810,9 @@ class Workflow {
 					'format' => 'Tag this GIF as "' . $the_tag->name . '" (%s currently use%s this tag)',
 				);
 
-				$subtitle = gif_quantity( $args );
+				$subtitle = quantity_statement( $args );
 
-				// Build individual tag list items.  Disable any tags that are already assigned to this GIF and show a subtitle to that effect
+				// Build individual tag list items. Disable any tags that are already assigned to this GIF and show a subtitle to that effect
 				$this->items['items'][] = array(
 					'title' => $the_tag->name,
 					'subtitle' => $the_gif->has_tag( $the_tag->id ) ? 'This GIF is already tagged as "' . $the_tag->name . '"' : $subtitle,
@@ -804,14 +821,29 @@ class Workflow {
 						'path' => '',
 					),
 					'variables' => array(
-						'is_new_tag' => false,
-						'next_step' => 'add_tags',
+						'is_new_tag' 	=> false,
+						'next_step' 	=> 'save_gif',
+						'save_mode' 	=> 'add_tag',
 						'selected_tag'	=> $the_tag->name,
 					),
 					'valid' => $the_gif->has_tag( $the_tag->id ) ? 'false' : 'true',
 				);
 			}
 		}
+
+		// Build navigation list item
+		$this->items['items'][] = array(
+			'title' => 'Go back',
+			'subtitle' => 'Return to tag management options',
+			'arg'   => '',
+			'icon'		=> array(
+				'path'  => 'img/back.png'
+			),
+			'variables' => array(
+				'next_step'	=> 'manage_tags',
+			),
+		);
+
 	}
 
 	/**
@@ -829,22 +861,19 @@ class Workflow {
 				'number' => $tag->gifs_with_tag - 1,
 				'zero'   => array (
 					'No',
-					's',
-					'',
+					'GIFs share',
 				),
 				'one'	 => array(
 					'One',
-					'',
-					's',
+					'GIF shares',
 				),
 				'many'   => array(
 					$tag->gifs_with_tag - 1,
-					's',
-					'',
+					'GIFs share',
 				),
-				'format' => '%s other GIF%s share%s this tag'
+				'format' => '%s other %s this tag'
 			);
-			$subtitle = gif_quantity( $args );
+			$subtitle = quantity_statement( $args );
 
 			// Build the list item
 			$this->items['items'][] = array(
@@ -855,6 +884,8 @@ class Workflow {
 					'path' => 'img/remove tag.png',
 				),
 				'variables' => array(
+					'next_step'		=> 'save_gif',
+					'save_mode' 	=> 'remove_tag',
 					'selected_tag'	=> $tag->name,
 				),
 			);
@@ -863,13 +894,13 @@ class Workflow {
 		// Build navigation list item
 		$this->items['items'][] = array(
 			'title' => 'Go back',
-			'subtitle' => 'Choose between adding or editing tags',
+			'subtitle' => 'Return to tag management options',
 			'arg'   => '',
 			'icon'		=> array(
 				'path'  => 'img/back.png'
 			),
 			'variables' => array(
-				'next_step'	=> '',
+				'next_step'	=> 'manage_tags',
 			),
 		);
 	}
@@ -1009,10 +1040,15 @@ class Workflow {
 		// Initialize workflow variables for various use cases
 		if ( 'save_gif' === $action ) {
 			$variables = array(
-				'item_id' => $object->new_props['id'],
-				'next_step' => $object->is_new ? 'add_tags' : '',
+				'item_id'			 => $object->new_props['id'],
+				'next_step'			 => $object->is_new ? 'add_tags' : 'launch_editor',
 				'notification_title' => 'GIF saved!',
-				'notification_text' => popup_notice(),
+				'notification_text'  => popup_notice(),
+				// Clear misc values in preparation of the next loop
+				'gif_url'  			 => false,
+				'gif_name' 			 => false,
+				'standby_title'		 => '',
+				'standby_text'		 => '',
 			);
 		} elseif ( 'save_tag' === $action ) {
 			$variables = array(
@@ -1021,16 +1057,18 @@ class Workflow {
 		} elseif ( 'add_tag' === $action ) {
 			$tag_message = 'GIF tagged as "' . $this->selected_tag . '"';
 			$variables = array(
-				'arg' => '',
+				'exit'				 => 'false',
+				'next_step'  		 => 'add_tags',
 				'notification_title' => 'Tag added!',
-				'notification_text' => popup_notice( $tag_message ),
+				'notification_text'  => popup_notice( $tag_message ),
 			);
 		} elseif ( 'remove_tag' === $action ) {
 			$tag_message = '"' . $this->selected_tag . '" removed from this GIF';
 			$variables = array(
-				'arg' => '',
+				'exit'				 => 'false',
+				'next_step'			 => 'remove_tags',
 				'notification_title' => 'Tag removed!',
-				'notification_text' => popup_notice( $tag_message ),
+				'notification_text'  => popup_notice( $tag_message ),
 			);
 		} elseif ( 'restore_gif' === $action ) {
 			$subtitle = '"' . $object->name . '" has been has been returned to your library';
@@ -1042,20 +1080,20 @@ class Workflow {
 			// Prepare notification message
 			$args = array(
 				'number' => $object->gif_count,
-				'zero' => 'No GIFs',
-				'one' => 'One GIF',
-				'many' => "$object->gif_count GIFs",
+				'zero'   => 'No GIFs',
+				'one'	 => 'One GIF',
+				'many'	 => "$object->gif_count GIFs",
 				'format' => '%s permanently deleted',
 			);
-			$subtitle = gif_quantity($args);
+			$subtitle = quantity_statement($args);
 
 			$variables = array(
 				'notification_title' => 'Trash emptied!',
-				'notification_text' => popup_notice($subtitle),
+				'notification_text'  => popup_notice( $subtitle ),
 			);
 		} elseif ('delete_gif' === $action ) {
 			$subtitle = '"' . $object->name . '" has been permanently removed from your library';
-			// Prepare script output
+			// Prepare script output  TODO test and fix deleted GIF output
 			$output = array(
 				'alfredworkflow' => array(
 					'variables' => array(

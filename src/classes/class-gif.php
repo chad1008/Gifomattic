@@ -248,7 +248,7 @@ class GIF {
 				// Initialize the UPDATE statement
 				$query = "UPDATE gifs SET";
 				// If a URL has been provided, add it to the query
-				if (isset( $this->new_props['url'] ) ) {
+				if ( isset( $this->new_props['url'] ) ) {
 					$query .= " url = :url";
 				}
 				// A comma, if needed
@@ -263,7 +263,7 @@ class GIF {
 				$query .= " WHERE gif_id IS :id";
 
 				// Prep the statement
-				$stmt = $this->db->prepare($query);
+				$stmt = $this->db->prepare( $query );
 
 				// Add the ID to the args array
 				$args['id'] = $this->id;
@@ -356,6 +356,59 @@ class GIF {
 		imagedestroy( $scaled_jpeg );
 	}
 
+	/**
+	 * Assign a tag to the GIF
+	 *
+	 * @param mixed $tag  		The tag to be added. Existing tags will be passed as an integer representing the tag ID.
+	 * 					   			New tags will be strings to be saved as the tag name.
+	 * @param bool $is_new_tag  Determines if this is a new tag that must be created, or an already existing tag
+	 *
+	 * @since 2.0
+	 */
+	public function add_tag( $tag, $is_new_tag = false ) {
+		// If this is a new tag, create it
+		if ( true === $is_new_tag ) {
+			$stmt = $this->db->prepare( "INSERT INTO tags ( tag ) VALUES ( :tag )" );
+			$stmt->bindValue(':tag', $tag);
+			$stmt->execute();
+
+			// Grab the ID of the new tag
+			$tag_id = $this->db->lastInsertRowID();
+			
+		// If this is an existing tag, use the provided ID	
+		} else {
+			// Use the provided existing tag ID
+			$tag_id = $tag;
+		}
+
+		// Update the tag_relationships table to assign the chosen tag to the GIF
+		$stmt = $this->db->prepare( "INSERT INTO tag_relationships ( tag_id,gif_id ) VALUES ( :tag_id,:gif_id )" );
+		$args = array(
+			':tag_id' => $tag_id,
+			':gif_id' => $this->id,
+		);
+		bind_values( $stmt, $args );
+		$stmt->execute();
+}
+
+	/**
+	 * Remove a tag from the GIF
+	 *
+	 * @param mixed $tag The ID of the tag to be removed.
+	 * 
+	 * @since 2.0
+	 */
+	public function remove_tag( $tag ) {
+		// Prepare DELETE statement to remove record from the tag relationships table
+		$stmt = $this->db->prepare( "DELETE FROM tag_relationships WHERE tag_id IS :tag_id AND gif_id IS :gif_id" );
+		$args = array(
+			':tag_id' => $tag,
+			':gif_id' => $this->id,
+		);
+		bind_values( $stmt, $args );
+		$stmt->execute();
+	}
+	
 	/**
 	 * Increment the GIF share count
 	 *
