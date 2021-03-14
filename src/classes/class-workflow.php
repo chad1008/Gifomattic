@@ -736,11 +736,11 @@ class Workflow {
 
 		// Build navigation list item
 		$this->items['items'][] = array(
-			'title' => 'Go back',
+			'title'    => 'Go back',
 			'subtitle' => 'Return to GIF Editor',
-			'arg'   => '',
-			'icon'		=> array(
-				'path'  => 'img/back.png'
+			'arg'      => '',
+			'icon'	   => array(
+				'path' => 'img/back.png'
 			),
 			'variables' => array(
 				'next_step'	=> 'launch_editor',
@@ -766,7 +766,7 @@ class Workflow {
 				'subtitle' => 'Begin typing to select an existing tag, or create a new one',
 				'arg'      => '',
 				'valid'    => false,
-				'icon'  => array(
+				'icon'     => array(
 					'path' => 'img/add tag.png',
 				),
 			);
@@ -831,16 +831,23 @@ class Workflow {
 			}
 		}
 
-		// Build navigation list item
+		// Build navigation list item. If the GIF has no tags, fall back to the main editor interface
+		if( empty( $the_gif->tags ) ) {
+			$destination = 'the GIF editor';
+			$next_step   = 'launch_editor';
+		} else {
+			$destination = 'tag management options';
+			$next_step   = 'manage_tags';
+		}
 		$this->items['items'][] = array(
 			'title' => 'Go back',
-			'subtitle' => 'Return to tag management options',
+			'subtitle' => "Return to $destination",
 			'arg'   => '',
 			'icon'		=> array(
 				'path'  => 'img/back.png'
 			),
 			'variables' => array(
-				'next_step'	=> 'manage_tags',
+				'next_step'	=> $next_step,
 			),
 		);
 
@@ -1030,7 +1037,7 @@ class Workflow {
 	 *
 	 * @since 2.0
 	 */
-	public function output_config( $action, $object='' )
+	public function output_config( $action, $object = '' )
 	{
 		// Initialize the configuration array
 		$config = array(
@@ -1066,7 +1073,8 @@ class Workflow {
 			$tag_message = '"' . $this->selected_tag . '" removed from this GIF';
 			$variables = array(
 				'exit'				 => 'false',
-				'next_step'			 => 'remove_tags',
+				// If this is the last tag assigned to the GIF, next step should be 'launch_editor'
+				'next_step'			 => 1 === count( $object->tags ) ? 'launch_editor' : 'remove_tags',
 				'notification_title' => 'Tag removed!',
 				'notification_text'  => popup_notice( $tag_message ),
 			);

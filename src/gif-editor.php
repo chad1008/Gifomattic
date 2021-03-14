@@ -32,25 +32,19 @@ if ( is_gif() ) {
 	// If this is the manage_tags step, output the tag management interface
 	} elseif ( 'manage_tags' === $flow->next_step ) {
 		// If the current GIF has no tags, skip ahead to the adding tags interface
-		if ( empty ( $the_gif->tags ) ) {
+		if ( empty( $the_gif->tags ) ) {
 			$flow->add_tags( $input, $the_gif, $tags );
 		} else {
 			$flow->launch_tag_management();
 		}
-		
-		//TODO add navigation
-		
+
 	// If this is the add_tags step, launch the tag addition interface
 	} elseif ( 'add_tags' === $flow->next_step ) {
 		$flow->add_tags( $input, $the_gif, $tags );
-
-		//TODO add navigation
-
+		
 	// If this is the remove_tags step, launch the tag removal interface
 	} elseif ( 'remove_tags' === $flow->next_step ) {
-		$flow->remove_tags( $the_gif ); //TODO test
-
-		//TODO add navigation
+		$flow->remove_tags( $the_gif );
 		
 	// If an unexpected step is detected, display an error
 	} else {

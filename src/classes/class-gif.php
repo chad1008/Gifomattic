@@ -156,7 +156,7 @@ class GIF {
 		// Set the various count statements
 		$this->selected_count_statement = $this->format_count_statement( 'selected_count' );
 		$this->random_count_statement 	= $this->format_count_statement( 'random_count' );
-		$this-> total_count_statement 	= $this->total_count_statement();
+		$this->total_count_statement 	= $this->total_count_statement();
 		
 		// Set the tag list, if possible
 		$this->tags = $this->get_tags();

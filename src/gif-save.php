@@ -13,7 +13,7 @@ $flow = new Workflow();
 if ( is_gif() ) {
 	// If the selected item is an existing GIF, query it using the ID
 	if (false != $flow->item_id) {
-		$the_gif = new GIF($flow->item_id);
+		$the_gif = new GIF( $flow->item_id );
 
 		// Otherwise, initialize a new, empty GIF object
 	} else {
@@ -43,7 +43,7 @@ if ( is_gif() ) {
 		$the_gif->remove_tag( $argv[1] );
 
 		// Output workflow configuration
-		$flow->output_config( 'remove_tag' );
+		$flow->output_config( 'remove_tag', $the_gif );
 		
 		// If we're in the default save mode, save the GIF name and/or URL
 	} else {
