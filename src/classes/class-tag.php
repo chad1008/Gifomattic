@@ -68,9 +68,9 @@ class Tag {
 		$stmt = $this->db->prepare( "SELECT tags.tag,
 											SUM( CASE WHEN gifs.in_trash = 0 THEN 1 ELSE 0 END ) as gifs_with_tag
 									 FROM tags
-									 JOIN tag_relationships
+									 LEFT JOIN tag_relationships
 									 	USING( tag_id )
-									 JOIN gifs
+									 LEFT JOIN gifs
 									 	USING (gif_id)
 									 WHERE tags.tag_id IS :id"
 								  );
