@@ -944,20 +944,6 @@ class Workflow {
 				'next_step' => 'empty_trash'
 			),
 		);
-
-		// Build navigation list item
-		$this->items['items'][] = array(
-			'title' => 'Go back',
-			'subtitle' => 'Return to Search',
-			'arg'   => '',
-			'icon'		=> array(
-				'path'  => 'img/back.png'
-			),
-			'variables' => array(
-				'exit'	=> 'true',
-			),
-		);
-
 	}
 
 	/**
@@ -993,7 +979,34 @@ class Workflow {
 			),
 		);
 	}
-	
+
+	/**
+	 * Display workflow navigation
+	 *
+	 * @param string $next_step Sets the workflow step this item should take the user to
+	 *
+	 * @since 2.0
+	 */
+	public function navigate( $next_step ) {
+		// Set destination text
+		if ( 'launch_trash' === $next_step ) {
+			$destination = 'Trash management';
+		}
+		// Build navigation list item
+		$this->items['items'][] = array(
+			'title' => 'Go back',
+			'subtitle' => "Return to $destination",
+			'arg'   => '',
+			'icon'		=> array(
+				'path'  => 'img/back.png'
+			),
+			'variables' => array(
+				'next_step'	=> $next_step,
+			),
+		);
+	}
+
+
 	/**
 	 * Output the items array for an Alfred script filter
 	 * 
@@ -1050,11 +1063,11 @@ class Workflow {
 	 *
 	 * @param string $action The workflow action to generate configuration for
 	 * @param mixed $object The GIF() or Tag() object being acted on and drawn from (optional)
-	 *
+	 * @param mixed $query The GIF_Query() or Tag_Query() object being compared against (optional)
 	 *
 	 * @since 2.0
 	 */
-	public function output_config( $action, $object = '' )
+	public function output_config( $action, $object = '', $query = '' )
 	{
 		// Initialize the configuration array
 		$config = array(
@@ -1105,12 +1118,6 @@ class Workflow {
 				'notification_title' => 'Tag removed!',
 				'notification_text'  => popup_notice( $tag_message ),
 			);
-		} elseif ( 'restore_gif' === $action ) {
-			$subtitle = '"' . $object->name . '" has been has been returned to your library';
-			$variables = array(
-						'notification_title' => 'GIF restored!',
-						'notification_text'  => popup_notice( $subtitle ),
-			);
 		} elseif ( 'empty_trash' === $action ) {
 			// Prepare notification message
 			$args = array(
@@ -1120,22 +1127,26 @@ class Workflow {
 				'many'	 => "$object->gif_count GIFs",
 				'format' => '%s permanently deleted',
 			);
-			$subtitle = quantity_statement($args);
-
+			$subtitle = quantity_statement( $args );
 			$variables = array(
 				'notification_title' => 'Trash emptied!',
 				'notification_text'  => popup_notice( $subtitle ),
 			);
+		} elseif ( 'restore_gif' === $action ) {
+			$subtitle = '"' . $object->name . '" has been has been returned to your library';
+			$variables = array(
+				'notification_title' => 'GIF restored!',
+				'notification_text'  => popup_notice( $subtitle ),
+				// If there are more GIFs that can be restored, next step should be 'view_trash'
+				'next_step'			 => 1 < $query->gif_count ? 'view_trash' : '',
+			);
 		} elseif ('delete_gif' === $action ) {
 			$subtitle = '"' . $object->name . '" has been permanently removed from your library';
-			// Prepare script output  TODO test and fix deleted GIF output
-			$output = array(
-				'alfredworkflow' => array(
-					'variables' => array(
-						'notification_title' => 'GIF deleted!',
-						'notification_text'  => popup_notice( $subtitle ),
-					),
-				),
+			$variables = array(
+				'notification_title' => 'GIF deleted!',
+				'notification_text'  => popup_notice( $subtitle ),
+				// If there are more GIFs that can be deleted, next step should be 'view_trash'
+				'next_step'			 => 1 < $query->gif_count ? 'view_trash' : '',
 			);
 		} elseif ( 'error' === $action ) {
 			$variables = array(
