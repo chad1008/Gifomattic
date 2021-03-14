@@ -933,7 +933,7 @@ class Workflow {
 			),
 		);
 		
-		// View 'empty trash' list item
+		// Build 'empty trash' list item
 		$this->items['items'][] = array(
 			'title'    => "Empty trash",
 			'subtitle' => 'Permanently delete ALL trashed GIFs. CAUTION: there is no undo!',
@@ -944,6 +944,20 @@ class Workflow {
 				'next_step' => 'empty_trash'
 			),
 		);
+
+		// Build navigation list item
+		$this->items['items'][] = array(
+			'title' => 'Go back',
+			'subtitle' => 'Return to Search',
+			'arg'   => '',
+			'icon'		=> array(
+				'path'  => 'img/back.png'
+			),
+			'variables' => array(
+				'exit'	=> 'true',
+			),
+		);
+
 	}
 
 	/**
