@@ -779,6 +779,9 @@ class Workflow {
 				$this->items['items'][] = array(
 					'title' 	=> "Create a new tag: $input",
 					'arg'   	=> '',
+					'icon'     => array(
+						'path' => 'img/add tag.png',
+					),
 					'variables'	=> array(
 						'is_new_tag' 	=> 'true',
 						'next_step'		=> 'save_gif',
@@ -814,11 +817,11 @@ class Workflow {
 
 				// Build individual tag list items. Disable any tags that are already assigned to this GIF and show a subtitle to that effect
 				$this->items['items'][] = array(
-					'title' => $the_tag->name,
+					'title'	   => $the_tag->name,
 					'subtitle' => $the_gif->has_tag( $the_tag->id ) ? 'This GIF is already tagged as "' . $the_tag->name . '"' : $subtitle,
-					'arg' => $the_tag->id,
-					'icon' => array(
-						'path' => '',
+					'arg'	   => $the_tag->id,
+					'icon'     => array(
+						'path' => 'img/add tag.png',
 					),
 					'variables' => array(
 						'is_new_tag' 	=> false,
@@ -840,9 +843,9 @@ class Workflow {
 			$next_step   = 'manage_tags';
 		}
 		$this->items['items'][] = array(
-			'title' => 'Go back',
-			'subtitle' => "Return to $destination",
-			'arg'   => '',
+			'title'		=> 'Go back',
+			'subtitle'  => "Return to $destination",
+			'arg' 	 	=> '',
 			'icon'		=> array(
 				'path'  => 'img/back.png'
 			),
@@ -884,10 +887,10 @@ class Workflow {
 
 			// Build the list item
 			$this->items['items'][] = array(
-				'title' => 'Remove "' . $tag->name . '" from this GIF',
+				'title'	   => 'Remove "' . $tag->name . '" from this GIF',
 				'subtitle' => $subtitle,
-				'arg'   => $tag->id,
-				'icon'  => array(
+				'arg'	   => $tag->id,
+				'icon'     => array(
 					'path' => 'img/remove tag.png',
 				),
 				'variables' => array(
@@ -900,11 +903,11 @@ class Workflow {
 		
 		// Build navigation list item
 		$this->items['items'][] = array(
-			'title' => 'Go back',
+			'title'    => 'Go back',
 			'subtitle' => 'Return to tag management options',
-			'arg'   => '',
-			'icon'		=> array(
-				'path'  => 'img/back.png'
+			'arg'      => '',
+			'icon'	   => array(
+				'path' => 'img/back.png'
 			),
 			'variables' => array(
 				'next_step'	=> 'manage_tags',
@@ -920,7 +923,7 @@ class Workflow {
 	public function launch_trash() {
 		// Build 'view trash' list item
 		$this->items['items'][] = array(
-			'title' => "View all trashed GIFs",
+			'title'    => "View all trashed GIFs",
 			'subtitle' => 'Restore or delete individual GIFs',
 			'icon' => array(
 				'path' => 'img/trash.png',
@@ -932,9 +935,9 @@ class Workflow {
 		
 		// View 'empty trash' list item
 		$this->items['items'][] = array(
-			'title' => "Empty trash",
+			'title'    => "Empty trash",
 			'subtitle' => 'Permanently delete ALL trashed GIFs. CAUTION: there is no undo!',
-			'icon' => array(
+			'icon'     => array(
 				'path' => 'img/destroy.png',
 			),
 			'variables' => array(
@@ -951,21 +954,21 @@ class Workflow {
 	 */
 	public function trashed_gif( $the_gif ) {
 		$this->items['items'][] = array(
-			'title' => "Trashed: $the_gif->name",
+			'title'    => "Trashed: $the_gif->name",
 			'subtitle' => 'Restore this GIF (hold CTRL to permanently delete this GIF)',
-			'arg' => $the_gif->id,
-			'icon' => array(
+			'arg'	   => $the_gif->id,
+			'icon'	   => array(
 				'path' => $the_gif->icon,
 			),
 			'variables' => array(
 				'item_type' => 'gif',
-				'item_id' => $the_gif->id,
+				'item_id'   => $the_gif->id,
 				'next_step' => 'restore_gif',
 			),
 			'mods' => array(
 				'ctrl' => array(
 					'subtitle' => 'Delete forever. CAUTION: there is no undo!',
-					'icon' => array(
+					'icon'     => array(
 						'path' => 'img/destroy.png',
 					),
 					'variables' => array(
