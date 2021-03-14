@@ -587,7 +587,7 @@ class Workflow {
 			'title'    => 'New GIF name:',
 			'subtitle' => null != $input ? $input : 'Enter the new GIF name',
 			'arg'	   => 'filler arg',
-			'valid'	   => '' === $input ? 'false' : 'true',
+			'valid'	   => null === $input ? 'false' : 'true',
 			'icon'	   => array(
 				'path' => 'img/edit.png',
 			),

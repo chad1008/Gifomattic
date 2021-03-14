@@ -279,7 +279,6 @@ function popup_notice( $message = '', $error = false, $inline = false ) {
 			"You're my hero.",
 			"Beep Beep Boop...",
 			"Mission accomplished!",
-			"Oh, that's a good one!",
 			"Your GIF is my command.",
 			"Is it hard to be so awesome?",
 			"Remember, it's 'GIF'. Not 'JIF.'",
