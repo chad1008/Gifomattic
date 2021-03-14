@@ -45,7 +45,7 @@ if ( is_gif() ) {
 		// Output workflow configuration
 		$flow->output_config( 'remove_tag', $the_gif );
 		
-		// If we're in the default save mode, save the GIF name and/or URL
+	// If we're in the default save mode, save the GIF name and/or URL
 	} else {
 		// Stage new/updated values for saving, skipping any that haven't been provided
 		if ( $flow->gif_url ) {

@@ -1046,11 +1046,21 @@ class Workflow {
 
 		// Initialize workflow variables for various use cases
 		if ( 'save_gif' === $action ) {
+			// Prepare notification message. Customize for new GIFs, edited names, and edited URLs. Include a failsafe as well
+			if( $object->is_new ) {
+				$text = '"' . $object->new_props['name'] . '" has been added to your library';
+			} elseif( isset( $object->new_props['name'] ) ) {
+				$text = 'GIF name updated to "' . $object->new_props['name'] . '"';
+			} elseif( isset( $object->new_props['url'] ) ) {
+				$text = 'GIF URL updated to "' . $object->new_props['url'] . '"';
+			} else {
+				$text = "The GIF's details have been saved";
+			}
 			$variables = array(
 				'item_id'			 => $object->new_props['id'],
 				'next_step'			 => $object->is_new ? 'add_tags' : 'launch_editor',
 				'notification_title' => 'GIF saved!',
-				'notification_text'  => popup_notice(),
+				'notification_text'  => popup_notice( $text ),
 				// Clear misc values in preparation of the next loop
 				'gif_url'  			 => false,
 				'gif_name' 			 => false,

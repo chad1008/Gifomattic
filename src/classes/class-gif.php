@@ -169,9 +169,9 @@ class GIF {
 
 		// Set the is_new flag
 		if ( $this->id == null ) {
-			$this->is_new = TRUE;
+			$this->is_new = true;
 		} else {
-			$this->is_new = FALSE;
+			$this->is_new = false;
 		}
 	}
 
