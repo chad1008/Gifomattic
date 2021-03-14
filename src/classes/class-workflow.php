@@ -468,6 +468,7 @@ class Workflow {
 			),
 			'variables' => array(
 				'next_step' => 'gif_name',
+				'external'  => 'editor',
 			),
 		);
 
@@ -481,6 +482,7 @@ class Workflow {
 			),
 			'variables' => array(
 				'next_step' => 'gif_url',
+				'external'  => 'editor',
 			),
 		);
 
@@ -503,7 +505,8 @@ class Workflow {
 				'path' => 'img/edit.png',
 			),
 			'variables' => array(
-				'next_step' => 'manage_tags', //TODO this is a new thing, make sure it actually functions
+				'next_step' => 'manage_tags',
+				'external'  => 'editor',
 			),
 		);
 
@@ -523,6 +526,9 @@ class Workflow {
 				'exit'				 => 'true',
 			),
 		);
+
+		// Add navigation
+		$this->navigate( 'search' );
 	}
 
 	/**
@@ -544,34 +550,25 @@ class Workflow {
 
 		// Build the 'New URL' list item
 		$this->items['items'][] = array(
-			'title' => 'New GIF URL:',
+			'title'	   => 'New GIF URL:',
 			'subtitle' => $subtitle,
-			'arg' => 'filler arg',
-			'valid' => is_valid_url( $input ) ? 'true' : 'false',
-			'icon' => array(
+			'arg'	   => 'filler arg',
+			'valid'    => is_valid_url( $input ) ? 'true' : 'false',
+			'icon'	   => array(
 				'path' => 'img/edit.png',
 			),
 			'variables' => array(
-				'gif_url' => $input,
-				'next_step' => 'true' === $this->new_gif ? 'gif_name' : 'save_gif',
+				'gif_url'		=> $input,
+				'next_step'		=> 'true' === $this->new_gif ? 'gif_name' : 'save_gif',
+				'external'		=> 'editor',
 				'standby_title' => 'Saving your GIF...',
 				'standby_text'  => 'This should only take a moment, please stand by',
-				'exit' => 'false',
+				'exit'			=> 'false',
 			),
 		);
 
-		// Build navigation list item
-		$this->items['items'][] = array(
-			'title' => 'Go back',
-			'subtitle' => 'Return to GIF Editor',
-			'arg'   => '',
-			'icon'		=> array(
-				'path'  => 'img/back.png'
-			),
-			'variables' => array(
-				'next_step'	=> 'launch_editor',
-			),
-		);
+		// Add navigation
+		$this->navigate( 'launch_editor' );
 	}
 
 	/**
@@ -592,25 +589,15 @@ class Workflow {
 				'path' => 'img/edit.png',
 			),
 			'variables' => array(
-				'gif_name'  		=> $input,
-				'next_step' 		=> 'save_gif',
-				'exit' 				=> 'false',
+				'gif_name'  => $input,
+				'next_step' => 'save_gif',
+				'external'  => 'editor',
+				'exit' 		=> 'false',
 			),
 		);
 
-		// Build navigation list item
-		$this->items['items'][] = array(
-			'title' => 'Go back',
-			'subtitle' => 'Return to GIF Editor',
-			'arg'   => '',
-			'icon'		=> array(
-				'path'  => 'img/back.png'
-			),
-			'variables' => array(
-				'next_step'	=> 'launch_editor',
-			),
-		);
-
+		// Add navigation
+		$this->navigate( 'launch_editor' );
 	}
 
 	/**
@@ -718,6 +705,7 @@ class Workflow {
 			),
 			'variables' => array(
 				'next_step'	=> 'add_tags',
+				'external'  => 'editor',
 			),
 		);
 
@@ -731,21 +719,12 @@ class Workflow {
 			),
 			'variables' => array(
 				'next_step'	=> 'remove_tags',
+				'external'  => 'editor',
 			),
 		);
 
-		// Build navigation list item
-		$this->items['items'][] = array(
-			'title'    => 'Go back',
-			'subtitle' => 'Return to GIF Editor',
-			'arg'      => '',
-			'icon'	   => array(
-				'path' => 'img/back.png'
-			),
-			'variables' => array(
-				'next_step'	=> 'launch_editor',
-			),
-		);
+		// Add navigation
+		$this->navigate( 'launch_editor' );
 	}
 
 	/**
@@ -785,6 +764,7 @@ class Workflow {
 					'variables'	=> array(
 						'is_new_tag' 	=> 'true',
 						'next_step'		=> 'save_gif',
+						'external'  	=> 'editor',
 						'save_mode' 	=> 'add_tag',
 						'selected_tag'	=> $input,
 					),
@@ -812,7 +792,6 @@ class Workflow {
 					),
 					'format' => 'Tag this GIF as "' . $the_tag->name . '" (%s currently use%s this tag)',
 				);
-
 				$subtitle = quantity_statement( $args );
 
 				// Build individual tag list items. Disable any tags that are already assigned to this GIF and show a subtitle to that effect
@@ -826,6 +805,7 @@ class Workflow {
 					'variables' => array(
 						'is_new_tag' 	=> false,
 						'next_step' 	=> 'save_gif',
+						'external'  => 'editor',
 						'save_mode' 	=> 'add_tag',
 						'selected_tag'	=> $the_tag->name,
 					),
@@ -834,26 +814,14 @@ class Workflow {
 			}
 		}
 
-		// Build navigation list item. If the GIF has no tags, fall back to the main editor interface
+		// Set next step for navigation. If the GIF has no tags, fall back to the main editor interface
 		if( empty( $the_gif->tags ) ) {
-			$destination = 'the GIF editor';
 			$next_step   = 'launch_editor';
 		} else {
-			$destination = 'tag management options';
 			$next_step   = 'manage_tags';
 		}
-		$this->items['items'][] = array(
-			'title'		=> 'Go back',
-			'subtitle'  => "Return to $destination",
-			'arg' 	 	=> '',
-			'icon'		=> array(
-				'path'  => 'img/back.png'
-			),
-			'variables' => array(
-				'next_step'	=> $next_step,
-			),
-		);
-
+		// Add navigation
+		$this->navigate( $next_step );
 	}
 
 	/**
@@ -895,24 +863,15 @@ class Workflow {
 				),
 				'variables' => array(
 					'next_step'		=> 'save_gif',
+					'external'  => 'editor',
 					'save_mode' 	=> 'remove_tag',
 					'selected_tag'	=> $tag->name,
 				),
 			);
 		}
-		
-		// Build navigation list item
-		$this->items['items'][] = array(
-			'title'    => 'Go back',
-			'subtitle' => 'Return to tag management options',
-			'arg'      => '',
-			'icon'	   => array(
-				'path' => 'img/back.png'
-			),
-			'variables' => array(
-				'next_step'	=> 'manage_tags',
-			),
-		);
+
+		// Add navigation
+		$this->navigate( 'manage_tags' );
 	}
 
 	/**
@@ -988,9 +947,19 @@ class Workflow {
 	 * @since 2.0
 	 */
 	public function navigate( $next_step ) {
-		// Set destination text
+		// Set destination text and external trigger target
 		if ( 'launch_trash' === $next_step ) {
 			$destination = 'Trash management';
+			$external	 = '';
+		} elseif ( 'search' === $next_step ) {
+			$destination = 'search';
+			$external	 = 'search';
+		} elseif ( 'launch_editor' === $next_step ) {
+			$destination = 'GIF editor';
+			$external	 = 'editor';
+		} elseif ( 'manage_tags' ) {
+			$destination = 'tag management options';
+			$external    = 'editor';
 		}
 		// Build navigation list item
 		$this->items['items'][] = array(
@@ -1002,6 +971,7 @@ class Workflow {
 			),
 			'variables' => array(
 				'next_step'	=> $next_step,
+				'external'  => $external,
 			),
 		);
 	}
