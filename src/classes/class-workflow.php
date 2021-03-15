@@ -195,6 +195,7 @@ class Workflow {
 					),
 					'variables' => array(
 						'next_step' => 'launch_editor',
+						'external'  => 'editor',
 						'item_id'	=> $the_gif->id,
 						'item_type' => 'gif',
 						'original_input' => $original_input,
