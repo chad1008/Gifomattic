@@ -664,6 +664,7 @@ class Workflow {
 			'title'    => "New tag name: $input",
 			'subtitle' => "Current name: $the_tag->name",
 			'arg'	   => $input,
+			'valid'	   => '' != $input ? 'true' : 'false',
 			'icon' 	   => array(
 				'path' => 'img/edit.png'
 			),
