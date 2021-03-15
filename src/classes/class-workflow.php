@@ -144,7 +144,7 @@ class Workflow {
 			);
 		// Format tag details for Explore mode
 		} elseif ( 'explore' === $mode ) {
-
+		// TODO is this needed? Test Explore mode.
 		}
 	}
 
@@ -175,6 +175,11 @@ class Workflow {
 					'subtitle'  => "View this GIF's details and stats",
 					'icon'	    => array(
 						'path'  => $the_gif->view_icon,
+					),
+					'variables' => array(
+						'external' => 'explore',
+						'item_id'	=> $the_gif->id,
+						'item_type' => 'gif',
 					),
 				),
 				'shift' => array(
@@ -215,7 +220,7 @@ class Workflow {
 		// Build the list item
 		$this->items['items'][] = array(
 			'title'		=> "There are no $missing_items that match your search!",
-			'subtitle'  => "If you've entered a URL you can save it as a new GIF",
+			'subtitle'  => '',
 			'valid'	    => 'false',
 			'mods'		=> array(),
 		);
@@ -302,7 +307,7 @@ class Workflow {
 	}
 
 	/**
-	 * Display the details for an individual GIF
+	 * Display the details for an individual GIF in Explorer
 	 *
 	 * @param object $the_gif The GIF object currently being displayed
 	 *
@@ -346,6 +351,7 @@ class Workflow {
 					),
 					'variables' => array(
 						'next_step' => 'launch_editor',
+						'external'  => 'editor'
 					),
 				),
 			),
@@ -444,6 +450,8 @@ class Workflow {
 						'item_type'  => 'tag',
 						'item_id'    => $tag->id,
 						'trash_mode' => '',
+						'next_step'  => '',
+						'external'   => 'explore'
 					),
 				);
 			}
