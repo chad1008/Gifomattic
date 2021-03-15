@@ -90,73 +90,79 @@ class Workflow {
 	 * Show an individual tag in script filter results
 	 *
 	 * @param object $the_tag  The current Tag() object being displayed
-	 * @param string $mode     Declares the format currently needed
+	 * @param string $input	   User input to be saved for retrieval later on
 	 *
 	 * @since 2.0
 	 */
-	public function the_tag( $the_tag, $mode ) {
+	public function the_tag( $the_tag, $input ) {
+		// Prepare a quantity statement for the subtitle
+		$args = array(
+			'number' => $the_tag->gifs_with_tag,
+			'zero'	 => 'No GIFs',
+			'one'	 => 'One GIF',
+			'many'	 => $the_tag->gifs_with_tag . ' GIFs',
+			'format' => 'Share a randomly selected "' . $the_tag->name . '" GIF (%s available)',
+		);
+		$subtitle = quantity_statement( $args );
 
-		// Format tag details for Search mode
-		if ( 'search' === $mode) {
-			// Prepare a quantity statement for the subtitle
-			$args = array(
-				'number' => $the_tag->gifs_with_tag,
-				'zero'	 => 'No GIFs',
-				'one'	 => 'One GIF',
-				'many'	 => $the_tag->gifs_with_tag . ' GIFs',
-				'format' => 'Share a randomly selected "' . $the_tag->name . '" GIF (%s available)',
-			);
-			$subtitle = quantity_statement( $args );
-
-			// Build the list item
-			$this->items['items'][] = array(
-				'title'	   => $the_tag->name,
-				'subtitle' => $subtitle,
-				'arg'	   => $the_tag->id,
-				'valid'	   => $the_tag->gifs_with_tag > 0 ? 'true' : 'false',
-				'icon'	   => array(
-					'path' => 'img/randomize.png',
-				),
-				'variables' => array(
-					'item_type' => 'tag',
-					'item_id'	=> $the_tag->id,
-					'next_step' => 'output',
-				),
-				'mods' => array(
-					'cmd' => array(
-						'subtitle' => 'View GIFs with this tag',
-						'valid'	   => $the_tag->gifs_with_tag > 0 ? 'true' : 'false',
-						'icon'	   => array(
-							'path' => 'img/view tag.png',
-						),
+		// Build the list item
+		$this->items['items'][] = array(
+			'title'	   => $the_tag->name,
+			'subtitle' => $subtitle,
+			'arg'	   => $the_tag->id,
+			'valid'	   => $the_tag->gifs_with_tag > 0 ? 'true' : 'false',
+			'icon'	   => array(
+				'path' => 'img/randomize.png',
+			),
+			'variables' => array(
+				'item_type' => 'tag',
+				'item_id'	=> $the_tag->id,
+				'next_step' => 'output',
+			),
+			'mods' => array(
+				'cmd' => array(
+					'subtitle' => 'View GIFs with this tag',
+					'valid'	   => $the_tag->gifs_with_tag > 0 ? 'true' : 'false',
+					'icon'	   => array(
+						'path' => 'img/view tag.png',
 					),
-					'shift' => array(
-						'subtitle' => 'Edit this tag',
-						'icon'	   => array(
-							'path' => 'img/edit tag.png',
-						),
-						'variables' => array(
-							'item_type' => 'tag',
-							'item_id'	=> $the_tag->id,
-						),
+					'variables' => array(
+						'item_type' => 'tag',
+						'item_id'	=> $the_tag->id,
+						'original_input' => $input,
 					),
 				),
-			);
-		// Format tag details for Explore mode
-		} elseif ( 'explore' === $mode ) {
-		// TODO is this needed? Test Explore mode.
-		}
+				'shift' => array(
+					'subtitle' => 'Edit this tag',
+					'icon'	   => array(
+						'path' => 'img/edit tag.png',
+					),
+					'variables' => array(
+						'item_type' => 'tag',
+						'item_id'	=> $the_tag->id,
+					),
+				),
+			),
+		);
 	}
 
 	/**
 	 * Show an individual GIF in script filter results
 	 *
-	 * @param object $the_gif  The current GIF() object being displayed
-	 * @param string $input	   User input to be saved for retrieval later on
+	 * @param object $the_gif The current GIF() object being displayed
+	 * @param string $input   User input to be saved for retrieval later on
+	 * @param string $mode	  Determines what mode/format is required
 	 *
 	 * @since 2.0
 	 */
-	public function the_gif( $the_gif, $input ) {
+	public function the_gif( $the_gif, $input, $mode ) {
+		// Safely save original search input
+		if ( 'search' === $mode ) {
+			$original_input = $input;
+		} else {
+			$original_input = $this->original_input;
+		}
+
 		// Build the list item
 		$this->items['items'][] = array(
 			'title'		=> $the_gif->name,
@@ -191,7 +197,7 @@ class Workflow {
 						'next_step' => 'launch_editor',
 						'item_id'	=> $the_gif->id,
 						'item_type' => 'gif',
-						'original_input' => $input,
+						'original_input' => $original_input,
 					),
 				),
 			),
@@ -350,8 +356,10 @@ class Workflow {
 						'path'  => $the_gif->edit_icon,
 					),
 					'variables' => array(
+						'item_type' => 'gif',
+						'item_id'   => $the_gif->id,
 						'next_step' => 'launch_editor',
-						'external'  => 'editor'
+						'external'  => 'editor',
 					),
 				),
 			),
