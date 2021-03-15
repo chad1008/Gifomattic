@@ -186,6 +186,7 @@ class Workflow {
 						'external' => 'explore',
 						'item_id'	=> $the_gif->id,
 						'item_type' => 'gif',
+						'original_input' => $original_input,
 					),
 				),
 				'shift' => array(
