@@ -896,7 +896,8 @@ class Workflow {
 				'path' => 'img/trash.png',
 			),
 			'variables' => array(
-				'next_step' => 'view_trash'
+				'next_step' => 'view_trash',
+				'external'  => 'trash',
 			),
 		);
 		
@@ -908,9 +909,14 @@ class Workflow {
 				'path' => 'img/destroy.png',
 			),
 			'variables' => array(
-				'next_step' => 'empty_trash'
+				'next_step'  => 'process_trash',
+				'trash_mode' => 'empty_trash',
 			),
 		);
+
+		// Add navigation
+		$this->navigate( 'search' );
+
 	}
 
 	/**
@@ -928,9 +934,10 @@ class Workflow {
 				'path' => $the_gif->icon,
 			),
 			'variables' => array(
-				'item_type' => 'gif',
-				'item_id'   => $the_gif->id,
-				'next_step' => 'restore_gif',
+				'item_type'  => 'gif',
+				'item_id'    => $the_gif->id,
+				'next_step'  => 'process_trash',
+				'trash_mode' => 'restore_gif',
 			),
 			'mods' => array(
 				'ctrl' => array(
@@ -939,8 +946,9 @@ class Workflow {
 						'path' => 'img/destroy.png',
 					),
 					'variables' => array(
-						'item_id'   => $the_gif->id,
-						'next_step' => 'delete_gif',
+						'item_id'    => $the_gif->id,
+						'next_step'  => 'process_trash',
+						'trash_mode' => 'delete_gif',
 					),
 				),
 			),
@@ -958,7 +966,7 @@ class Workflow {
 		// Set destination text and external trigger target
 		if ( 'launch_trash' === $next_step ) {
 			$destination = 'Trash management';
-			$external	 = '';
+			$external	 = 'trash';
 		} elseif ( 'search' === $next_step ) {
 			$destination = 'search';
 			$external	 = 'search';
@@ -1109,6 +1117,7 @@ class Workflow {
 			$variables = array(
 				'notification_title' => 'Trash emptied!',
 				'notification_text'  => popup_notice( $subtitle ),
+				'next_step' 		 => 'exit',
 			);
 		} elseif ( 'restore_gif' === $action ) {
 			$subtitle = '"' . $object->name . '" has been has been returned to your library';
@@ -1116,7 +1125,7 @@ class Workflow {
 				'notification_title' => 'GIF restored!',
 				'notification_text'  => popup_notice( $subtitle ),
 				// If there are more GIFs that can be restored, next step should be 'view_trash'
-				'next_step'			 => 1 < $query->gif_count ? 'view_trash' : '',
+				'next_step'			 => 1 < $query->gif_count ? 'view_trash' : 'exit',
 			);
 		} elseif ('delete_gif' === $action ) {
 			$subtitle = '"' . $object->name . '" has been permanently removed from your library';
@@ -1124,7 +1133,7 @@ class Workflow {
 				'notification_title' => 'GIF deleted!',
 				'notification_text'  => popup_notice( $subtitle ),
 				// If there are more GIFs that can be deleted, next step should be 'view_trash'
-				'next_step'			 => 1 < $query->gif_count ? 'view_trash' : '',
+				'next_step'			 => 1 < $query->gif_count ? 'view_trash' : 'exit',
 			);
 		} elseif ( 'error' === $action ) {
 			$variables = array(
