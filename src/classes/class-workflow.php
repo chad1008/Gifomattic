@@ -980,7 +980,7 @@ class Workflow {
 			),
 		);
 	}
-	
+
 	/**
 	 * Output the items array for an Alfred script filter
 	 * 
