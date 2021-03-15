@@ -678,7 +678,8 @@ class Workflow {
 				'path' => 'img/destroy.png',
 			),
 			'variables' => array(
-				'next_step' => 'confirm_delete'
+				'next_step' => 'confirm_delete',
+				'external'  => 'editor',
 			),
 		);
 	}

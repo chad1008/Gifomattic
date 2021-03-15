@@ -59,7 +59,7 @@ if ( is_gif() ) {
 	if ( 'confirm_delete' === $flow->next_step ) {
 	$flow->confirm_tag_delete( $the_tag );
 
-		// If this isn't the 'confirm_delete' step, proceed with the editing prompts
+	// If this isn't the 'confirm_delete' step, proceed with the editing prompts
 	} else {
 	$flow->edit_tag( $the_tag, $input );
 
