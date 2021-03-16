@@ -103,12 +103,9 @@ function is_legacy_db() {
  *
  * @since 2.0
  */
-function prep_db() { //TODO Remove testing conditional
-	if ( isset( $_SERVER['alfred_workflow_data'] ) ) {
-		$file = $_SERVER['alfred_workflow_data'] . '/gifomattic.db';
-	} else {
-		$file = 'gifomattic.db';
-	}
+function prep_db() {
+	$file = $_SERVER['alfred_workflow_data'] . '/gifomattic.db';
+
 	// While we're here, we should set up the icons folders
 	global $icons;
 	$icons = $_SERVER['alfred_workflow_data'] . '/icons/';
