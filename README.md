@@ -1,74 +1,45 @@
-Gifomattic is an Alfred 3 workflow to help you organize and share your favorite gifs.
+Gifomattic is an Alfred workflow to help you organize and share your favorite GIF URLs.
 
-Gifomattic uses URLs for gif sharing. You can use the URL where you originally found the gif or upload it to someplace of your own like a Cloudup stream or WordPress media library.
+To launch Gifomattic, open Alfred and enter the keyword `gif`.
 
-##Adding Gifs
-**Keyword:** `gifadd`
+## Adding GIFs To Your Library
+There are three ways to add a new GIF to your library:
 
-**Shortcut:** user-defined hotkey to use last url added to clipboard
+1. User-defined hotkey that will pull from your clipboard. Remember to copy your URL before hitting your hotkey!
+2. After launching Gifomattic, paste your URL directly into the prompt
+3. After launching Gifomattic, use the keyword `add` instead of a search term
 
-Entering the keyword 'gifadd' into Alfred will allow you to save a new gif. The first time your run gifadd, Gifomattic will create a new folder for your data. In that folder a new database with the necessary table is built and a folder for icon files is created, along with the icon for the gif you've just saved.
+After you've saved your URL and given it a name, you can optionally assign tags to the GIF to keep your library organized.
 
-After typing `gifadd`, you provide a url and name (both required) for the gif, as well as optional tags.The tags are separated by comas.
+## Searching and Sharing Gifs
+After you've added some GIFs to your library you can search for them by launching Gifomattic and typing your search term. Gifomattic will return any GIFs or tags that match your search string.
 
-You can also assign a hotkey to `gifadd`, which will start the process using the last item copied to your clipboard. Copy URL, hit hotkey, fill in title and tags and you're done!
+If you select a GIF from the search results, Gifomattic will paste that URL into your currently focused app.
 
-###Duplicate Gifs
-When adding a gif, `gifadd` will alert you to existing gifs in your database that match the URL or name you've entered. If you notice you're saving a gif you already have, you can select the match to edit it, rather than continuing with the new gif creation.
+If you select a tag from the search results, Gifomattic will select a random GIF that tag has been assigned to. This way you can ensure there's some variety to your GIF sharing... but it's also just a fun little surprise to see which GIF you get!
 
-##Searching and Sharing Gifs
-**Keyword:** `gif`
+## Modifier Keys
+Gifomattic uses three modifier keys: CMD, SHIFT, and CTRL.
 
-Now that you've saved a gif or two, you can select them to share the URLs.
+**CMD** is used to explore more details about a GIF, preview a GIF in your browser, or browse/search all of the GIFs that a particular tag has been assigned to. Think of **CMD** as the "show me more" button.
 
-Enter the keyword `gif` into Alfred and then start typing to search. Gifomattic will search for gifs whose names or URLs match what you've entered. You'll see the name of your gifs, followed by their URL. Each one will also have an automatically generated thumbnail icon.
+**SHIFT** is used for editing GIFs or tags. This includes trashing GIFs and deleting tags, should you need to do so.
 
-When you see the gif you want, select it to paste the URL into your focused app.
+**CTRL** is used exclusively for permanently deleting GIFs from the trash. It serves no other function, to decrease the risk of accidental deletions.
 
-This keyword also searches for tags. If your search query matches any of the tags you've assigned, you'll see them listed. Each tag will display the number of gifs available in that group.
+## Explore Mode
+You can explore your library using the **CMD** modfier. When used on a GIF, you'll be shown the name and URL of the GIF, and can preview the GIF by using the **CMD** modifier again. You'll also see how often the GIF has been shared, the date that you first saved it, and any tags that are assigned to it.
 
-Selecting a tag from the search results will paste the URL of a random tag from that group - making it a nice surprise for you, as well as the person you're sending it to :)
+Exlpore mode for tags will list all of the GIFs that tag is currently assigned to. You can then search within that tag by entering a search term, share any individual GIF  from the list. You can also use **CMD** again to view GIF details.
 
-##Searching By Tag
-**Modifier:** `SHIFT + RETURN` on any tag search results
+## The Trash
+Gifomattic allows you to safely delete your GIFs by placing them in the trash, rather than completely removing them right away.
 
-You can use `SHIFT + RETURN` on tags in search results to view a tag and search within it.
+Once trashed, a GIF will be permanently deleted automatically after 30 days.
 
-Selecting a tag this way will display a list of all the gifs in that group. You can then filter those results by typing a search query.
+**Important:** this deletion only happens if you actually *use* Gifomattic. When the workflow launches, it will check and clean up the trash, but it cannot do this if the workflow isn't run. In practice, this means that if you trash a GIF and then never run Gifomattic again, that GIF will stay in your database indefinitely. The next time you launch Gifommatic however (for example, on day 47 or something) the old GIFs in the trash will be cleaned up before your first search result even loads.
 
-When you see the gif you want you can share and edit it using the usual commands.
+**Viewing the trash:**  To view GIFs currently in the trash, launch Gifomattic and then enter the `trash` keyword instead of a search term. From here you can empty the trash (delete all GIFs currently in the trash), or browse the currently trashed GIFs.
 
-##Editing  Gifs
-**Keyword:** `gifedit`
+While browsing trashed GIFs, you'll then have the option to restore them to your library individually, or permanently delete individual GIFs using the **CTRL** modifier key.
 
-**Shortcut:** User defined hotkey selecting the currently highlighted item on the screen
-
-**Modifier:** `SHIFT + RETURN` on any gif search result
-
-If you need to change anything about your gif, you can type `gifedit` to search, or use `SHIFT + RETURN` to select if from search results.
-
-Selecting a gif this way will allow you to edit the selected gif. At each step along the way you can elect to keep the current value, or enter a new one. For tags you'll also have the option (when applicable) to erase the current tags.
-
-You can also assign a hotkey to edit gifs, which will grab the current selection in OSX - ideal for quickly fixing a gif that didn't paste properly.
-
-##Viewing Gif Reports
-**Keyword:** `gifstats`
-
-**Modifier:** `CMD + RETURN` on any gif search result
-
-To view a report on a specific gif, search for it like you would normally, and select it using `CMD + RETURN`. A temporary file will be created and opened in your web browser showing the gif and all of it's info, including share counts.
-
-
-##Deleting Gifs
-**Keyword:** `gifdelete`
-
-This one's fairly self explanatory. Enter `gifdelete` then search and select.
-
-You then confirm the cancellation (or not, if you've changed your mind) and the gif is removed from your database. There no undo button. Scary stuff.
-
-##Restoring Gifs
-**Keyword:** `gifrestore`
-
-Okay, fine. If you delete a gif and you REALLY want it back, you can use the `gifrestore` command. Accidents happen, I get it.
-
-The last gif you deleted will be reinserted into the database - but it only works for the last gif, and you can only do it once. After that you're on your own. For real this time. ;)
