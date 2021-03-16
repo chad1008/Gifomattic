@@ -48,14 +48,14 @@ if ( $gifs->have_gifs() || $tags->have_tags() ) {
 	while ( $tags->have_tags() ) {
 		$the_tag = $tags->the_tag();
 		
-		$flow->the_tag( $the_tag, 'search' );
+		$flow->the_tag( $the_tag, $input );
 	}
 
 	// Add any GIFs returned by the current query to the items array
 	while ( $gifs->have_gifs() ) {
 		$the_gif = $gifs->the_gif();
 
-		$flow->the_gif( $the_gif, $input );
+		$flow->the_gif( $the_gif, $input, 'search' );
 	}
 } else {
 	$flow->no_results( 'both' );

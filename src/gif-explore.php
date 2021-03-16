@@ -15,7 +15,7 @@ $flow = new Workflow();
 
 if ( is_tag() ) {
 	// Query the database for GIFs with names that match input and an assigned tag that matches the provided ID
-	$gifs = new GIF_Query( $input, $flow->item_id) ;
+	$gifs = new GIF_Query( $input, $flow->item_id ) ;
 
 	if ( $gifs->have_gifs() ) {
 
@@ -23,9 +23,15 @@ if ( is_tag() ) {
 		while ( $gifs->have_gifs() ) {
 			$the_gif = $gifs->the_gif();
 
-			$flow->the_gif( $the_gif, $input );
+			$flow->the_gif( $the_gif, $input, 'explore' );
 		}
+	} else {
+		$flow->no_results( 'gifs' );
 	}
+
+	// Add navigation
+	$flow->navigate( 'search' );
+
 } elseif ( is_gif() ) {
 	// Query the requested GIF
 	$the_gif = new GIF( $flow->item_id );
@@ -35,6 +41,9 @@ if ( is_tag() ) {
 
 	// Display the tags assigned to the GIF
 	$flow->display_gif_tags( $the_gif );
+
+	// Add navigation
+	$flow->navigate( 'search' );
 }
 
 // Output the list of items
