@@ -1,9 +1,9 @@
 <?php
-require_once ('functions.php');
+require_once( 'functions.php' );
 
 // Confirm that the database exists and exit if it doesn't
 $file = $_SERVER['alfred_workflow_data'] . '/gifomattic.db';
-if ( !file_exists( $file ) ) {
+if ( ! file_exists( $file ) ) {
 	die( "The database could not be found. Aborting update." );
 }
 
@@ -14,15 +14,15 @@ $folders = array(
 	$icons . 'view/',
 	$icons . 'edit/',
 );
-foreach( $folders as $folder ) {
-	if (!file_exists( $folder ) )
+foreach ( $folders as $folder ) {
+	if ( ! file_exists( $folder ) )
 		mkdir( $folder, 0777, true );
 }
 
 if ( is_legacy_db() ) {
 	// Connect to the database
 	$file = $_SERVER['alfred_workflow_data'] . '/gifomattic.db';
-	$db = new sqlite3($file);
+	$db = new sqlite3( $file );
 
 	// Rename existing table to make way for new database format
 	$rename = 'ALTER TABLE gifs RENAME TO legacydb';
@@ -39,14 +39,14 @@ if ( is_legacy_db() ) {
 		// Prep statement for the gifs table, and execute
 		$gifs_insert = $db->prepare( 'INSERT INTO gifs VALUES ( :gif_id, :url, :name, :selected_count, :random_count, :date, :in_trash, :trash_date )' );
 		$query_values = array(
-							':gif_id' 		  => $row['id'],
-							':url'			  => $row['url'],
-							':name' 		  => $row['name'],
-							':selected_count' => $row['selectedcount'],
-							':random_count'   => $row['randomcount'],
-							':date' 		  => $row['date'],
-							':in_trash'		  => 0,
-						);
+			':gif_id'         => $row['id'],
+			':url'            => $row['url'],
+			':name'           => $row['name'],
+			':selected_count' => $row['selectedcount'],
+			':random_count'   => $row['randomcount'],
+			':date'           => $row['date'],
+			':in_trash'       => 0,
+		);
 		bind_values( $gifs_insert, $query_values );
 		$gifs_insert->execute();
 
@@ -55,14 +55,14 @@ if ( is_legacy_db() ) {
 
 		// Prep statement for the tags table
 		$tags_insert = $db->prepare( 'INSERT OR IGNORE INTO tags ( tag ) VALUES ( :tag )' );
-		$tag_relationships_insert = $db->prepare ( 'INSERT INTO tag_relationships VALUES ( :tag_id, :gif_id )' );
+		$tag_relationships_insert = $db->prepare( 'INSERT INTO tag_relationships VALUES ( :tag_id, :gif_id )' );
 
 		// Separate the tag strings into individual tags
 		$tags = $row['tags'];
 		$split_tags = explode( ',', $tags );
 
 		foreach ( $split_tags as $tag ) {
-			if ($tag !== '' ) {
+			if ( $tag !== '' ) {
 				// Insert individual tags into the tags table
 				$tags_insert->bindValue( ':tag', $tag );
 				$tags_insert->execute();
@@ -80,15 +80,13 @@ if ( is_legacy_db() ) {
 				);
 				bind_values( $tag_relationships_insert, $query_values );
 				$tag_relationships_insert->execute();
-
 			}
 		}
 	}
 
 	echo 'Update complete!';
-
 } else {
 	die ( "Database format does not match previous version. Skipping update." );
 }
 $db->close();
-unset($db);
+unset( $db );
