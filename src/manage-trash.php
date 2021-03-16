@@ -16,14 +16,14 @@ $items = array(
 );
 
 // If this is the launch_trash step, show prompts to either view or empty the trash
-if ( $flow->next_step == 'launch_trash' ) {
+if ( 'launch_trash' === $flow->next_step ) {
 	// Alert if input is provided
 	$flow->alert_select_option( $input );
 
 	$flow->launch_trash();
 
 // If this is the view_trash step, add any GIFs returned by the current query to the items array
-} elseif ( $flow->next_step == 'view_trash' ) {
+} elseif ( 'view_trash' === $flow->next_step ) {
 	// If there are GIFs, display them
 	if ( $trash->have_gifs() ) {
 

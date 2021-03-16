@@ -1,9 +1,9 @@
 <?php
 /**
  * Autoloads classes when called
- * 
+ *
  * First sanitizes the class name to conform with file name convention
- * 
+ *
  * @param string $class The class being called
  *
  * @since 2.0
@@ -18,9 +18,9 @@ spl_autoload_register( 'class_autoloader' );
  * Validates the URL entered by the user
  *
  * @param string $url The URL entered by the user
- * 
+ *
  * @since 2.0
- * 
+ *
  * @return bool
  */
 function is_valid_url ( $url ) {
@@ -39,7 +39,7 @@ function is_valid_url ( $url ) {
  */
 function is_gif() {
 	$type = getenv( 'item_type' );
-	if ( $type == 'gif' ) {
+	if ( 'gif' === $type ) {
 		return TRUE;
 	} else {
 		return FALSE;
@@ -53,7 +53,7 @@ function is_gif() {
  */
 function is_tag() {
 	$type = getenv( 'item_type' );
-	if ( $type == 'tag' ) {
+	if ( 'tag' === $type ) {
 		return TRUE;
 	} else {
 		return FALSE;
@@ -91,7 +91,7 @@ function is_legacy_db() {
 	$columns_count = count( $columns );
 	$legacy_match = count( array_intersect_assoc( $legacy, $columns ) );
 
-	if ( $legacy_match == 7 && $columns_count == 7 ) {
+	if ( 7 === $legacy_match && 7 === $columns_count ) {
 		return TRUE;
 	} else {
 		return FALSE;
@@ -163,14 +163,14 @@ function prep_db() { //TODO Remove testing conditional
  * @since 2.0
  */
 function trash_cleanup() {
-	
+
 	$gifs = new GIF_Query( '','',TRUE,TRUE );
-	
+
 	if ( $gifs->have_gifs() ) {
 		while ( $gifs->have_gifs() ) {
-			
+
 			$gif = $gifs->the_gif();
-			
+
 			$gif->delete();
 		}
 	}
@@ -178,7 +178,7 @@ function trash_cleanup() {
 
 /**
  * Binds an array of values for a provided prepared sqlite statement
- * 
+ *
  * @param string $stmt Prepared SQL statement
  * @param array $args token => value pairs
  *
@@ -235,9 +235,9 @@ function flag_icon( $id ) {
 
 function quantity_statement(array $args ) {
 	// Determine what kind of statement is needed
-	if ( $args['number'] == 0 ) {
+	if ( 0 === $args['number'] ) {
 		$case = $args['zero'];
-	} elseif ( $args['number'] == 1 ) {
+	} elseif ( 1 === $args['number'] ) {
 		$case = $args['one'];
 	} else {
 		$case = $args['many'];
@@ -264,9 +264,9 @@ function quantity_statement(array $args ) {
  *
  * @param string $message String to be appended to the random success message
  * @param bool   $error   Sets error state for output. Defaults to FALSE
- * 
+ *
  * @since 2.0
- * 
+ *
  * @return string
  */
 function popup_notice( $message = '', $error = false, $inline = false ) {
@@ -324,13 +324,13 @@ function update_icon() {
 
 	// Select a random file number
 	$number = array_rand( $logos );
-	
+
 	// Grab the source file using the randomly generated number
 	$source = 'img/logos/logo' . $logos[$number] . '.png';
-	
+
 	// Set destination path and filename
 	$destination = 'icon.png';
-	
+
 	// Copy the source file over the destination file
 	copy( $source, $destination );
 }
