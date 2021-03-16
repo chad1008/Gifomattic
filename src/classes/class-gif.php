@@ -1,10 +1,10 @@
 <?php
+
 /**
  * The GIF class.
  *
  * @since 2.0
  */
-
 class GIF {
 	/**
 	 * The sqlite3 object for the Gifomattic database
@@ -87,7 +87,7 @@ class GIF {
 	 * @var string
 	 */
 	public $date;
-	
+
 	/**
 	 * Path to the GIF's icon file
 	 *
@@ -121,14 +121,13 @@ class GIF {
 	 */
 	public $new_props;
 
-
-	public function __construct( int $id=null ) {
+	public function __construct( int $id = null ) {
 		// Set database connection
 		$this->db = prep_db();
-		
+
 		// Set the ID
 		$this->id = $id;
-		
+
 		// If an ID was provided, pull the rest of the data from the database
 		$data = $this->get_gif_data();
 
@@ -155,15 +154,15 @@ class GIF {
 
 		// Set the various count statements
 		$this->selected_count_statement = $this->format_count_statement( 'selected_count' );
-		$this->random_count_statement 	= $this->format_count_statement( 'random_count' );
-		$this->total_count_statement 	= $this->total_count_statement();
-		
+		$this->random_count_statement = $this->format_count_statement( 'random_count' );
+		$this->total_count_statement = $this->total_count_statement();
+
 		// Set the tag list, if possible
 		$this->tags = $this->get_tags();
 
 		// Set icon paths
 		global $icons;
-		$this->icon 	 = $icons . $this->id . '.jpg';
+		$this->icon = $icons . $this->id . '.jpg';
 		$this->view_icon = $icons . 'view/' . $this->id . '.jpg';
 		$this->edit_icon = $icons . 'edit/' . $this->id . '.jpg';
 
@@ -190,7 +189,7 @@ class GIF {
 		$result = $stmt->execute();
 
 		$data = $result->fetchArray( SQLITE3_ASSOC );
-		
+
 		return $data;
 	}
 
@@ -238,13 +237,13 @@ class GIF {
 
 		//If this is a new GIF, prepare an INSERT statement
 		if ( $this->is_new ) {
-			$stmt = $this->db->prepare("INSERT INTO gifs ( url,name,date ) VALUES ( :url,:name,:date )");
+			$stmt = $this->db->prepare( "INSERT INTO gifs ( url,name,date ) VALUES ( :url,:name,:date )" );
 
 			// Add the date to the args array
 			$args['date'] = $this->new_props['date'];
 		} else {
 			// Otherwise as long as either a URL or a name have been provided, prepare an UPDATE statement
-			if ( isset( $this->new_props['url']) || isset( $this->new_props['name'] ) ) {
+			if ( isset( $this->new_props['url'] ) || isset( $this->new_props['name'] ) ) {
 				// Initialize the UPDATE statement
 				$query = "UPDATE gifs SET";
 				// If a URL has been provided, add it to the query
@@ -252,11 +251,11 @@ class GIF {
 					$query .= " url = :url";
 				}
 				// A comma, if needed
-				if ( isset( $this->new_props['url']) && isset( $this->new_props['name'] ) ) {
+				if ( isset( $this->new_props['url'] ) && isset( $this->new_props['name'] ) ) {
 					$query .= " ,";
 				}
 				// If a name has been provided, add it to the query
-				if ( isset($this->new_props['name'] ) ) {
+				if ( isset( $this->new_props['name'] ) ) {
 					$query .= " name = :name";
 				}
 				// Close the query with WHERE clause using the gif ID
@@ -273,7 +272,7 @@ class GIF {
 		// As long as there is a new name and/or URL, execute the prepared statement
 		bind_values( $stmt, $args );
 
-		if ( isset( $this->new_props['url']) || isset( $this->new_props['name'] ) ) {
+		if ( isset( $this->new_props['url'] ) || isset( $this->new_props['name'] ) ) {
 			$stmt->execute();
 		}
 
@@ -283,7 +282,7 @@ class GIF {
 		} else {
 			$this->new_props['id'] = $this->id;
 		}
-		
+
 		// If a new URL was provided, prepare an icon
 		if ( isset ( $this->new_props['url'] ) ) {
 			$this->generate_icon();
@@ -316,7 +315,7 @@ class GIF {
 		$original_gif_y = getimagesize( $this->new_props['url'] )[1];
 
 		// Set a centered crop area: if landscape, center horizontally otherwise center vertically
-		if ($original_gif_x > $original_gif_y) {
+		if ( $original_gif_x > $original_gif_y ) {
 			$crop_x = ( $original_gif_x - $original_gif_y ) / 2;
 			$crop_y = 0;
 		} else {
@@ -329,8 +328,8 @@ class GIF {
 
 		// Crop it
 		$crop_vals = array(
-			'x'		 => $crop_x,
-			'y'		 => $crop_y,
+			'x'      => $crop_x,
+			'y'      => $crop_y,
 			'width'  => $crop_measure,
 			'height' => $crop_measure,
 		);
@@ -341,7 +340,7 @@ class GIF {
 		imagejpeg( $thumbnail, $icons . $this->new_props['id'] . ".jpg" );
 
 		// Create an image resource to scale from the cropped jpeg
-		$new_jpeg = imagecreatefromjpeg( "$icons" . $this->new_props['id'] . ".jpg") ;
+		$new_jpeg = imagecreatefromjpeg( "$icons" . $this->new_props['id'] . ".jpg" );
 
 		//Scale the new image to 128px, respecting aspect ratio
 		$scaled_jpeg = imagescale( $new_jpeg, 128, -1, IMG_BICUBIC_FIXED );
@@ -350,7 +349,7 @@ class GIF {
 		imagejpeg( $scaled_jpeg, $icons . $this->new_props['id'] . ".jpg", 10 );
 
 		// Create the view/edit flagged icon variants
-		flag_icon ( $this->new_props['id'] );
+		flag_icon( $this->new_props['id'] );
 
 		imagedestroy( $new_jpeg );
 		imagedestroy( $scaled_jpeg );
@@ -359,9 +358,9 @@ class GIF {
 	/**
 	 * Assign a tag to the GIF
 	 *
-	 * @param mixed $tag  		The tag to be added. Existing tags will be passed as an integer representing the tag ID.
-	 * 					   			New tags will be strings to be saved as the tag name.
-	 * @param bool $is_new_tag  Determines if this is a new tag that must be created, or an already existing tag
+	 * @param mixed $tag         The tag to be added. Existing tags will be passed as an integer representing the tag
+	 *                           ID. New tags will be strings to be saved as the tag name.
+	 * @param bool  $is_new_tag  Determines if this is a new tag that must be created, or an already existing tag
 	 *
 	 * @since 2.0
 	 */
@@ -369,13 +368,12 @@ class GIF {
 		// If this is a new tag, create it
 		if ( true === $is_new_tag ) {
 			$stmt = $this->db->prepare( "INSERT INTO tags ( tag ) VALUES ( :tag )" );
-			$stmt->bindValue(':tag', $tag);
+			$stmt->bindValue( ':tag', $tag );
 			$stmt->execute();
 
 			// Grab the ID of the new tag
 			$tag_id = $this->db->lastInsertRowID();
-			
-		// If this is an existing tag, use the provided ID	
+			// If this is an existing tag, use the provided ID	
 		} else {
 			// Use the provided existing tag ID
 			$tag_id = $tag;
@@ -389,13 +387,13 @@ class GIF {
 		);
 		bind_values( $stmt, $args );
 		$stmt->execute();
-}
+	}
 
 	/**
 	 * Remove a tag from the GIF
 	 *
 	 * @param mixed $tag The ID of the tag to be removed.
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	public function remove_tag( $tag ) {
@@ -408,7 +406,7 @@ class GIF {
 		bind_values( $stmt, $args );
 		$stmt->execute();
 	}
-	
+
 	/**
 	 * Increment the GIF share count
 	 *
@@ -418,7 +416,7 @@ class GIF {
 	 */
 	public function increment_count( $count ) {
 		$stmt = $this->db->prepare( "UPDATE gifs SET {$count} = {$count} + 1 WHERE gif_id IS :query" );
-		$stmt->bindValue(':query', $this->id );
+		$stmt->bindValue( ':query', $this->id );
 		$stmt->execute();
 	}
 
@@ -432,25 +430,26 @@ class GIF {
 	 * @return string
 	 */
 	public function format_count_statement( $chosen_count ) {
-		if ($chosen_count == 'selected_count') {
+		if ( $chosen_count == 'selected_count' ) {
 			$count = $this->selected_count;
 			$format = "You have %sselected this GIF %s";
-		} elseif ($chosen_count == 'random_count') {
+		} elseif ( $chosen_count == 'random_count' ) {
 			$count = $this->random_count;
 			$format = "This GIF has %scome up in a random selection %s";
 		}
 
 		// Define selected_count statement
-		if ($count == 0) {
+		if ( $count == 0 ) {
 			$none = "never ";
-		} elseif ($count == 1) {
+		} elseif ( $count == 1 ) {
 			$number = "once";
 		} else {
 			$number = "$count times";
 		}
 
-		return sprintf($format, $none, $number);
+		return sprintf( $format, $none, $number );
 	}
+
 	/**
 	 * Prepare a formatted statement of about the total number of shares for this GIF
 	 *
@@ -459,23 +458,23 @@ class GIF {
 	 * @return string
 	 */
 	public function total_count_statement() {
-		
+
 		$total_count = $this->selected_count + $this->random_count;
 
 		//first, define the total count as the sum of selections and randoms, then rewrite the string
 		if ( $total_count == 0 ) {
 			$output = array(
-				'title' => 'This GIF has never been shared!',
+				'title'    => 'This GIF has never been shared!',
 				'subtitle' => 'You must be saving it for a special occasion...',
-				);
+			);
 		} elseif ( $total_count == 1 ) {
 			$output = array(
-				'title' => "That's just one share for this GIF",
+				'title'    => "That's just one share for this GIF",
 				'subtitle' => "Did it not go well? Or are you quitting while you're ahead?",
 			);
 		} else {
 			$output = array(
-				'title' => "That's a total of " . $total_count . " shares for this GIF!",
+				'title'    => "That's a total of " . $total_count . " shares for this GIF!",
 				'subtitle' => "Don't stop now, you're on a roll!",
 			);
 		}
@@ -487,7 +486,7 @@ class GIF {
 	 * Check to see if the GIF has a specific tag assigned
 	 *
 	 * @param int $id The ID of the tag to compare against the current GIF's tags
-	 * 
+	 *
 	 * @since 2.0
 	 *
 	 * @return bool
@@ -498,7 +497,7 @@ class GIF {
 
 	/**
 	 * Prepare a temporary preview-flagged icon variant
-	 * 
+	 *
 	 * Replaces the single preview icon each time the function runs.
 	 *
 	 * @since 2.0
@@ -507,7 +506,7 @@ class GIF {
 		// Create flagged icon variants
 		global $icons;
 		$flags = imagecreatefrompng( 'img/flags.png' );
-		$icon  = imagecreatefromjpeg( $this->icon );
+		$icon = imagecreatefromjpeg( $this->icon );
 
 		// Generate "Preview" icon
 		imagecopymerge( $icon, $flags, 64, 64, 0, 128, 64, 64, 100 );
@@ -528,7 +527,7 @@ class GIF {
 		$stmt = $this->db->prepare( "UPDATE gifs SET in_trash = 1, trash_date = :today WHERE gif_id IS :id" );
 		$args = array(
 			':today' => $today,
-			':id' => $this->id,
+			':id'    => $this->id,
 		);
 		bind_values( $stmt, $args );
 		$stmt->execute();
