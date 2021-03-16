@@ -140,6 +140,7 @@ class Workflow {
 					'variables' => array(
 						'item_type' => 'tag',
 						'item_id'	=> $the_tag->id,
+						'original_input' => $input,
 					),
 				),
 			),
@@ -691,8 +692,13 @@ class Workflow {
 			'variables' => array(
 				'next_step' => 'confirm_delete',
 				'external'  => 'editor',
+				'trash_mode' => 'true'
 			),
 		);
+
+		// Add navigation
+		$this->navigate( 'search' );
+
 	}
 
 	/**
