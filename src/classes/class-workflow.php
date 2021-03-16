@@ -1023,7 +1023,7 @@ class Workflow {
 		// Loop through each provided list items
 		foreach ( $this->items['items'] as $k => $item ) {
 			// Initialize the main item subtitle and validity (if missing, default validity to 'true')
-			$subtitle = $item['subtitle'];
+			$subtitle = isset( $item['subtitle'] ) ? $item['subtitle'] : '';
 			$valid = isset ( $item ['valid'] ) ? $item['valid'] : 'true';
 
 			// If the 'mods' sub-array is missing, initialize it
