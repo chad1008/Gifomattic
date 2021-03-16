@@ -9,9 +9,10 @@
  * @since 2.0
  */
 function class_autoloader( $class ) {
-		$class_slug = preg_replace( '/_/', '-', strtolower( $class ) );
-		include_once 'classes/class-' . $class_slug . '.php';
+	$class_slug = preg_replace( '/_/', '-', strtolower( $class ) );
+	include_once 'classes/class-' . $class_slug . '.php';
 }
+
 spl_autoload_register( 'class_autoloader' );
 
 /**
@@ -23,14 +24,13 @@ spl_autoload_register( 'class_autoloader' );
  *
  * @return bool
  */
-function is_valid_url ( $url ) {
-	if( preg_match( '/^(https?:\/\/).*\..*\.(gif|jpe?g|png)$/i', $url ) ) {
-		return TRUE;
+function is_valid_url( $url ) {
+	if ( preg_match( '/^(https?:\/\/).*\..*\.(gif|jpe?g|png)$/i', $url ) ) {
+		return true;
 	} else {
-		return FALSE;
+		return false;
 	}
 }
-
 
 /**
  * Checks if the currently selected item in Alfred is a GIF
@@ -40,9 +40,9 @@ function is_valid_url ( $url ) {
 function is_gif() {
 	$type = getenv( 'item_type' );
 	if ( 'gif' === $type ) {
-		return TRUE;
+		return true;
 	} else {
-		return FALSE;
+		return false;
 	}
 }
 
@@ -54,9 +54,9 @@ function is_gif() {
 function is_tag() {
 	$type = getenv( 'item_type' );
 	if ( 'tag' === $type ) {
-		return TRUE;
+		return true;
 	} else {
-		return FALSE;
+		return false;
 	}
 }
 
@@ -85,16 +85,16 @@ function is_legacy_db() {
 	);
 
 	// Build an array of current database's column names, then compare to that the legacy structure
-	while ($column = $result->fetchArray()) {
+	while ( $column = $result->fetchArray() ) {
 		$columns[] = $column['name'];
 	}
 	$columns_count = count( $columns );
 	$legacy_match = count( array_intersect_assoc( $legacy, $columns ) );
 
 	if ( 7 === $legacy_match && 7 === $columns_count ) {
-		return TRUE;
+		return true;
 	} else {
-		return FALSE;
+		return false;
 	}
 }
 
@@ -114,20 +114,20 @@ function prep_db() {
 		$icons . 'view/',
 		$icons . 'edit/',
 	);
-	foreach( $folders as $folder ) {
-		if (!file_exists( $folder ) )
+	foreach ( $folders as $folder ) {
+		if ( ! file_exists( $folder ) )
 			mkdir( $folder, 0777, true );
 	}
 
 	// Check if a database exists. If not, set up a workflow folder to put the database in.
-	if ( !file_exists( $file ) ) {
+	if ( ! file_exists( $file ) ) {
 		mkdir( $_SERVER['alfred_workflow_data'] );
 	}
-		// Connect to the database
-		$db = new sqlite3( $file );
+	// Connect to the database
+	$db = new sqlite3( $file );
 
-		// Create the database and tables as needed
-		$create_gifs_table = 'CREATE TABLE IF NOT EXISTS gifs (
+	// Create the database and tables as needed
+	$create_gifs_table = 'CREATE TABLE IF NOT EXISTS gifs (
 		gif_id	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 		url	TEXT NOT NULL,
 		name	TEXT NOT NULL,
@@ -137,21 +137,21 @@ function prep_db() {
 		in_trash INTEGER NOT NULL DEFAULT 0 CHECK ( in_trash IN ( 0,1 ) ),
 		trash_date INTEGER
 		)';
-		$create_tags_table = 'CREATE TABLE IF NOT EXISTS tags (
+	$create_tags_table = 'CREATE TABLE IF NOT EXISTS tags (
 		tag_id	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
 		tag	TEXT COLLATE NOCASE NOT NULL UNIQUE
 		)';
-		$create_tags_rel_table = 'CREATE TABLE IF NOT EXISTS tag_relationships (
+	$create_tags_rel_table = 'CREATE TABLE IF NOT EXISTS tag_relationships (
 		tag_id	INTEGER NOT NULL,
 		gif_id	INTEGER NOT NULL,
 		PRIMARY KEY ( tag_id, gif_id)
 		)';
 
-		$db->exec( $create_gifs_table );
-		$db->exec( $create_tags_table );
-		$db->exec( $create_tags_rel_table );
+	$db->exec( $create_gifs_table );
+	$db->exec( $create_tags_table );
+	$db->exec( $create_tags_rel_table );
 
-		return $db;
+	return $db;
 }
 
 /**
@@ -161,7 +161,7 @@ function prep_db() {
  */
 function trash_cleanup() {
 
-	$gifs = new GIF_Query( '','',TRUE,TRUE );
+	$gifs = new GIF_Query( '', '', true, true );
 
 	if ( $gifs->have_gifs() ) {
 		while ( $gifs->have_gifs() ) {
@@ -177,12 +177,12 @@ function trash_cleanup() {
  * Binds an array of values for a provided prepared sqlite statement
  *
  * @param string $stmt Prepared SQL statement
- * @param array $args token => value pairs
+ * @param array  $args token => value pairs
  *
  * @since 2.0
  */
 function bind_values( $stmt, $args ) {
-	foreach( $args as $k => $v ) {
+	foreach ( $args as $k => $v ) {
 		$stmt->bindValue( $k, $v );
 	}
 }
@@ -200,11 +200,11 @@ function flag_icon( $id ) {
 
 	// Prepare the icon and save path
 	global $icons;
-	$icon = imagecreatefromjpeg( $icons . $id . '.jpg');
+	$icon = imagecreatefromjpeg( $icons . $id . '.jpg' );
 
 	// Generate "View" icon
 	imagecopymerge( $icon, $flags, 64, 64, 0, 0, 64, 64, 100 );
-	imagejpeg( $icon, $icons . "view/" . $id . ".jpg", 10 ) ;
+	imagejpeg( $icon, $icons . "view/" . $id . ".jpg", 10 );
 
 	// Generate "Edit" icon
 	imagecopymerge( $icon, $flags, 64, 64, 0, 64, 64, 64, 100 );
@@ -212,25 +212,25 @@ function flag_icon( $id ) {
 
 	// Release images from memory
 	imagedestroy( $flags );
-	imagedestroy ( $icon );
+	imagedestroy( $icon );
 }
 
 /**
  * Prepare a dynamic string to convey the number of GIFs available for a given request
  *
- * @param array $args      Defines the parameters of the statement to be prepared
- * 		 int    [number]   Defines the value to be checked against
- * 		 mixed    [zero]   A string or array of strings to be used when the value is zero
- * 		 mixed     [one]   A string or array of strings to be used when the value is one
- * 		 mixed    [many]   A string or array of strings to be used when the value is more than one
- * 		 string [format]   The message that strings should be inserted into
+ * @param array $args Defines the parameters of the statement to be prepared
+ *        int    [number]   Defines the value to be checked against
+ *        mixed    [zero]   A string or array of strings to be used when the value is zero
+ *        mixed     [one]   A string or array of strings to be used when the value is one
+ *        mixed    [many]   A string or array of strings to be used when the value is more than one
+ *        string [format]   The message that strings should be inserted into
  *
  * @since 2.0
  *
  * @return string
  */
 
-function quantity_statement(array $args ) {
+function quantity_statement( array $args ) {
 	// Determine what kind of statement is needed
 	if ( 0 === $args['number'] ) {
 		$case = $args['zero'];
@@ -268,7 +268,7 @@ function quantity_statement(array $args ) {
  */
 function popup_notice( $message = '', $error = false, $inline = false ) {
 	// Conditionally define outputs for random selection
-	if ( !$error ) {
+	if ( ! $error ) {
 		$messages = array(
 			"Boom!",
 			"Huzzah!",
@@ -296,7 +296,7 @@ function popup_notice( $message = '', $error = false, $inline = false ) {
 		);
 	}
 
-	$rand = $messages[array_rand( $messages )];
+	$rand = $messages[ array_rand( $messages ) ];
 
 	// Set up an optional line break
 	$join = true === $inline ? ' ' : "\r\n";
@@ -315,7 +315,7 @@ function popup_notice( $message = '', $error = false, $inline = false ) {
  */
 function update_icon() {
 	// List possible source file numbers
-	for ( $i = 1; $i<=12; ++$i ) {
+	for ( $i = 1; $i <= 12; ++$i ) {
 		$logos[] = $i;
 	}
 
@@ -323,7 +323,7 @@ function update_icon() {
 	$number = array_rand( $logos );
 
 	// Grab the source file using the randomly generated number
-	$source = 'img/logos/logo' . $logos[$number] . '.png';
+	$source = 'img/logos/logo' . $logos[ $number ] . '.png';
 
 	// Set destination path and filename
 	$destination = 'icon.png';
