@@ -30,7 +30,7 @@ Gifomattic uses three modifier keys: CMD, SHIFT, and CTRL.
 ## Explore Mode
 You can explore your library using the **CMD** modfier. When used on a GIF, you'll be shown the name and URL of the GIF, and can preview the GIF by using the **CMD** modifier again. You'll also see how often the GIF has been shared, the date that you first saved it, and any tags that are assigned to it.
 
-Exlpore mode for tags will list all of the GIFs that tag is currently assigned to. You can then search within that tag by entering a search term, share any individual GIF  from the list. You can also use **CMD** again to view GIF details.
+Explore mode for tags will list all of the GIFs that tag is currently assigned to. You can then search within that tag by entering a search term, share any individual GIF  from the list. You can also use **CMD** again to view GIF details.
 
 ## The Trash
 Gifomattic allows you to safely delete your GIFs by placing them in the trash, rather than completely removing them right away.
