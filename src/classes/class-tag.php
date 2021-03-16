@@ -1,10 +1,10 @@
 <?php
+
 /**
  * The Tag class.
  *
  * @since 2.0
  */
-
 class Tag {
 	/**
 	 * The sqlite3 object for the Gifomattic database
@@ -41,16 +41,16 @@ class Tag {
 	public function __construct( int $id = null ) {
 		// Set database connection
 		$this->db = prep_db();
-		
+
 		// Set the ID
 		$this->id = $id;
-		
+
 		// Pull tag details from the database
 		$data = $this->get_tag_data();
-		
+
 		// Set the tag name
 		$this->name = $data['tag'];
-		
+
 		// Count the GIFs with this tag assigned
 		$this->gifs_with_tag = $data['gifs_with_tag'];
 	}
@@ -64,22 +64,22 @@ class Tag {
 	 *
 	 * @return array
 	 */
-	public function get_tag_data() { 
+	public function get_tag_data() {
 		$stmt = $this->db->prepare( "SELECT tags.tag,
-											SUM( CASE WHEN gifs.in_trash = 0 THEN 1 ELSE 0 END ) as gifs_with_tag
+											SUM( CASE WHEN gifs.in_trash = 0 THEN 1 ELSE 0 END ) AS gifs_with_tag
 									 FROM tags
 									 LEFT JOIN tag_relationships
 									 	USING( tag_id )
 									 LEFT JOIN gifs
 									 	USING (gif_id)
 									 WHERE tags.tag_id IS :id"
-								  );
+		);
 
 		$stmt->bindValue( ':id', $this->id );
 		$result = $stmt->execute();
 
 		$the_tag = $result->fetchArray( SQLITE3_ASSOC );
-		
+
 		return $the_tag;
 	}
 
@@ -92,7 +92,7 @@ class Tag {
 		$stmt = $this->db->prepare( "UPDATE tags SET tag = :new_name WHERE tag_id IS :id" );
 		$args = array(
 			':new_name' => $this->new_name,
-			':id'		=> $this->id,
+			':id'       => $this->id,
 		);
 		bind_values( $stmt, $args );
 
