@@ -2,6 +2,9 @@ Gifomattic is an Alfred workflow to help you organize and share your favorite GI
 
 To launch Gifomattic, open Alfred and enter the keyword `gif`.
 
+## Installation
+Please download the `Gifomattic.alfredworkflow` file from the [latest release.](https://github.com/chad1008/Gifomattic/releases) Once downloaded, open the file to install or update Gifomattic
+
 ## Adding GIFs To Your Library
 There are three ways to add a new GIF to your library:
 
