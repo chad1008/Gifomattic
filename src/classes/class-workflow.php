@@ -772,7 +772,7 @@ class Workflow {
 		);
 
 		// Add navigation
-		$this->navigate( 'search' );
+		$this->navigate( 'restart' );
 	}
 
 	/**
@@ -849,8 +849,7 @@ class Workflow {
 					'path' => 'img/add tag.png',
 				),
 			);
-			
-		// If user input is not empty, show appropriate tags
+			// If user input is not empty, show appropriate tags
 		} else {
 			// If user input does NOT match any existing tags, prepare to create a new tag
 			// Gather matching tags in an array
@@ -1070,9 +1069,12 @@ class Workflow {
 		} elseif ( 'launch_editor' === $next_step ) {
 			$destination = 'GIF editor';
 			$external = 'editor';
-		} elseif ( 'manage_tags' ) {
+		} elseif ( 'manage_tags' === $next_step ) {
 			$destination = 'tag management options';
 			$external = 'editor';
+		} elseif ( 'restart' === $next_step ) {
+			$destination = 'search';
+			$external = 'restart';
 		}
 		// Build navigation list item
 		$this->items['items'][] = array(
@@ -1083,8 +1085,9 @@ class Workflow {
 				'path' => 'img/back.png',
 			),
 			'variables' => array(
-				'next_step' => $next_step,
-				'external'  => $external,
+				'next_step'      => $next_step,
+				'external'       => $external,
+				'original_input' => $this->original_input,
 			),
 		);
 	}

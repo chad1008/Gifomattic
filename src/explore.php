@@ -45,7 +45,7 @@ if ( is_tag() ) {
 	$flow->display_gif_tags( $the_gif );
 
 	// Add navigation
-	$flow->navigate( 'search' );
+	$flow->navigate( 'restart' );
 }
 
 // Output the list of items
