@@ -7,10 +7,10 @@
  * @since 2.0
  */
 
-require_once ( 'functions.php' );
+require_once( 'functions.php' );
 
 // Initialize the workflow data
-$flow  = new Workflow();
+$flow = new Workflow();
 
 // Check database and prompt for update if needed
 if ( is_legacy_db() ) {
@@ -23,16 +23,16 @@ if ( is_legacy_db() ) {
 
 // Initialize the remaining data
 $input = $argv[1];
-$gifs  = new GIF_Query( $input );
-$tags  = new Tag_Query( $input );
-$trash = new GIF_Query( '','',TRUE );
+$gifs = new GIF_Query( $input );
+$tags = new Tag_Query( $input );
+$trash = new GIF_Query( '', '', true );
 
 // Clean up any old GIFs that have been in the trash for >30 days
 trash_cleanup();
 
 // Using 'add' or a valid URL as a keyword, display prompt to add a new GIF
 if ( 'add' === $input || is_valid_url( $input ) ) {
-	$flow->add_gif($input);
+	$flow->add_gif( $input );
 }
 
 // Using 'trash' as a keyword, display prompt to view trash
@@ -47,7 +47,7 @@ if ( $gifs->have_gifs() || $tags->have_tags() ) {
 	// Add any tags returned by the current query to the items array
 	while ( $tags->have_tags() ) {
 		$the_tag = $tags->the_tag();
-		
+
 		$flow->the_tag( $the_tag, $input );
 	}
 
