@@ -773,7 +773,12 @@ class Workflow {
 		// If user input is not empty, show appropriate tags
 		} else {
 			// If user input does NOT match any existing tags, prepare to create a new tag
-			if ( !in_array( $input, array_column( $tags->tags, 'tag') ) )  {
+			// Gather matching tags in an array
+			$matches = array_column( $tags->tags, 'tag' );
+			// Use lowercase comparisons (tag names are case insensitive in the database)
+			$lowercase_matches = array_map( 'strtolower', $matches );
+			$lowercase_input   = strtolower( $input );
+			if ( !in_array( $lowercase_input, $lowercase_matches ) )  {
 				// Build the 'Create a new tag" list item
 				$this->items['items'][] = array(
 					'title' 	=> "Create a new tag: $input",
