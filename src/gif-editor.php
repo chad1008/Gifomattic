@@ -19,6 +19,9 @@ if ( is_gif() ) {
 	
 	// If this is the initial editing step, display prompts to either edit or trash the GIF
 	if ( 'launch_editor' === $flow->next_step ) {
+		// Alert if input is provided
+		$flow->alert_select_option( $input );
+
 		$flow->launch_editor( $the_gif );
 
 	// If this is the gif_url step, start with the GIF URL prompts
@@ -31,6 +34,9 @@ if ( is_gif() ) {
 
 	// If this is the manage_tags step, output the tag management interface
 	} elseif ( 'manage_tags' === $flow->next_step ) {
+		// Alert if input is provided
+		$flow->alert_select_option( $input );
+
 		// If the current GIF has no tags, skip ahead to the adding tags interface
 		if ( empty( $the_gif->tags ) ) {
 			$flow->add_tags( $input, $the_gif, $tags );
@@ -57,7 +63,10 @@ if ( is_gif() ) {
 
 	// If the next step is 'confirm_delete' display a confirmation prompts
 	if ( 'confirm_delete' === $flow->next_step ) {
-	$flow->confirm_tag_delete( $the_tag );
+		// Alert if input is provided
+		$flow->alert_select_option( $input );
+
+		$flow->confirm_tag_delete( $the_tag );
 
 		// If this isn't the 'confirm_delete' step, proceed with the editing prompts
 	} else {

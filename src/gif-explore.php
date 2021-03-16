@@ -35,7 +35,10 @@ if ( is_tag() ) {
 } elseif ( is_gif() ) {
 	// Query the requested GIF
 	$the_gif = new GIF( $flow->item_id );
-	
+
+	// Alert if input is provided
+	$flow->alert_select_option( $input );
+
 	// Display the various GIF details
 	$flow->display_gif_details( $the_gif );
 

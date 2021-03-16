@@ -756,7 +756,7 @@ class Workflow {
 	 *
 	 * @since 2.0
 	 */
-	public function add_tags( $input, $the_gif, $tags ){
+	public function add_tags( $input, $the_gif, $tags ) {
 		// If user input is empty
 		if ( $input == '' ) {
 			// Build the 'Add a tag' list item
@@ -1007,6 +1007,28 @@ class Workflow {
 				'external'  => $external,
 			),
 		);
+	}
+
+	/**
+	 * Display alert that an option must be selected
+	 *
+	 * @since 2.0
+	 *
+	 * @param string $input The string to evaluate. Triggers an alert if it's populated.
+	 */
+	public function alert_select_option( $input ) {
+		// If input is populated, display the alert
+		if ( '' != $input ) {
+			// Build the alert list item
+			$this->items['items'][] = array(
+				'title' => 'Please select an option below!',
+				'subtitle' => "(This isn't a valid search field)",
+				'valid' => 'false',
+				'icon' => array(
+					'path' => 'img/alert.png',
+				),
+			);
+		}
 	}
 
 	/**

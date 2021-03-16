@@ -6,6 +6,7 @@
 
 require_once ( 'functions.php' );
 
+$input = $argv[1];
 $flow = new Workflow();
 $trash = new GIF_Query( '', '' , true );
 
@@ -16,8 +17,10 @@ $items = array(
 
 // If this is the launch_trash step, show prompts to either view or empty the trash
 if ( $flow->next_step == 'launch_trash' ) {
+	// Alert if input is provided
+	$flow->alert_select_option( $input );
+
 	$flow->launch_trash();
-	
 
 // If this is the view_trash step, add any GIFs returned by the current query to the items array
 } elseif ( $flow->next_step == 'view_trash' ) {
