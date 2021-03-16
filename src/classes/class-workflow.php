@@ -614,15 +614,15 @@ class Workflow {
 			),
 			'variables' => array(
 				'next_step'          => 'save_gif',
-				'trash_mode'         => 'true',
+				'external'           => 'search',
 				'notification_title' => "GIF trashed!",
 				'notification_text'  => '"' . $the_gif->name . '" will be permanently deleted in 30 days.',
-				'exit'               => 'true',
+				'exit'               => 'false',
 			),
 		);
 
 		// Add navigation
-		$this->navigate( 'search' );
+		$this->navigate( 'restart' );
 	}
 
 	/**
@@ -765,9 +765,9 @@ class Workflow {
 				'path' => 'img/destroy.png',
 			),
 			'variables' => array(
-				'next_step'  => 'confirm_delete',
-				'external'   => 'editor',
-				'trash_mode' => 'true',
+				'next_step' => 'confirm_delete',
+				'external'  => 'editor',
+				'exit'      => 'false',
 			),
 		);
 
