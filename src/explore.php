@@ -7,7 +7,7 @@
  * @since 2.0
  */
 
-require_once ( 'functions.php' );
+require_once( 'functions.php' );
 
 // Initialize the data
 $input = $argv[1];
@@ -15,7 +15,7 @@ $flow = new Workflow();
 
 if ( is_tag() ) {
 	// Query the database for GIFs with names that match input and an assigned tag that matches the provided ID
-	$gifs = new GIF_Query( $input, $flow->item_id ) ;
+	$gifs = new GIF_Query( $input, $flow->item_id );
 
 	if ( $gifs->have_gifs() ) {
 
@@ -31,7 +31,6 @@ if ( is_tag() ) {
 
 	// Add navigation
 	$flow->navigate( 'search' );
-
 } elseif ( is_gif() ) {
 	// Query the requested GIF
 	$the_gif = new GIF( $flow->item_id );
