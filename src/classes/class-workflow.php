@@ -9,28 +9,6 @@
 
 class Workflow {
 	/**
-	 * Environment vars set in Alfred
-	 *
-	 * @since 2.0
-	 *
-	 * @var integer $item_id   The ID of the GIF or tag that's currently being worked on
-	 * @var string  $next_step The next step the workflow should enter. Used for workflow nodes that get looped through multiple times
-	 * TODO update all vars with individual notes
-	 */
-	public $item_id;
-	public $gif_url;
-	public $gif_name;
-	public $tag_name;
-	public $next_step;
-	public $new_gif;
-	public $is_new_tag;
-	public $selected_tag;
-	public $save_mode;
-	public $trash_mode;
-	public $original_input;
-	public $confirmed_delete;
-	
-	/**
 	 * The items array for script filter output
 	 *
 	 * @since 2.0
@@ -38,6 +16,104 @@ class Workflow {
 	 * @var
 	 */
 	public $items;
+
+	/**
+	 * Alfred environment variable. Stores the ID of the selected GIF or tag
+	 *
+	 * @since 2.0
+	 * @var int
+	 */
+	public $item_id;
+
+	/**
+	 * Alfred environment variable. Stores the URL to be saved when adding or editing a GIF
+	 *
+	 * @since 2.0
+	 * @var string
+	 */
+	public $gif_url;
+
+	/**
+	 * Alfred environment variable. Stores the name to be saved when adding or editing a GIF
+	 *
+	 * @since 2.0
+	 * @var string
+	 */
+	public $gif_name;
+
+	/**
+	 * Alfred environment variable. Stores the name to be saved when editing a tag
+	 *
+	 * @since 2.0
+	 * @var string
+	 */
+ 	public $tag_name;
+
+	/**
+	 * Alfred environment variable. Stores the next step the workflow should move to
+	 *
+	 * @since 2.0
+	 * @var string
+	 */
+	public $next_step;
+
+	/**
+	 * Alfred environment variable. Declares whether or not the GIF being saved is new
+	 *
+	 * @since 2.0
+	 * @var string
+	 */
+	public $new_gif;
+
+	/**
+	 * Alfred environment variable. Declares whether or not the tag being saved is new
+	 *
+	 * @since 2.0
+	 * @var string
+	 */
+	public $is_new_tag;
+
+	/**
+	 * Alfred environment variable. Stores the name or ID of the tag to add to a GIF
+	 *
+	 * @since 2.0
+	 * @var mixed
+	 */
+	public $selected_tag;
+
+	/**
+	 * Alfred environment variable. Sets the type of action to take when saving a GIF
+	 *
+	 * @since 2.0
+	 * @var string
+	 */
+	public $save_mode;
+
+	/**
+	 * Alfred environment variable. Multi purpose.
+	 * Serves as a true/false indicator to exit the editor.
+	 * Also declares what action should be taken when processing a save in the trash flow
+	 *
+	 * @since 2.0
+	 * @var string
+	 */
+	public $trash_mode;
+
+	/**
+	 * Alfred environment variable. Stores the original query input for reinsertion when the workflow restarts itself
+	 *
+	 * @since 2.0
+	 * @var string
+	 */
+	public $original_input;
+
+	/**
+	 * Alfred environment variable. Stores confirmation that a tag should be deleted from the database
+	 *
+	 * @since 2.0
+	 * @var string
+	 */
+	public $confirmed_delete;
 
 	/**
 	 * Constructor
