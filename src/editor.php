@@ -5,10 +5,10 @@
  * Powers the GIF Add script filter and its friends
  */
 
-require_once ( 'functions.php' );
+require_once( 'functions.php' );
 
 $input = $argv[1];
-$tags	 = new Tag_Query( $input );
+$tags = new Tag_Query( $input );
 
 // Initialize the Workflow object
 $flow = new Workflow();
@@ -16,7 +16,7 @@ $flow = new Workflow();
 // If the selected item was a GIF, enter the GIF editing flow
 if ( is_gif() ) {
 	$the_gif = new GIF( $flow->item_id );
-	
+
 	// If this is the initial editing step, display prompts to either edit or trash the GIF
 	if ( 'launch_editor' === $flow->next_step ) {
 		// Alert if input is provided
@@ -56,9 +56,8 @@ if ( is_gif() ) {
 	} else {
 		$flow->error();
 	}
-
 // If the selected item was a tag, enter the tag editing flow
-} elseif ( is_tag () ) {
+} elseif ( is_tag() ) {
 	$the_tag = new Tag ( $flow->item_id );
 
 	// If the next step is 'confirm_delete' display a confirmation prompts
@@ -68,16 +67,14 @@ if ( is_gif() ) {
 
 		$flow->confirm_tag_delete( $the_tag );
 
-		// If this isn't the 'confirm_delete' step, proceed with the editing prompts
+	// If this isn't the 'confirm_delete' step, proceed with the editing prompts
 	} else {
-	$flow->edit_tag( $the_tag, $input );
-
+		$flow->edit_tag( $the_tag, $input );
 	}
 	
 // If the selected item was neither a GIF or a tag, abandon all hope
 } else {
 	$flow->error();
-
 }
 
 // Output the list of items
