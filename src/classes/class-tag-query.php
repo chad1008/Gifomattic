@@ -1,4 +1,5 @@
 <?php
+
 /**
  * The Tag Query class.
  *
@@ -53,6 +54,7 @@ class Tag_Query {
 	 *
 	 * Sets up the tag query
 	 **
+	 *
 	 * @since 2.0
 	 *
 	 * @param string $query Alfred user input
@@ -73,7 +75,7 @@ class Tag_Query {
 		// Count the tags returned by the query
 		$this->tag_count = $this->count_tags();
 	}
-	
+
 	/**
 	 * Query tags based on the user-provided name or workflow-provided ID
 	 *
@@ -133,9 +135,9 @@ class Tag_Query {
 	 */
 	public function have_tags() {
 		if ( $this->current_tag + 1 < $this->tag_count ) {
-			return TRUE;
+			return true;
 		} else {
-			return FALSE;
+			return false;
 		}
 	}
 
@@ -149,7 +151,7 @@ class Tag_Query {
 	public function the_tag() {
 		// Increment the current_tag pointer, and then use it to identify the current tag from the tag array
 		++$this->current_tag;
-		$current_tag = new Tag( $this->tags[$this->current_tag]['tag_id'] );
+		$current_tag = new Tag( $this->tags[ $this->current_tag ]['tag_id'] );
 
 		return $current_tag;
 	}
