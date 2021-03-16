@@ -3,14 +3,14 @@
  * The GIF output script
  *
  * Powers the GIF output script node.
- * 
- * Outputs the URL of the GIF selected by the user, or if a tag was selected, pulls a random GIF that tag is assigned to.
- * Updates the 'selected_count' or 'random_count' value for the GIF used.
+ *
+ * Outputs the URL of the GIF selected by the user, or if a tag was selected, pulls a random GIF that tag is assigned
+ * to. Updates the 'selected_count' or 'random_count' value for the GIF used.
  *
  * @since 2.0
  */
 
-require_once ( 'functions.php' );
+require_once( 'functions.php' );
 
 // Just for fun, update the workflow's icon
 update_icon();
