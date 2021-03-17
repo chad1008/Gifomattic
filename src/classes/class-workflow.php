@@ -614,7 +614,8 @@ class Workflow {
 			),
 			'variables' => array(
 				'next_step'          => 'save_gif',
-				'external'           => 'search',
+				'trash_mode'         => 'true',
+				'external'           => 'restart',
 				'notification_title' => "GIF trashed!",
 				'notification_text'  => '"' . $the_gif->name . '" will be permanently deleted in 30 days.',
 				'exit'               => 'false',
