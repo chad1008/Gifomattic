@@ -34,13 +34,13 @@ if ( is_gif() ) {
 
 	// If this is the manage_tags step, output the tag management interface
 	} elseif ( 'manage_tags' === $flow->next_step ) {
-		// Alert if input is provided
-		$flow->alert_select_option( $input );
-
 		// If the current GIF has no tags, skip ahead to the adding tags interface
 		if ( empty( $the_gif->tags ) ) {
 			$flow->add_tags( $input, $the_gif, $tags );
 		} else {
+			// Alert if input is provided
+			$flow->alert_select_option( $input );
+
 			$flow->launch_tag_management();
 		}
 
