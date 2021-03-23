@@ -343,6 +343,7 @@ class Workflow {
 				'next_step'     => is_valid_url( $input ) ? 'gif_name' : 'gif_url',
 				'standby_title' => 'Saving your GIF...',
 				'standby_text'  => 'This should only take a moment, please stand by',
+				'original_input' => '',
 			),
 		);
 	}
