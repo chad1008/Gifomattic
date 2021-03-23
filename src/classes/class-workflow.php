@@ -343,6 +343,7 @@ class Workflow {
 				'next_step'     => is_valid_url( $input ) ? 'gif_name' : 'gif_url',
 				'standby_title' => 'Saving your GIF...',
 				'standby_text'  => 'This should only take a moment, please stand by',
+				'original_input' => '',
 			),
 		);
 	}
@@ -614,7 +615,8 @@ class Workflow {
 			),
 			'variables' => array(
 				'next_step'          => 'save_gif',
-				'external'           => 'search',
+				'trash_mode'         => 'true',
+				'external'           => 'restart',
 				'notification_title' => "GIF trashed!",
 				'notification_text'  => '"' . $the_gif->name . '" will be permanently deleted in 30 days.',
 				'exit'               => 'false',
