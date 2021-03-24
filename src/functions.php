@@ -70,6 +70,12 @@ function is_tag() {
  */
 function is_legacy_db() {
 	$file = $_SERVER['alfred_workflow_data'] . '/gifomattic.db';
+
+	// Check if a database exists. If not, set up a workflow folder to put the database in.
+	if ( ! file_exists( $file ) ) {
+		mkdir( $_SERVER['alfred_workflow_data'] );
+	}
+
 	$db = new sqlite3( $file );
 	$query = 'PRAGMA table_info( gifs )';
 	$result = $db->query( $query );
