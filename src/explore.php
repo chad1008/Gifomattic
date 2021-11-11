@@ -10,7 +10,7 @@
 require_once( 'functions.php' );
 
 // Initialize the data
-$input = $argv[1];
+$input = isset( $argv[1] ) ? $argv[1] : '';
 $flow = new Workflow();
 
 if ( is_tag() ) {

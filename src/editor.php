@@ -7,7 +7,7 @@
 
 require_once( 'functions.php' );
 
-$input = $argv[1];
+$input = isset( $argv[1] ) ? $argv[1] : '';
 $tags = new Tag_Query( $input );
 
 // Initialize the Workflow object

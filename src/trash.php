@@ -6,7 +6,7 @@
 
 require_once( 'functions.php' );
 
-$input = $argv[1];
+$input = isset( $argv[1] ) ? $argv[1] : '';
 $flow = new Workflow();
 $trash = new GIF_Query( '', '', true );
 

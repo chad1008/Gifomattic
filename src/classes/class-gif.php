@@ -343,7 +343,7 @@ class GIF {
 		$new_jpeg = imagecreatefromjpeg( "$icons" . $this->new_props['id'] . ".jpg" );
 
 		//Scale the new image to 128px, respecting aspect ratio
-		$scaled_jpeg = imagescale( $new_jpeg, 128, -1, IMG_BICUBIC_FIXED );
+		$scaled_jpeg = imagescale( $new_jpeg, 128, -1 );
 
 		// Save the scaled image as a jpeg
 		imagejpeg( $scaled_jpeg, $icons . $this->new_props['id'] . ".jpg", 10 );
@@ -441,10 +441,13 @@ class GIF {
 		// Define selected_count statement
 		if ( $count == 0 ) {
 			$none = "never ";
+			$number = "";
 		} elseif ( $count == 1 ) {
 			$number = "once";
+			$none = "";
 		} else {
 			$number = "$count times";
+			$none = "";
 		}
 
 		return sprintf( $format, $none, $number );
