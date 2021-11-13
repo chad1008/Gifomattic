@@ -618,7 +618,7 @@ class Workflow {
 		$this->items['items'][] = array(
 			'title'     => 'Trash "' . $the_gif->name . '"',
 			'subtitle'  => "Once trashed, the GIF will be deleted in 30 days",
-			'arg'       => 'filler arg',
+			'arg'       => '',
 			'icon'      => array(
 				'path' => 'img/trash.png',
 			),
