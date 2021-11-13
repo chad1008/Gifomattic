@@ -79,7 +79,15 @@ class Workflow {
 	 * @since 2.0
 	 * @var mixed
 	 */
-	public $selected_tag;
+	public $selected_tag_name;
+
+	/**
+	 * Alfred environment variable. Stores the ID of the tag to add to or remove from a GIF
+	 *
+	 * @since 2.0
+	 * @var mixed
+	 */
+	public $selected_tag_id;
 
 	/**
 	 * Alfred environment variable. Sets the type of action to take when saving a GIF
@@ -130,7 +138,8 @@ class Workflow {
 		$this->next_step = getenv( 'next_step' );
 		$this->new_gif = getenv( 'new_gif' );
 		$this->is_new_tag = 'true' === getenv( 'is_new_tag' ) ? true : false;
-		$this->selected_tag = getenv( 'selected_tag' );
+		$this->selected_tag_name = getenv( 'selected_tag_name' );
+		$this->selected_tag_id = getenv( 'selected_tag_id');
 		$this->save_mode = getenv( 'save_mode' );
 		$this->trash_mode = getenv( 'trash_mode' );
 		$this->original_input = getenv( 'original_input' );
@@ -868,11 +877,11 @@ class Workflow {
 						'path' => 'img/add tag.png',
 					),
 					'variables' => array(
-						'is_new_tag'   => 'true',
-						'next_step'    => 'save_gif',
-						'external'     => 'editor',
-						'save_mode'    => 'add_tag',
-						'selected_tag' => $input,
+						'is_new_tag'        => 'true',
+						'next_step'         => 'save_gif',
+						'external'          => 'editor',
+						'save_mode'         => 'add_tag',
+						'selected_tag_name' => $input,
 					),
 				);
 			}
@@ -904,16 +913,17 @@ class Workflow {
 				$this->items['items'][] = array(
 					'title'     => $the_tag->name,
 					'subtitle'  => $the_gif->has_tag( $the_tag->id ) ? 'This GIF is already tagged as "' . $the_tag->name . '"' : $subtitle,
-					'arg'       => $the_tag->id,
+					'arg'       => '',
 					'icon'      => array(
 						'path' => 'img/add tag.png',
 					),
 					'variables' => array(
-						'is_new_tag'   => false,
-						'next_step'    => 'save_gif',
-						'external'     => 'editor',
-						'save_mode'    => 'add_tag',
-						'selected_tag' => $the_tag->name,
+						'is_new_tag'        => false,
+						'next_step'         => 'save_gif',
+						'external'          => 'editor',
+						'save_mode'         => 'add_tag',
+						'selected_tag_name' => $the_tag->name,
+						'selected_tag_id'   => $the_tag->id,
 					),
 					'valid'     => $the_gif->has_tag( $the_tag->id ) ? 'false' : 'true',
 				);
@@ -963,15 +973,16 @@ class Workflow {
 			$this->items['items'][] = array(
 				'title'     => 'Remove "' . $tag->name . '" from this GIF',
 				'subtitle'  => $subtitle,
-				'arg'       => $tag->id,
+				'arg'       => '',
 				'icon'      => array(
 					'path' => 'img/remove tag.png',
 				),
 				'variables' => array(
-					'next_step'    => 'save_gif',
-					'external'     => 'editor',
-					'save_mode'    => 'remove_tag',
-					'selected_tag' => $tag->name,
+					'next_step'       => 'save_gif',
+					'external'        => 'editor',
+					'save_mode'       => 'remove_tag',
+					'selected_tag_name'    => $tag->name,
+					'selected_tag_id' => $tag->id,
 				),
 			);
 		}
@@ -1210,7 +1221,7 @@ class Workflow {
 				'exit' => 'true',
 			);
 		} elseif ( 'add_tag' === $action ) {
-			$tag_message = 'GIF tagged as "' . $this->selected_tag . '"';
+			$tag_message = 'GIF tagged as "' . $this->selected_tag_name . '"';
 			$variables = array(
 				'exit'               => 'false',
 				'next_step'          => 'add_tags',
@@ -1218,7 +1229,7 @@ class Workflow {
 				'notification_text'  => popup_notice( $tag_message ),
 			);
 		} elseif ( 'remove_tag' === $action ) {
-			$tag_message = '"' . $this->selected_tag . '" removed from this GIF';
+			$tag_message = '"' . $this->selected_tag_name . '" removed from this GIF';
 			$variables = array(
 				'exit'               => 'false',
 				// If this is the last tag assigned to the GIF, next step should be 'launch_editor'

@@ -29,8 +29,8 @@ if ( is_gif() ) {
 
 	// If save mode is 'add_tag' assign the selected tag to the GIF
 	} elseif ( 'add_tag' === $flow->save_mode ) {
-		// If this is a new tag, pass in the user provided name. Otherwise, pass the ID via the workflow 'argv[1] value
-		$tag_to_add = true === $flow->is_new_tag ? $flow->selected_tag : $argv[1];
+		// If this is a new tag, pass in the user provided name. Otherwise, pass the ID of the selected tag
+		$tag_to_add = true === $flow->is_new_tag ? $flow->selected_tag_name : $flow->selected_tag_id;
 		$the_gif->add_tag( $tag_to_add, $flow->is_new_tag );
 
 		// Output workflow configuration
@@ -38,8 +38,8 @@ if ( is_gif() ) {
 
 	// Otherwise, prep and save the new GIF info
 	} elseif ( 'remove_tag' === $flow->save_mode ) {
-		// Pass the selected tag's ID from the current workflow 'argv[1]'
-		$the_gif->remove_tag( $argv[1] );
+		// Pass the selected tag's ID from the current workflow
+		$the_gif->remove_tag( $flow->selected_tag_id );
 
 		// Output workflow configuration
 		$flow->output_config( 'remove_tag', $the_gif );
