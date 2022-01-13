@@ -5,6 +5,12 @@ To launch Gifomattic, open Alfred and enter the keyword `gif`.
 ## Installation
 Please download the `Gifomattic.alfredworkflow` file from the [latest release.](https://github.com/chad1008/Gifomattic/releases) Once downloaded, open the file to install or update Gifomattic
 
+**IMPORTANT:** Starting with Monterey, MacOS no longer ships with PHP built in, so you'll need to install it to use Gifomattic:
+
+`brew install php`
+
+If you don't already have homebrew, you can get started at https://brew.sh/.
+
 ## Adding GIFs To Your Library
 There are three ways to add a new GIF to your library:
 
