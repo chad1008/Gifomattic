@@ -36,6 +36,8 @@ Gifomattic uses three modifier keys: CMD, SHIFT, and CTRL.
 
 **CTRL** is used exclusively for permanently deleting GIFs from the trash. It serves no other function, to decrease the risk of accidental deletions.
 
+**OPTION** is used to download a GIF to your computer and then paste it into whatever app currently has focus. This is useful for apps or services that don't unfurl or animate GIF URLs.
+
 ## Explore Mode
 You can explore your library using the **CMD** modfier. When used on a GIF, you'll be shown the name and URL of the GIF, and can preview the GIF by using the **CMD** modifier again. You'll also see how often the GIF has been shared, the date that you first saved it, and any tags that are assigned to it.
 

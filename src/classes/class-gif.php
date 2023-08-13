@@ -298,7 +298,7 @@ class GIF {
 		// Determine image type based on file extension (not infallible but should be good for most cases)
 		$image_type = exif_imagetype( $this->new_props['url'] );
 
-		// Create a new file from the url, read it's dimensions
+		// Create a new file from the url, read its dimensions
 		if ( $image_type == 1 ) {
 			$original_gif = imagecreatefromgif( $this->new_props['url'] );
 		} elseif ( $image_type == 2 ) {

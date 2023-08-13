@@ -227,6 +227,16 @@ class Workflow {
 						'original_input' => $input,
 					),
 				),
+				'option' => array(
+					'subtitle'  => 'Download and paste a random "' . $the_tag->name . '" GIF',
+					'variables' => array(
+						'next_step'      => 'download',
+				'item_id'   => $the_tag->id,
+				'item_id'        => $the_tag->id,
+				'item_type'      => 'tag',
+					),
+				),
+
 			),
 		);
 	}
@@ -285,6 +295,14 @@ class Workflow {
 						'item_id'        => $the_gif->id,
 						'item_type'      => 'gif',
 						'original_input' => $original_input,
+					),
+				),
+				'option' => array(
+					'subtitle'  => 'Download and paste this GIF',
+					'variables' => array(
+						'next_step'      => 'download',
+						'item_id'        => $the_gif->id,
+						'item_type'      => 'gif',
 					),
 				),
 			),
