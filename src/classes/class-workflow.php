@@ -468,6 +468,14 @@ class Workflow {
 						'external'  => 'editor',
 					),
 				),
+				'option' => array(
+					'subtitle'  => 'Download and paste this GIF',
+					'variables' => array(
+						'next_step'      => 'download',
+						'item_id'        => $the_gif->id,
+						'item_type'      => 'gif',
+					),
+				),
 			),
 		);
 
