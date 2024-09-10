@@ -96,6 +96,7 @@ class GIF {
 	 */
 	public $icon;
 	public $view_icon;
+	public $edit_icon;
 
 	/**
 	 * A list of the tags assigned to the GIF

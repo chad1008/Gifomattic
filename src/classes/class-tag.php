@@ -38,6 +38,14 @@ class Tag {
 	 */
 	public $new_name;
 
+	/**
+	 *  The list of GIFs that have this tag assigned
+	 *
+	 * @since 2.0
+	 * @var array
+	 */
+	public $gifs_with_tag;
+
 	public function __construct( int $id = null ) {
 		// Set database connection
 		$this->db = prep_db();
